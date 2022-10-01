@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:background="@drawable/popup_border">
+
+    <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Wybierz numer\nna który chcesz zadzwonić"
+            android:id="@+id/header"
+            android:layout_centerHorizontal="true"
+            android:textAlignment="center"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="15dp"
+            />
+
+    <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/call112"
+            android:layout_below="@+id/header"
+            android:text="Służby ratunkowe - 112"
+            android:onClick="emergencyCall"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="20dp"
+            />
+
+    <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Bliska osoba"
+            android:id="@+id/call_iceperson"
+            android:layout_below="@+id/call112"
+            android:onClick="call_ICE"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="20dp"
+            />
+
+</RelativeLayout>
