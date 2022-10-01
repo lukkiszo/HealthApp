@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="Wyniki badań">
+        <menu>
+            <item android:title="Ciśnienie tętnicze" android:icon="@drawable/ic_bloodpressure"/>
+
+            <item android:title="Puls" android:icon="@drawable/ic_heartrate"/>
+
+            <item android:title="Saturacja" android:icon="@drawable/ic_saturation"/>
+
+            <item android:title="Poziom cukru we krwi" android:id="@+id/sugarNav" android:icon="@drawable/ic_sugar"/>
+
+            <item android:title="Liczba wykonanych kroków" android:icon="@drawable/ic_steps"/>
+
+            <item android:title="Temperatura ciała" android:icon="@drawable/ic_temperature"/>
+        </menu>
+    </item>
+
+    <item android:title="Harmonogram">
+        <menu>
+            <item android:title="Harmonogram leków" android:icon="@drawable/ic_timesheet"/>
+
+            <item android:title="Kalendarz wizyt" android:icon="@drawable/ic_timesheet2"/>
+
+            <item android:title="Podsumowanie miesiąca" android:icon="@drawable/ic_month_summary"/>
+        </menu>
+    </item>
+
+    <item android:title="Ustawienia">
+        <menu>
+            <item android:title="Mój profil" android:id="@+id/myProfile" android:icon="@drawable/ic_account"/>
+
+            <item android:title="Ustawienia" android:id="@+id/settings" android:icon="@drawable/ic_settings"/>
+
+            <item android:title="O Aplikacji" android:id="@+id/about" android:icon="@drawable/ic_about"/>
+
+            <item android:title="Wyjdź" android:id="@+id/exit" android:icon="@drawable/ic_exit"/>
+        </menu>
+    </item>
+
+</menu>
