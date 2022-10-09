@@ -1,9 +1,10 @@
 package com.example.healthapp;
 
-import android.view.MenuItem;
+import android.view.*;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentTransaction;
 
 public class SugarActivity extends AppCompatActivity {
 
@@ -11,6 +12,10 @@ public class SugarActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sugar);
+
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.sugarResults, new SugarResultsFragment());
+        ft.commit();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

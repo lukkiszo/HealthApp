@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:id="@+id/sugarFragmentScrollView"
+            android:padding="10dp"
+            android:fillViewport="true">
+
+    <RelativeLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".SugarActivity">
+
+        <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="270dp"
+                android:src="@drawable/border"
+                android:layout_marginTop="20dp"
+                android:id="@+id/sugarChart"
+                />
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/sugarChart"
+                android:layout_marginTop="15dp"
+                android:layout_marginStart="20dp"
+                android:text="Srednia wyników: 123"
+                android:id="@+id/meanSugarResults"/>
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/meanSugarResults"
+                android:layout_marginTop="15dp"
+                android:layout_marginStart="20dp"
+                android:text="Ostatni wynik: 123"
+                android:id="@+id/lastSugarResult"/>
+
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/BMI"
+                android:layout_below="@+id/lastSugarResult"
+                android:layout_marginTop="15dp"
+                android:textAlignment="center"
+                android:textSize="30sp"
+                android:textStyle="bold"/>
+
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/BMI_info"
+                android:text="BMI Prawidłowe"
+                android:layout_below="@+id/BMI"
+                android:layout_marginTop="15dp"
+                android:textAlignment="center"
+                android:textSize="14sp"/>
+
+        <ListView
+                android:layout_width="wrap_content"
+                android:layout_height="400dp"
+                android:layout_below="@+id/BMI_info"
+                android:layout_marginTop="40dp"
+                android:divider="@color/white"
+                android:dividerHeight="1dp"
+                android:textAlignment="center"
+                android:scrollingCache="false"
+                android:smoothScrollbar="true"
+                android:id="@+id/listview"/>
+
+        <ImageButton
+                android:layout_width="90dp"
+                android:id="@+id/addSugarResultButton"
+                android:layout_height="90dp"
+                android:layout_below="@+id/listview"
+                android:background="@drawable/roundedbutton"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="50dp"
+                android:layout_marginTop="25dp"
+                android:layout_marginBottom="35dp"
+                android:src="@drawable/ic_add"/>
+
+    </RelativeLayout>
+</ScrollView>
