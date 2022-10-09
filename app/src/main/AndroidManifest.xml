@@ -14,6 +14,8 @@
             android:supportsRtl="true"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
             tools:targetApi="m">
+        <activity android:name=".ResultEditor">
+        </activity>
         <activity android:name=".SugarActivity">
         </activity>
         <activity android:name=".ProfileActivity">
