@@ -3,37 +3,44 @@ package com.example.healthapp;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.*;
 import android.widget.*;
-import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.PackageManagerCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import com.google.android.material.navigation.NavigationView;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
-
+    private TextView sugarInfo;
+    private int lastSugarResult;
     private static final int REQUEST_CALL = 1;
     private String number;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +49,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         toolbar = findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
+
+        sugarInfo = findViewById(R.id.sugar);
 
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
@@ -52,10 +61,74 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         actionBarDrawerToggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
 
+        getLastResults();
         setProfilePhoto();
         customizeDimension();
+        checkResults();
     }
 
+    @SuppressLint("SetTextI18n")
+    private void getLastResults(){
+        SharedPreferences sharedPreferences = getSharedPreferences("results", Context.MODE_PRIVATE);
+        Gson gson = new Gson();
+
+        String json = sharedPreferences.getString("sugar", null);
+
+        Type type = new TypeToken<ArrayList<SugarResult>>() {}.getType();
+
+        ArrayList<SugarResult> sugarResultsArrayList = gson.fromJson(json, type);
+
+        if (sugarResultsArrayList == null) {
+            sugarResultsArrayList = new ArrayList<>();
+        }
+
+        ArrayList<SugarResult> sorted = sortResults(sugarResultsArrayList);
+        lastSugarResult = (int) sorted.get(sorted.size() - 1).getResult();
+        sugarInfo.setText("Poziom cukru \nwe krwi: " + lastSugarResult + " mg/dl");
+
+    }
+
+    private void checkResults(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            NotificationChannel channel = new NotificationChannel("My Notification", "My Notification", NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            manager.createNotificationChannel(channel);
+        }
+
+        if (lastSugarResult > 100 || lastSugarResult < 70){
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "My Notification")
+                    .setSmallIcon(R.drawable.ic_notification_icon)
+                    .setContentTitle("Nieprawidłowy poziom cukru we krwi!")
+                    .setContentText("Twój ostatni wprowadzony wynik badania poziomu cukru we krwi nie mieścił się w granicach normy")
+                    .setPriority(NotificationCompat.PRIORITY_HIGH);
+
+            NotificationManagerCompat managerCompat = NotificationManagerCompat.from(this);
+            managerCompat.notify(100, builder.build());
+        }
+    }
+
+    public static ArrayList<SugarResult> sortResults(ArrayList<SugarResult> sugarResultsArrayList) {
+        ArrayList<SugarResult> sorted = sugarResultsArrayList;
+
+        int pos;
+        SugarResult temp;
+
+        for(int i = 0; i < sorted.size() - 1; i++){
+            pos = i;
+            for (int j = i + 1; j < sorted.size(); j++){
+                if(sorted.get(j).getNumber() < sorted.get(pos).getNumber()){
+                    pos = j;
+                }
+            }
+
+            temp = sorted.get(pos);
+            sorted.set(pos, sorted.get(i));
+            sorted.set(i, temp);
+
+        }
+
+        return sorted;
+    }
 
     private void customizeDimension(){
         View bloodpressure = findViewById(R.id.blood_pressure);
@@ -160,6 +233,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
     }
 
+    public void goToEditor(View view){
+        Intent intent = new Intent(this, ResultEditor.class);
+        intent.putExtra("type", "Cukier");
+        startActivity(intent);
+    }
 
     @SuppressLint("NonConstantResourceId")
     @Override
@@ -199,6 +277,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onResume() {
         setProfilePhoto();
+        getLastResults();
         super.onResume();
     }
 

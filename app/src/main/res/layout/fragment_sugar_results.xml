@@ -17,18 +17,26 @@
             android:layout_height="match_parent"
             tools:context=".SugarActivity">
 
-        <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="270dp"
-                android:src="@drawable/border"
-                android:layout_marginTop="20dp"
+        <com.github.mikephil.charting.charts.LineChart
                 android:id="@+id/sugarChart"
-                />
+                android:layout_width="match_parent"
+                android:layout_marginTop="20dp"
+                android:background="@color/white"
+                android:layout_height="270dp" />
+
+
+        <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/sugarChart"
+                android:id="@+id/resetChartButton"
+                android:layout_centerHorizontal="true"
+                android:text="RESET"/>
 
         <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/sugarChart"
+                android:layout_below="@+id/resetChartButton"
                 android:layout_marginTop="15dp"
                 android:layout_marginStart="20dp"
                 android:text="Srednia wyników: 123"
@@ -63,11 +71,44 @@
                 android:textAlignment="center"
                 android:textSize="14sp"/>
 
+        <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/BMI_info"
+                android:layout_marginTop="20dp"
+                android:id="@+id/listviewButtons"
+                android:layout_centerHorizontal="true">
+
+            <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/previousSugarResults"
+                    android:text="&lt;"/>
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@+id/previousSugarResults"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="15dp"
+                    android:id="@+id/listviewText"/>
+
+            <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/nextSugarResults"
+                    android:layout_toEndOf="@+id/listviewText"
+                    android:layout_marginStart="20dp"
+                    android:text=">"/>
+
+        </RelativeLayout>
+
+
         <ListView
                 android:layout_width="wrap_content"
                 android:layout_height="400dp"
-                android:layout_below="@+id/BMI_info"
-                android:layout_marginTop="40dp"
+                android:layout_below="@+id/listviewButtons"
+                android:layout_marginTop="20dp"
                 android:divider="@color/white"
                 android:dividerHeight="1dp"
                 android:textAlignment="center"

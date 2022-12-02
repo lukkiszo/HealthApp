@@ -166,7 +166,7 @@ public class SugarEditorFragment extends Fragment {
         SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences("results", Context.MODE_PRIVATE);
         Gson gson = new Gson();
 
-        SugarResult result = new SugarResult(givenDate, givenHour, givenResult, givenAnnotations, year, month, day);
+        SugarResult result = new SugarResult(givenDate, givenHour, givenResult, givenAnnotations);
         if(clickedItem >= 0){
             sugarResultsArrayList.remove(clickedItem);
         }
@@ -237,7 +237,7 @@ public class SugarEditorFragment extends Fragment {
         return day + " " + getMonthFormat(month) + " " + year;
     }
 
-    private String getMonthFormat(int month){
+    public static String getMonthFormat(int month){
         switch (month) {
             case 1:
                 return "Styczeń";

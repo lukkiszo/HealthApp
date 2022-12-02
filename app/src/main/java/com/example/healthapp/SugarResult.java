@@ -1,8 +1,5 @@
 package com.example.healthapp;
 
-import android.util.Log;
-
-import java.util.Date;
 
 public class SugarResult implements Comparable<SugarResult>{
 
@@ -17,14 +14,14 @@ public class SugarResult implements Comparable<SugarResult>{
     private String annotation;
     private int number;
 
-    public SugarResult(String addedDate, String addedHour, double res, String annot, int year, int month, int day){
+    public SugarResult(String addedDate, String addedHour, double res, String annot){
         this.date = addedDate;
         this.hour = addedHour;
         this.result = res;
         this.annotation = annot;
-        this.year = year;
-        this.month = month;
-        this.day = day;
+        this.year = Integer.parseInt(addedDate.split(" ")[2]);
+        this.month = getMonthInt(addedDate.split(" ")[1]);
+        this.day = Integer.parseInt(addedDate.split(" ")[0]);
         this.thour = Integer.parseInt(addedHour.split(":")[0]);
         this.minutes = Integer.parseInt(addedHour.split(":")[1]);
         this.number = (year-2020) * 365 * 1440 + month * 31 * 1440 + day * 1440 + thour * 60 + minutes;
@@ -81,6 +78,47 @@ public class SugarResult implements Comparable<SugarResult>{
     public void setMonth(int month) { this.month = month; }
 
     public void setYear(int year) { this.year = year; }
+
+    public static int getMonthInt(String month){
+        switch (month) {
+            case "Styczeń":
+                return 1;
+
+            case "Luty":
+                return 2;
+
+            case "Marzec":
+                return 3;
+
+            case "Kwiecień":
+                return 4;
+
+            case "Maj":
+                return 5;
+
+            case "Czerwiec":
+                return 6;
+
+            case "Lipiec":
+                return 7;
+
+            case "Sierpień":
+                return 8;
+
+            case "Wrzesień":
+                return 9;
+
+            case "Październik":
+                return 10;
+
+            case "Listopad":
+                return 11;
+
+            case "Grudzień":
+                return 12;
+        }
+        return 1;
+    }
 
     public int compareTo(SugarResult compareResult) {
 
