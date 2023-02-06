@@ -1,12 +1,15 @@
 package com.example.healthapp;
 
+import android.content.Intent;
 import android.view.*;
+import android.widget.ImageButton;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentTransaction;
 
 public class SugarActivity extends AppCompatActivity {
+    private ImageButton addNewResultButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +29,20 @@ public class SugarActivity extends AppCompatActivity {
             getSupportActionBar().setTitle("Cukier i BMI");
         }
 
+        addNewResultButton = findViewById(R.id.addSugarResultButton);
+        addNewResultButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                addNewResult();
+            }
+        });
+
+    }
+
+    private void addNewResult(){
+        Intent intent = new Intent(this, ResultEditor.class);
+        intent.putExtra("type", "Cukier");
+        startActivity(intent);
     }
 
     @Override

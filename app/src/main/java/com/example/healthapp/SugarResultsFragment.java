@@ -37,7 +37,6 @@ public class SugarResultsFragment extends Fragment implements OnChartValueSelect
     private ListView listView;
     private TextView BMI_text;
     private TextView BMI_info;
-    private ImageButton addButton;
     private TextView lastResult;
     private TextView meanResults;
     private List<String> results = new ArrayList<>();
@@ -50,6 +49,10 @@ public class SugarResultsFragment extends Fragment implements OnChartValueSelect
     private TextView listViewResultsInfo;
     private ArrayList<SugarResult> listViewArrayList;
     private Integer currentListViewPage;
+    private Date todayDate;
+    private Date chartLastDay;
+    private Button chartLeftButton;
+    private Button chartRightButton;
 
     // The onCreateView method is called when Fragment should create its View object hierarchy,
     // either dynamically or via XML layout inflation.
@@ -64,26 +67,24 @@ public class SugarResultsFragment extends Fragment implements OnChartValueSelect
     // Any view setup should occur here.  E.g., view lookups and attaching view listeners.
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-
+        todayDate = new Date();
+        chartLastDay = todayDate;
         BMI_text = view.findViewById(R.id.BMI);
         BMI_info = view.findViewById(R.id.BMI_info);
         listView = view.findViewById(R.id.listview);
-        addButton = view.findViewById(R.id.addSugarResultButton);
         lastResult = view.findViewById(R.id.lastSugarResult);
         meanResults = view.findViewById(R.id.meanSugarResults);
         resetChartButton = view.findViewById(R.id.resetChartButton);
         previousListViewResultsButton = view.findViewById(R.id.previousSugarResults);
         nextListViewResultsButton = view.findViewById(R.id.nextSugarResults);
         listViewResultsInfo = view.findViewById(R.id.listviewText);
+        chartLeftButton = view.findViewById(R.id.chartLeft);
+        chartRightButton = view.findViewById(R.id.chartRight);
         chart = (LineChart) view.findViewById(R.id.sugarChart);
         currentListViewPage = 1;
         nextListViewResultsButton.setEnabled(false);
         BMI_text.setText(MessageFormat.format("BMI = {0}", BMI_count()));
         checkBMI(BMI_count());
-        addButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) { addNewResult(); }
-        });
 
         resetChartButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,8 +101,21 @@ public class SugarResultsFragment extends Fragment implements OnChartValueSelect
             public void onClick(View view) { previousListViewResults(); }
         });
 
+        chartRightButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) { moveChartRight(); }
+        });
+
+        chartLeftButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) { moveChartLeft(); }
+        });
+
         loadResults();
         lastResultIndex = sugarResultsArrayList.size() - 1;
+        if (lastResultIndex < 7) {
+            previousListViewResultsButton.setEnabled(false);
+        }
         last7DaysSugarResultsArrayList = getLast7DaysResults();
         loadLastResults();
         loadChart();
@@ -111,8 +125,11 @@ public class SugarResultsFragment extends Fragment implements OnChartValueSelect
     private void loadLastResults(){
         listViewArrayList = new ArrayList<>();
         Integer i = 0;
-        while (listViewArrayList.size() < 7 && (i < sugarResultsArrayList.size() - 1 || sugarResultsArrayList.size() < 2)
-                && (lastResultIndex - i) >= 0 && (lastResultIndex - i) < sugarResultsArrayList.size()){
+        while   (listViewArrayList.size() < 7 &&
+                (i < sugarResultsArrayList.size() || sugarResultsArrayList.size() < 2) &&
+                (lastResultIndex - i) >= 0 &&
+                (lastResultIndex - i) < sugarResultsArrayList.size()){
+
             SugarResult result = new SugarResult(sugarResultsArrayList.get(lastResultIndex - i).getDate(),
                     sugarResultsArrayList.get(lastResultIndex - i).getHour(),
                     sugarResultsArrayList.get(lastResultIndex - i).getResult(),
@@ -126,11 +143,14 @@ public class SugarResultsFragment extends Fragment implements OnChartValueSelect
             }
         }
 
-        listViewResultsInfo.setText(String.format("%d-%d - %d-%d", listViewArrayList.get(listViewArrayList.size() - 1).getDay(),
-                listViewArrayList.get(listViewArrayList.size() - 1).getMonth(),
-                listViewArrayList.get(0).getDay(),
-                listViewArrayList.get(0).getMonth()));
-        reloadListView();
+        if (listViewArrayList.size() != 0){
+            listViewResultsInfo.setText(String.format("%d-%d - %d-%d", listViewArrayList.get(listViewArrayList.size() - 1).getDay(),
+                    listViewArrayList.get(listViewArrayList.size() - 1).getMonth(),
+                    listViewArrayList.get(0).getDay(),
+                    listViewArrayList.get(0).getMonth()));
+            reloadListView();
+        }
+
     }
 
     @SuppressLint("DefaultLocale")
@@ -194,6 +214,9 @@ public class SugarResultsFragment extends Fragment implements OnChartValueSelect
         currentListViewPage = 1;
         nextListViewResultsButton.setEnabled(false);
         previousListViewResultsButton.setEnabled(true);
+        if (lastResultIndex < 7) {
+            previousListViewResultsButton.setEnabled(false);
+        }
         last7DaysSugarResultsArrayList = getLast7DaysResults();
         loadLastResults();
         loadChart();
@@ -208,6 +231,9 @@ public class SugarResultsFragment extends Fragment implements OnChartValueSelect
         currentListViewPage = 1;
         nextListViewResultsButton.setEnabled(false);
         previousListViewResultsButton.setEnabled(true);
+        if (lastResultIndex < 7) {
+            previousListViewResultsButton.setEnabled(false);
+        }
         last7DaysSugarResultsArrayList = getLast7DaysResults();
         loadLastResults();
         loadChart();
@@ -226,13 +252,32 @@ public class SugarResultsFragment extends Fragment implements OnChartValueSelect
         }
     }
 
+    private void moveChartLeft(){
+        Calendar ca = Calendar.getInstance();
+        ca.setTime(chartLastDay);
+        ca.add(Calendar.DATE, -1);
+        chartLastDay = ca.getTime();
+
+        reloadChart();
+    }
+
+    private void moveChartRight(){
+        if (chartLastDay.compareTo(todayDate) < 0){
+            Calendar ca = Calendar.getInstance();
+            ca.setTime(chartLastDay);
+            ca.add(Calendar.DATE, 1);
+            chartLastDay = ca.getTime();
+
+            reloadChart();
+        }
+    }
+
     private ArrayList<SugarResult> getLast7DaysResults(){
         ArrayList<SugarResult> chartArrayList = new ArrayList<>();
 
-        Date date = new Date();
+        Date date = chartLastDay;
         Calendar ca = Calendar.getInstance();
         ca.setTime(date);
-        ca.add(Calendar.DATE, -1);
         date = ca.getTime();
         SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());;
         String formattedDate;
@@ -287,10 +332,15 @@ public class SugarResultsFragment extends Fragment implements OnChartValueSelect
         meanResults.setText(MessageFormat.format("Średnia wyników = {0} mg/dl", sum/sugarResultsArrayList.size()));
     }
 
-    private void resetChart(){
+    private void reloadChart(){
         chart.fitScreen();
         last7DaysSugarResultsArrayList = getLast7DaysResults();
         loadChart();
+    }
+
+    private void resetChart(){
+        chartLastDay = todayDate;
+        reloadChart();
     }
 
     private double BMI_count(){
@@ -329,13 +379,6 @@ public class SugarResultsFragment extends Fragment implements OnChartValueSelect
         }
     }
 
-    private void addNewResult(){
-        Intent intent = new Intent(getActivity(), ResultEditor.class);
-        intent.putExtra("type", "Cukier");
-        startActivity(intent);
-
-    }
-
     private void loadResults(){
         SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences("results", Context.MODE_PRIVATE);
         Gson gson = new Gson();
@@ -358,10 +401,10 @@ public class SugarResultsFragment extends Fragment implements OnChartValueSelect
 
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        String json1 = gson.toJson(MainActivity.sortResults(results));
+        String json1 = gson.toJson(MainActivity.sortSugarResults(results));
         editor.putString("sugar", json1);
         editor.apply();
-        return MainActivity.sortResults(results);
+        return MainActivity.sortSugarResults(results);
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -370,7 +413,7 @@ public class SugarResultsFragment extends Fragment implements OnChartValueSelect
 
         int numberOfElementsOnPage = 0;
         sugarResultsArrayList = sortSugarResults(sugarResultsArrayList);
-        listViewArrayList = MainActivity.sortResults(listViewArrayList);
+        listViewArrayList = MainActivity.sortSugarResults(listViewArrayList);
 
         for (SugarResult sugarResult : listViewArrayList) {
             results.add(sugarResult.getDate() + ", " + sugarResult.getHour());
