@@ -5,14 +5,14 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
+import android.content.*;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.util.Log;
 import android.view.*;
 import android.widget.*;
 import androidx.annotation.NonNull;
@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private NavigationView navigationView;
     private TextView sugarInfo;
     private int lastSugarResult;
+    private double lastTemperatureResult;
     private static final int REQUEST_CALL = 1;
     private String number;
 
@@ -65,6 +66,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setProfilePhoto();
         customizeDimension();
         checkResults();
+
+        startNewService();
+
     }
 
     @SuppressLint("SetTextI18n")
@@ -73,17 +77,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Gson gson = new Gson();
 
         String json = sharedPreferences.getString("sugar", null);
+        String json1 = sharedPreferences.getString("temperature", null);
 
         Type type = new TypeToken<ArrayList<SugarResult>>() {}.getType();
+        Type type1 = new TypeToken<ArrayList<TemperatureResult>>() {}.getType();
 
         ArrayList<SugarResult> sugarResultsArrayList = gson.fromJson(json, type);
+        ArrayList<TemperatureResult> temperatureResultArrayList = gson.fromJson(json1, type1);
 
         if (sugarResultsArrayList == null) {
             sugarResultsArrayList = new ArrayList<>();
         }
 
-        ArrayList<SugarResult> sorted = sortResults(sugarResultsArrayList);
+        if (temperatureResultArrayList == null) {
+            temperatureResultArrayList = new ArrayList<>();
+        }
+
+        ArrayList<SugarResult> sorted = sortSugarResults(sugarResultsArrayList);
         lastSugarResult = (int) sorted.get(sorted.size() - 1).getResult();
+        ArrayList<TemperatureResult> sortedTemperature = sortTemperatureResults(temperatureResultArrayList);
+        lastTemperatureResult = sortedTemperature.get(sortedTemperature.size() - 1).getResult();
+
         sugarInfo.setText("Poziom cukru \nwe krwi: " + lastSugarResult + " mg/dl");
 
     }
@@ -105,9 +119,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             NotificationManagerCompat managerCompat = NotificationManagerCompat.from(this);
             managerCompat.notify(100, builder.build());
         }
+
+        if (lastTemperatureResult > 37.5 || lastTemperatureResult < 36){
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "My Notification")
+                    .setSmallIcon(R.drawable.ic_notification_icon)
+                    .setContentTitle("Nieprawidłowa temperatura ciała!")
+                    .setContentText("Twój ostatni wprowadzony wynik badania temperatury ciała nie mieścił się w granicach normy")
+                    .setPriority(NotificationCompat.PRIORITY_HIGH);
+
+            NotificationManagerCompat managerCompat = NotificationManagerCompat.from(this);
+            managerCompat.notify(100, builder.build());
+        }
+
     }
 
-    public static ArrayList<SugarResult> sortResults(ArrayList<SugarResult> sugarResultsArrayList) {
+    public static ArrayList<SugarResult> sortSugarResults(ArrayList<SugarResult> sugarResultsArrayList) {
         ArrayList<SugarResult> sorted = sugarResultsArrayList;
 
         int pos;
@@ -129,6 +155,51 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         return sorted;
     }
+
+    public static ArrayList<TemperatureResult> sortTemperatureResults(ArrayList<TemperatureResult> temperatureResultArrayList) {
+        ArrayList<TemperatureResult> sorted = temperatureResultArrayList;
+
+        int pos;
+        TemperatureResult temp;
+
+        for(int i = 0; i < sorted.size() - 1; i++){
+            pos = i;
+            for (int j = i + 1; j < sorted.size(); j++){
+                if(sorted.get(j).getNumber() < sorted.get(pos).getNumber()){
+                    pos = j;
+                }
+            }
+
+            temp = sorted.get(pos);
+            sorted.set(pos, sorted.get(i));
+            sorted.set(i, temp);
+
+        }
+
+        return sorted;
+    }
+
+    private Intent intent = new Intent(MainActivity.this, ReminderService.class);
+
+    private void startNewService(){
+//        bindService(new Intent(getBaseContext(), ReminderService.class), connection, BIND_AUTO_CREATE);
+        startService(new Intent(MainActivity.this, ReminderService.class));
+    }
+
+//    private Boolean bound;
+//
+//    private ServiceConnection connection = new ServiceConnection() {
+//        @Override
+//        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+//            bound = true;
+//        }
+//
+//        @Override
+//        public void onServiceDisconnected(ComponentName componentName) {
+//            bound = false;
+//        }
+//    };
+
 
     private void customizeDimension(){
         View bloodpressure = findViewById(R.id.blood_pressure);
@@ -185,7 +256,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             String dial = "tel:" + number;
             startActivity(new Intent(Intent.ACTION_CALL, Uri.parse(dial)));
         }
-
     }
 
     @SuppressLint({"MissingSuperCall", "ShowToast"})
@@ -244,6 +314,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         Intent intent;
         switch (item.getItemId()){
+            case R.id.temperatureNav:
+                intent = new Intent(this, TemperatureActivity.class);
+                startActivity(intent);
+                break;
+
             case R.id.sugarNav:
                 intent = new Intent(this, SugarActivity.class);
                 startActivity(intent);

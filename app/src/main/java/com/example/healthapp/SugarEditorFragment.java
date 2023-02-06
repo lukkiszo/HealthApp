@@ -24,10 +24,10 @@ import java.util.*;
 public class SugarEditorFragment extends Fragment {
 
     String[] items = {"Nieokreślone", "Przed posiłkiem", "Po posiłku"};
-    private ArrayList<SugarResult> sugarResultsArrayList;
-    private List<String> results = new ArrayList<>();
+//    private List<String> results = new ArrayList<>();
     TextInputLayout textInputLayout;
     AutoCompleteTextView autoCompleteTextView;
+    private ArrayList<SugarResult> sugarResultsArrayList;
     private DatePickerDialog datePickerDialog;
     private Button dateButton;
     private Button timeButton;
@@ -180,7 +180,7 @@ public class SugarEditorFragment extends Fragment {
         getActivity().finish();
     }
 
-    private String getTodayDate(){
+    public static String getTodayDate(){
         Calendar cal = Calendar.getInstance();
         int year = cal.get(Calendar.YEAR);
         int month = cal.get(Calendar.MONTH);
@@ -189,7 +189,7 @@ public class SugarEditorFragment extends Fragment {
         return makeDateString(day, month, year);
     }
 
-    private String getCurrentTime(){
+    public static String getCurrentTime(){
         Calendar cal = Calendar.getInstance();
         int currentHour = cal.get(Calendar.HOUR_OF_DAY);
         int currentMinute = cal.get(Calendar.MINUTE);
@@ -233,7 +233,7 @@ public class SugarEditorFragment extends Fragment {
         datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
     }
 
-    private String makeDateString(int day, int month, int year){
+    public static String makeDateString(int day, int month, int year){
         return day + " " + getMonthFormat(month) + " " + year;
     }
 
