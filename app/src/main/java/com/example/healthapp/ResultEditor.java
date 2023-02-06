@@ -74,14 +74,18 @@ public class ResultEditor extends AppCompatActivity{
                 break;
 
             case "Temperatura ciała":
+                Bundle bundle2 = new Bundle();
+                bundle2.putInt("position", position);
+
+                TemperatureEditorFragment temperatureEditorFragment = new TemperatureEditorFragment();
+                temperatureEditorFragment.setArguments(bundle2);
+                ft.replace(R.id.resultEdit, temperatureEditorFragment);
                 break;
 
             default:
                 break;
         }
 
-        // or ft.add(R.id.your_placeholder, new FooFragment());
-        // Complete the changes added above
         ft.commit();
     }
 

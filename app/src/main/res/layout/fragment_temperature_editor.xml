@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
+    <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:text="Data wykonania badania"
+            android:layout_marginTop="20dp"
+            android:id="@+id/temperature_dateText"/>
+
+    <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/temperature_date_picker_button"
+            android:layout_centerHorizontal="true"
+            android:textAlignment="center"
+            android:layout_marginTop="5dp"
+            android:textSize="25sp"
+            style="?android:spinnerStyle"
+            android:layout_below="@+id/temperature_dateText"
+            />
+
+    <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:text="Godzina wykonania badania"
+            android:layout_below="@id/temperature_date_picker_button"
+            android:layout_marginTop="20dp"
+            android:id="@+id/temperature_hourText"/>
+
+    <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/temperature_time_picker_button"
+            android:layout_centerHorizontal="true"
+            android:textAlignment="center"
+            android:layout_marginTop="5dp"
+            android:textSize="30sp"
+            style="?android:spinnerStyle"
+            android:layout_below="@+id/temperature_hourText"
+            />
+
+    <TextView
+            android:id="@+id/temperature_Text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="20dp"
+            android:layout_below="@id/temperature_time_picker_button"
+            android:text="Temperatura ciała" />
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/temperature_Text"
+            android:layout_marginStart="20dp"
+            android:id="@+id/temperatureResultLayout"
+            android:layout_marginEnd="20dp"
+            android:orientation="horizontal" >
+
+        <NumberPicker
+                android:layout_width="20dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/temperature_value1"
+                android:layout_weight="1"
+                android:textSize="25sp"
+                android:textAlignment="center"/>
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="."
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <NumberPicker
+                android:layout_width="20dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:id="@+id/temperature_value2"
+                android:layout_weight="1"
+                android:textSize="25sp"
+                android:textAlignment="center"/>
+
+
+<!--        <EditText-->
+<!--                android:id="@+id/temperature_Value"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_weight="1"-->
+<!--                android:textSize="25sp"-->
+<!--                android:textAlignment="center"-->
+<!--                android:inputType="numberDecimal"-->
+<!--                android:textAppearance="?android:attr/textAppearanceMedium" />-->
+
+        <TextView
+                android:id="@+id/temperature_value_unit_symbol"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="°C"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+    </LinearLayout>
+
+    <ImageButton
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:layout_below="@+id/temperatureResultLayout"
+            android:background="@drawable/roundedbutton"
+            android:id="@+id/deleteTemperatureResultButton"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="50dp"
+            android:src="@drawable/ic_delete"/>
+
+    <ImageButton
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:layout_below="@+id/temperatureResultLayout"
+            android:background="@drawable/roundedbutton"
+            android:id="@+id/confirmTemperatureResultButton"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="50dp"
+            android:layout_marginTop="50dp"
+            android:src="@drawable/ic_add_result"/>
+
+</RelativeLayout>

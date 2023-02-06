@@ -13,7 +13,7 @@
 
             <item android:title="Liczba wykonanych kroków" android:icon="@drawable/ic_steps"/>
 
-            <item android:title="Temperatura ciała" android:icon="@drawable/ic_temperature"/>
+            <item android:title="Temperatura ciała" android:id="@+id/temperatureNav" android:icon="@drawable/ic_temperature"/>
         </menu>
     </item>
 
