@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:id="@+id/temperatureFragmentScrollView"
+            android:padding="10dp"
+            android:fillViewport="true">
+
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:context=".TemperatureActivity">
+
+        <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/temperatureChart"
+                android:layout_width="match_parent"
+                android:layout_marginTop="20dp"
+                android:background="@color/white"
+                android:layout_height="270dp" />
+
+
+        <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/temperatureChart"
+                android:layout_marginTop="20dp"
+                android:id="@+id/temperatureChartButtons"
+                android:layout_centerHorizontal="true">
+
+            <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/temperatureChartLeft"
+                    android:text="&lt;"/>
+
+            <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/temperatureResetChartButton"
+                    android:layout_toEndOf="@+id/temperatureChartLeft"
+                    android:text="RESET"/>
+
+            <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@+id/temperatureResetChartButton"
+                    android:id="@+id/temperatureChartRight"
+                    android:text=">"/>
+
+        </RelativeLayout>
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/temperatureChartButtons"
+                android:layout_marginTop="15dp"
+                android:layout_marginStart="20dp"
+                android:text="Srednia wyników: 123"
+                android:id="@+id/meanTemperatureResults"/>
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/meanTemperatureResults"
+                android:layout_marginTop="15dp"
+                android:layout_marginStart="20dp"
+                android:text="Ostatni wynik: 123"
+                android:id="@+id/lastTemperatureResult"/>
+
+        <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/lastTemperatureResult"
+                android:layout_marginTop="20dp"
+                android:id="@+id/temperatureListviewButtons"
+                android:layout_centerHorizontal="true">
+
+            <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/previousTemperatureResults"
+                    android:text="&lt;"/>
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@+id/previousTemperatureResults"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="15dp"
+                    android:id="@+id/temperatureListviewText"/>
+
+            <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/nextTemperatureResults"
+                    android:layout_toEndOf="@+id/temperatureListviewText"
+                    android:layout_marginStart="20dp"
+                    android:text=">"/>
+
+        </RelativeLayout>
+
+
+        <ListView
+                android:layout_width="wrap_content"
+                android:layout_height="400dp"
+                android:layout_below="@+id/temperatureListviewButtons"
+                android:layout_marginTop="20dp"
+                android:divider="@color/white"
+                android:dividerHeight="1dp"
+                android:textAlignment="center"
+                android:scrollingCache="false"
+                android:smoothScrollbar="true"
+                android:id="@+id/temperatureListview"/>
+
+    </RelativeLayout>
+</ScrollView>
