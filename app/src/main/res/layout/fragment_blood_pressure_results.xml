@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:id="@+id/bloodPressureFragmentScrollView"
+            android:padding="10dp"
+            android:fillViewport="true">
+
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:context=".BloodPressureActivity">
+
+        <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/bloodPressureChart"
+                android:layout_width="match_parent"
+                android:layout_marginTop="20dp"
+                android:background="@color/white"
+                android:layout_height="270dp" />
+
+
+        <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/bloodPressureChart"
+                android:layout_marginTop="20dp"
+                android:id="@+id/bloodPressureChartButtons"
+                android:layout_centerHorizontal="true">
+
+            <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/bloodPressureChartLeft"
+                    android:text="&lt;"/>
+
+            <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/bloodPressureResetChartButton"
+                    android:layout_toEndOf="@+id/bloodPressureChartLeft"
+                    android:text="RESET"/>
+
+            <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@+id/bloodPressureResetChartButton"
+                    android:id="@+id/bloodPressureChartRight"
+                    android:text=">"/>
+
+        </RelativeLayout>
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/bloodPressureChartButtons"
+                android:layout_marginTop="15dp"
+                android:layout_marginStart="20dp"
+                android:text="Srednia wyników: 123"
+                android:id="@+id/meanBloodPressureResults"/>
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/meanBloodPressureResults"
+                android:layout_marginTop="15dp"
+                android:layout_marginStart="20dp"
+                android:text="Ostatni wynik: 123"
+                android:id="@+id/lastBloodPressureResult"/>
+
+        <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/lastBloodPressureResult"
+                android:layout_marginTop="20dp"
+                android:id="@+id/bloodPressureListviewButtons"
+                android:layout_centerHorizontal="true">
+
+            <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/previousBloodPressureResults"
+                    android:text="&lt;"/>
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@+id/previousBloodPressureResults"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="15dp"
+                    android:id="@+id/bloodPressureListviewText"/>
+
+            <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/nextBloodPressureResults"
+                    android:layout_toEndOf="@+id/bloodPressureListviewText"
+                    android:layout_marginStart="20dp"
+                    android:text=">"/>
+
+        </RelativeLayout>
+
+
+        <ListView
+                android:layout_width="wrap_content"
+                android:layout_height="400dp"
+                android:layout_below="@+id/bloodPressureListviewButtons"
+                android:layout_marginTop="20dp"
+                android:divider="@color/white"
+                android:dividerHeight="1dp"
+                android:textAlignment="center"
+                android:scrollingCache="false"
+                android:smoothScrollbar="true"
+                android:id="@+id/bloodPressureListview"/>
+
+    </RelativeLayout>
+</ScrollView>

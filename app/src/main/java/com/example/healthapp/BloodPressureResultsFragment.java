@@ -6,85 +6,80 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.*;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.data.*;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
-import com.github.mikephil.charting.highlight.Highlight;
-import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Type;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.ArrayList;
 
 
-public class SugarResultsFragment extends Fragment implements OnChartValueSelectedListener {
-
-    private static ArrayList<SugarResult> sugarResultsArrayList;
-    private static ArrayList<SugarResult> last7DaysSugarResultsArrayList;
+public class BloodPressureResultsFragment extends Fragment {
     private View currentView;
+    private static ArrayList<BloodPressureResult> bloodPressureResultArrayList;
+    private static ArrayList<BloodPressureResult> last7DaysBloodPressureResultsArrayList;
     private ListView listView;
-    private TextView BMI_text;
-    private TextView BMI_info;
     private TextView lastResult;
     private TextView meanResults;
     private List<String> results = new ArrayList<>();
-    private ArrayList chartArrayList;
+    private ArrayList chartSystolicArrayList;
+    private ArrayList chartDiastolicArrayList;
     private LineChart chart;
     private Button resetChartButton;
     private Button previousListViewResultsButton;
     private Button nextListViewResultsButton;
     private Integer lastResultIndex;
     private TextView listViewResultsInfo;
-    private ArrayList<SugarResult> listViewArrayList;
+    private ArrayList<BloodPressureResult> listViewArrayList;
     private Integer currentListViewPage;
     private Date todayDate;
     private Date chartLastDay;
     private Button chartLeftButton;
     private Button chartRightButton;
 
-    // The onCreateView method is called when Fragment should create its View object hierarchy,
-    // either dynamically or via XML layout inflation.
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
-        // Defines the xml file for the fragment
-        currentView = inflater.inflate(R.layout.fragment_sugar_results, parent, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        currentView = inflater.inflate(R.layout.fragment_blood_pressure_results, container, false);
         return currentView;
     }
 
-    // This event is triggered soon after onCreateView().
-    // Any view setup should occur here.  E.g., view lookups and attaching view listeners.
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull @NotNull View view, @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
         todayDate = new Date();
         chartLastDay = todayDate;
-        BMI_text = view.findViewById(R.id.BMI);
-        BMI_info = view.findViewById(R.id.BMI_info);
-        listView = view.findViewById(R.id.listview);
-        lastResult = view.findViewById(R.id.lastSugarResult);
-        meanResults = view.findViewById(R.id.meanSugarResults);
-        resetChartButton = view.findViewById(R.id.resetChartButton);
-        previousListViewResultsButton = view.findViewById(R.id.previousSugarResults);
-        nextListViewResultsButton = view.findViewById(R.id.nextSugarResults);
-        listViewResultsInfo = view.findViewById(R.id.listviewText);
-        chartLeftButton = view.findViewById(R.id.chartLeft);
-        chartRightButton = view.findViewById(R.id.chartRight);
-        chart = (LineChart) view.findViewById(R.id.sugarChart);
+
+        listView = view.findViewById(R.id.bloodPressureListview);
+        lastResult = view.findViewById(R.id.lastBloodPressureResult);
+        meanResults = view.findViewById(R.id.meanBloodPressureResults);
+        resetChartButton = view.findViewById(R.id.bloodPressureResetChartButton);
+        previousListViewResultsButton = view.findViewById(R.id.previousBloodPressureResults);
+        nextListViewResultsButton = view.findViewById(R.id.nextBloodPressureResults);
+        listViewResultsInfo = view.findViewById(R.id.bloodPressureListviewText);
+        chartLeftButton = view.findViewById(R.id.bloodPressureChartLeft);
+        chartRightButton = view.findViewById(R.id.bloodPressureChartRight);
+        chart = (LineChart) view.findViewById(R.id.bloodPressureChart);
+
         currentListViewPage = 1;
         nextListViewResultsButton.setEnabled(false);
-        BMI_text.setText(MessageFormat.format("BMI = {0}", BMI_count()));
-        checkBMI(BMI_count());
 
         resetChartButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -112,33 +107,38 @@ public class SugarResultsFragment extends Fragment implements OnChartValueSelect
         });
 
         loadResults();
-        lastResultIndex = sugarResultsArrayList.size() - 1;
+        lastResultIndex = bloodPressureResultArrayList.size() - 1;
         if (lastResultIndex < 7) {
             previousListViewResultsButton.setEnabled(false);
         }
-        last7DaysSugarResultsArrayList = getLast7DaysResults();
+        last7DaysBloodPressureResultsArrayList = getLast7DaysResults();
         loadLastResults();
         loadChart();
+
+        super.onViewCreated(view, savedInstanceState);
     }
 
     @SuppressLint("DefaultLocale")
     private void loadLastResults(){
         listViewArrayList = new ArrayList<>();
-        Integer i = 0;
+        int i = 0;
         while   (listViewArrayList.size() < 7 &&
-                (i < sugarResultsArrayList.size() || sugarResultsArrayList.size() < 2) &&
+                (i < bloodPressureResultArrayList.size() || bloodPressureResultArrayList.size() < 2) &&
                 (lastResultIndex - i) >= 0 &&
-                (lastResultIndex - i) < sugarResultsArrayList.size()){
+                (lastResultIndex - i) < bloodPressureResultArrayList.size()){
 
-            SugarResult result = new SugarResult(sugarResultsArrayList.get(lastResultIndex - i).getDate(),
-                    sugarResultsArrayList.get(lastResultIndex - i).getHour(),
-                    sugarResultsArrayList.get(lastResultIndex - i).getResult(),
-                    sugarResultsArrayList.get(lastResultIndex - i).getAnnotation()
+            BloodPressureResult result = new BloodPressureResult(bloodPressureResultArrayList.get(lastResultIndex - i).getDate(),
+                    bloodPressureResultArrayList.get(lastResultIndex - i).getHour(),
+                    bloodPressureResultArrayList.get(lastResultIndex - i).getSystolicResult(),
+                    bloodPressureResultArrayList.get(lastResultIndex - i).getDiastolicResult(),
+                    bloodPressureResultArrayList.get(lastResultIndex - i).getPulse(),
+                    bloodPressureResultArrayList.get(lastResultIndex - i).getSaturation(),
+                    bloodPressureResultArrayList.get(lastResultIndex - i).getAnnotation()
             );
             listViewArrayList.add(result);
 
             i += 1;
-            if (sugarResultsArrayList.size() < 2) {
+            if (bloodPressureResultArrayList.size() < 2) {
                 break;
             }
         }
@@ -148,6 +148,7 @@ public class SugarResultsFragment extends Fragment implements OnChartValueSelect
                     listViewArrayList.get(listViewArrayList.size() - 1).getMonth(),
                     listViewArrayList.get(0).getDay(),
                     listViewArrayList.get(0).getMonth()));
+
             reloadListView();
         }
 
@@ -156,10 +157,10 @@ public class SugarResultsFragment extends Fragment implements OnChartValueSelect
     @SuppressLint("DefaultLocale")
     private void nextListViewResults(){
         lastResultIndex += 7;
-        if (lastResultIndex >= sugarResultsArrayList.size()){
-            lastResultIndex = sugarResultsArrayList.size() - 1;
+        if (lastResultIndex >= bloodPressureResultArrayList.size()){
+            lastResultIndex = bloodPressureResultArrayList.size() - 1;
         }
-        if (lastResultIndex >= sugarResultsArrayList.size() - 7){
+        if (lastResultIndex >= bloodPressureResultArrayList.size() - 7){
             nextListViewResultsButton.setEnabled(false);
         }
         if (lastResultIndex >= 7){
@@ -171,12 +172,11 @@ public class SugarResultsFragment extends Fragment implements OnChartValueSelect
 
     @SuppressLint("DefaultLocale")
     private void previousListViewResults(){
-
         lastResultIndex -= 7;
         if (lastResultIndex < 0){
             lastResultIndex = 6;
         }
-        if (lastResultIndex < sugarResultsArrayList.size() - 7){
+        if (lastResultIndex < bloodPressureResultArrayList.size() - 7){
             nextListViewResultsButton.setEnabled(true);
         }
         if (lastResultIndex < 7){
@@ -188,20 +188,32 @@ public class SugarResultsFragment extends Fragment implements OnChartValueSelect
 
     private void loadChart(){
         getData();
-        LineDataSet lineDataSet = new LineDataSet(chartArrayList, "Poziom cukru we krwi [mg/dl]");
-        LineData lineData = new LineData(lineDataSet);
-        lineDataSet.setColors(Color.GREEN);
+        LineDataSet lineDataSet = new LineDataSet(chartSystolicArrayList, "Ciśnienie skurczowe [mmHg]");
+        lineDataSet.setColors(Color.RED);
         lineDataSet.setLineWidth(2f);
         lineDataSet.setValueTextColor(Color.BLACK);
         lineDataSet.setValueTextSize(10f);
 
+        LineDataSet lineDataSet1 = new LineDataSet(chartDiastolicArrayList, "Ciśnienie rozkurczowe [mmHg]");
+        lineDataSet1.setColors(Color.BLUE);
+        lineDataSet1.setLineWidth(2f);
+        lineDataSet1.setValueTextColor(Color.BLACK);
+        lineDataSet1.setValueTextSize(10f);
+
+        ArrayList<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
+        dataSets.add(lineDataSet);
+        dataSets.add(lineDataSet1);
+
+        LineData data = new LineData(dataSets);
+
+
         XAxis xAxis = chart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setDrawGridLines(true);
-        xAxis.setLabelCount(chartArrayList.size() - 1);
+        xAxis.setLabelCount(chartSystolicArrayList.size() - 1);
         xAxis.setValueFormatter(new IndexAxisValueFormatter(getXAxisValues()));
         chart.getDescription().setEnabled(false);
-        chart.setData(lineData);
+        chart.setData(data);
         chart.animateXY(2000, 2000);
         chart.notifyDataSetChanged();
         chart.getAxisRight().setEnabled(true);
@@ -211,14 +223,14 @@ public class SugarResultsFragment extends Fragment implements OnChartValueSelect
     @Override
     public void onStart() {
         loadResults();
-        lastResultIndex = sugarResultsArrayList.size() - 1;
+        lastResultIndex = bloodPressureResultArrayList.size() - 1;
         currentListViewPage = 1;
         nextListViewResultsButton.setEnabled(false);
         previousListViewResultsButton.setEnabled(true);
         if (lastResultIndex < 7) {
             previousListViewResultsButton.setEnabled(false);
         }
-        last7DaysSugarResultsArrayList = getLast7DaysResults();
+        last7DaysBloodPressureResultsArrayList = getLast7DaysResults();
         loadLastResults();
         loadChart();
         reloadListView();
@@ -228,14 +240,14 @@ public class SugarResultsFragment extends Fragment implements OnChartValueSelect
     @Override
     public void onResume() {
         loadResults();
-        lastResultIndex = sugarResultsArrayList.size() - 1;
+        lastResultIndex = bloodPressureResultArrayList.size() - 1;
         currentListViewPage = 1;
         nextListViewResultsButton.setEnabled(false);
         previousListViewResultsButton.setEnabled(true);
         if (lastResultIndex < 7) {
             previousListViewResultsButton.setEnabled(false);
         }
-        last7DaysSugarResultsArrayList = getLast7DaysResults();
+        last7DaysBloodPressureResultsArrayList = getLast7DaysResults();
         loadLastResults();
         loadChart();
         reloadListView();
@@ -243,12 +255,14 @@ public class SugarResultsFragment extends Fragment implements OnChartValueSelect
     }
 
     private void getData(){
-        chartArrayList = new ArrayList();
+        chartSystolicArrayList = new ArrayList();
+        chartDiastolicArrayList = new ArrayList();
         int i = 0;
-        sugarResultsArrayList = sortSugarResults(sugarResultsArrayList);
-        last7DaysSugarResultsArrayList = sortSugarResults(last7DaysSugarResultsArrayList);
-        for(SugarResult sugarResult : last7DaysSugarResultsArrayList){
-            chartArrayList.add(new Entry(i, (int) sugarResult.getResult()));
+        bloodPressureResultArrayList = sortBloodPressureResults(bloodPressureResultArrayList);
+        last7DaysBloodPressureResultsArrayList = sortBloodPressureResults(last7DaysBloodPressureResultsArrayList);
+        for(BloodPressureResult bloodPressureResult : last7DaysBloodPressureResultsArrayList){
+            chartSystolicArrayList.add(new Entry(i, (float) bloodPressureResult.getSystolicResult()));
+            chartDiastolicArrayList.add(new Entry(i, (float) bloodPressureResult.getDiastolicResult()));
             i += 1;
         }
     }
@@ -273,8 +287,8 @@ public class SugarResultsFragment extends Fragment implements OnChartValueSelect
         }
     }
 
-    private ArrayList<SugarResult> getLast7DaysResults(){
-        ArrayList<SugarResult> chartArrayList = new ArrayList<>();
+    private ArrayList<BloodPressureResult> getLast7DaysResults(){
+        ArrayList<BloodPressureResult> chartArrayList = new ArrayList<>();
 
         Date date = chartLastDay;
         Calendar ca = Calendar.getInstance();
@@ -296,12 +310,12 @@ public class SugarResultsFragment extends Fragment implements OnChartValueSelect
             ca.add(Calendar.DATE, -1);
             date = ca.getTime();
 
-            SugarResult blankResult = new SugarResult(day + " " + SugarEditorFragment.getMonthFormat(month) + " " + year, "00:00", 0, "");
+            BloodPressureResult blankResult = new BloodPressureResult(day + " " + SugarEditorFragment.getMonthFormat(month) + " " + year, "00:00", 0, 0, 0, 0, "");
             chartArrayList.add(blankResult);
 
-            for (SugarResult sugarResult : sugarResultsArrayList){
-                if (sugarResult.getDay() == day && sugarResult.getMonth() == month && sugarResult.getYear() == year){
-                    chartArrayList.set(i, sugarResult);
+            for (BloodPressureResult bloodPressureResult : bloodPressureResultArrayList){
+                if (bloodPressureResult.getDay() == day && bloodPressureResult.getMonth() == month && bloodPressureResult.getYear() == year){
+                    chartArrayList.set(i, bloodPressureResult);
                 }
             }
         }
@@ -311,31 +325,35 @@ public class SugarResultsFragment extends Fragment implements OnChartValueSelect
 
     private ArrayList getXAxisValues() {
         ArrayList xAxis = new ArrayList();
-        sugarResultsArrayList = sortSugarResults(sugarResultsArrayList);
-        for(SugarResult sugarResult : last7DaysSugarResultsArrayList){
-            xAxis.add(String.format(Locale.getDefault(), "%02d.%02d", sugarResult.getDay(), sugarResult.getMonth()));
+        bloodPressureResultArrayList = sortBloodPressureResults(bloodPressureResultArrayList);
+        for(BloodPressureResult bloodPressureResult : last7DaysBloodPressureResultsArrayList){
+            xAxis.add(String.format(Locale.getDefault(), "%02d.%02d", bloodPressureResult.getDay(), bloodPressureResult.getMonth()));
         }
         return xAxis;
     }
 
     private void getLastResult(){
-        lastResult.setText(MessageFormat.format("Ostatni wynik = {0} mg/dl", 0));
-        if (!sugarResultsArrayList.isEmpty()){
-            lastResult.setText(MessageFormat.format("Ostatni wynik = {0} mg/dl", (int) sugarResultsArrayList.get(sugarResultsArrayList.size() - 1).getResult()));
+        lastResult.setText(MessageFormat.format("Ostatni wynik = {0} / {1}", 0, 0));
+        if (!bloodPressureResultArrayList.isEmpty()){
+            lastResult.setText(MessageFormat.format("Ostatni wynik = {0} / {1} [ mmHg / mmHg ]",
+                    bloodPressureResultArrayList.get(bloodPressureResultArrayList.size() - 1).getSystolicResult(),
+                    bloodPressureResultArrayList.get(bloodPressureResultArrayList.size() - 1).getDiastolicResult()));
         }
     }
 
-    private void meanSugarResults(){
-        double sum = 0;
-        for (SugarResult sugarResult : sugarResultsArrayList) {
-            sum += sugarResult.getResult();
+    private void meanBloodPressureResults(){
+        double sum1 = 0;
+        double sum2 = 0;
+        for (BloodPressureResult bloodPressureResult : bloodPressureResultArrayList) {
+            sum1 += bloodPressureResult.getSystolicResult();
+            sum2 += bloodPressureResult.getDiastolicResult();
         }
-        meanResults.setText(MessageFormat.format("Średnia wyników = {0} mg/dl", sum/sugarResultsArrayList.size()));
+        meanResults.setText(MessageFormat.format("Średnia wyników = {0} / {1} [ mmHg / mmHg ]", sum1/bloodPressureResultArrayList.size(), sum2/bloodPressureResultArrayList.size() ));
     }
 
     private void reloadChart(){
         chart.fitScreen();
-        last7DaysSugarResultsArrayList = getLast7DaysResults();
+        last7DaysBloodPressureResultsArrayList = getLast7DaysResults();
         loadChart();
     }
 
@@ -344,68 +362,32 @@ public class SugarResultsFragment extends Fragment implements OnChartValueSelect
         reloadChart();
     }
 
-    private double BMI_count(){
-        SharedPreferences sharedPref = Objects.requireNonNull(getActivity()).getSharedPreferences(ProfileActivity.mypreference, Context.MODE_PRIVATE);
-
-        int weight = sharedPref.getInt("weight", 0);
-        double height = sharedPref.getInt("height", 0);
-
-        return (double) weight / ((height/100)*(height/100));
-    }
-
-    private void checkBMI(double BMI){
-        if(BMI < 17 || BMI >= 30){
-            BMI_text.setTextColor(Color.RED);
-            if(BMI < 17){
-                BMI_info.setText("Stan wychudzenia!");
-                if(BMI < 16) BMI_info.setText("Stan wygłodzenia!");
-            }
-
-            if(BMI >= 30){
-                BMI_info.setText("Stan otyłości 1 stopnia!");
-                if(BMI >= 35) BMI_info.setText("Stan otyłości 2 stopnia!");
-                if(BMI >= 40) BMI_info.setText("Stan otyłości 3 stopnia!");
-            }
-
-        }
-        else if (BMI < 18.5 || BMI >= 25){
-            if (BMI < 18.5) BMI_info.setText("Stan niedowagi!");
-            if (BMI >= 25) BMI_info.setText("Stan nadwagi!");
-
-            BMI_text.setTextColor(Color.YELLOW);
-        }
-        else {
-            BMI_text.setTextColor(Color.GREEN);
-            BMI_info.setText("BMI prawidłowe.");
-        }
-    }
-
     private void loadResults(){
         SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences("results", Context.MODE_PRIVATE);
         Gson gson = new Gson();
 
-        String json = sharedPreferences.getString("sugar", null);
+        String json = sharedPreferences.getString("bloodPressure", null);
 
-        Type type = new TypeToken<ArrayList<SugarResult>>() {}.getType();
+        Type type = new TypeToken<ArrayList<BloodPressureResult>>() {}.getType();
 
-        sugarResultsArrayList = gson.fromJson(json, type);
+        bloodPressureResultArrayList = gson.fromJson(json, type);
 
-        if (sugarResultsArrayList == null) {
-            sugarResultsArrayList = new ArrayList<>();
+        if (bloodPressureResultArrayList == null) {
+            bloodPressureResultArrayList = new ArrayList<>();
         }
     }
 
-    private ArrayList<SugarResult> sortSugarResults(ArrayList<SugarResult> results){
-
+    private ArrayList<BloodPressureResult> sortBloodPressureResults(ArrayList<BloodPressureResult> results){
         SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences("results", Context.MODE_PRIVATE);
         Gson gson = new Gson();
 
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        String json1 = gson.toJson(SortHelperClass.sortSugarResults(results));
-        editor.putString("sugar", json1);
+        ArrayList<BloodPressureResult> sorted = SortHelperClass.sortBloodPressureResults(results);
+        String json1 = gson.toJson(sorted);
+        editor.putString("bloodPressure", json1);
         editor.apply();
-        return SortHelperClass.sortSugarResults(results);
+        return sorted;
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -413,11 +395,11 @@ public class SugarResultsFragment extends Fragment implements OnChartValueSelect
         results.clear();
 
         int numberOfElementsOnPage = 0;
-        sugarResultsArrayList = sortSugarResults(sugarResultsArrayList);
-        listViewArrayList = SortHelperClass.sortSugarResults(listViewArrayList);
+        bloodPressureResultArrayList = sortBloodPressureResults(bloodPressureResultArrayList);
+        listViewArrayList = SortHelperClass.sortBloodPressureResults(listViewArrayList);
 
-        for (SugarResult sugarResult : listViewArrayList) {
-            results.add(sugarResult.getDate() + ", " + sugarResult.getHour());
+        for (BloodPressureResult bloodPressureResult : listViewArrayList) {
+            results.add(bloodPressureResult.getDate() + ", " + bloodPressureResult.getHour());
             numberOfElementsOnPage += 1;
         }
 
@@ -430,20 +412,19 @@ public class SugarResultsFragment extends Fragment implements OnChartValueSelect
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3)
             {
                 Intent intent = new Intent(getActivity(), ResultEditor.class);
-                intent.putExtra("type", "Cukier");
+                intent.putExtra("type", "Ciśnienie krwi, puls i saturacja");
                 if (finalNumberOfElementsOnPage == 7){
-                    intent.putExtra("position", sugarResultsArrayList.size() - 7 * currentListViewPage + position);
+                    intent.putExtra("position", bloodPressureResultArrayList.size() - 7 * currentListViewPage + position);
                 }
                 else {
-                    intent.putExtra("position", sugarResultsArrayList.size() - 7 * (currentListViewPage - 1) + position - finalNumberOfElementsOnPage);
+                    intent.putExtra("position", bloodPressureResultArrayList.size() - 7 * (currentListViewPage - 1) + position - finalNumberOfElementsOnPage);
                 }
-                Log.d("posio", String.valueOf(position));
                 startActivity(intent);
             }
         });
 
         getLastResult();
-        meanSugarResults();
+        meanBloodPressureResults();
 
         listView.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -465,10 +446,6 @@ public class SugarResultsFragment extends Fragment implements OnChartValueSelect
 
     }
 
-    @Override
-    public void onValueSelected(Entry e, Highlight h) {
-    }
 
-    @Override
-    public void onNothingSelected() {}
+
 }

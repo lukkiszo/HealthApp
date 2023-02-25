@@ -67,7 +67,7 @@ public class ReminderService extends Service {
             sugarResultsArrayList = new ArrayList<>();
         }
 
-        ArrayList<SugarResult> sorted = MainActivity.sortSugarResults(sugarResultsArrayList);
+        ArrayList<SugarResult> sorted = SortHelperClass.sortSugarResults(sugarResultsArrayList);
         lastSugarResult = sorted.get(sorted.size() - 1);
 
     }

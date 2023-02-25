@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:id="@+id/saturationFragmentScrollView"
+            android:padding="10dp"
+            android:fillViewport="true">
+
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:context=".BloodPressureActivity">
+
+        <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/saturationChart"
+                android:layout_width="match_parent"
+                android:layout_marginTop="20dp"
+                android:background="@color/white"
+                android:layout_height="270dp" />
+
+
+        <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/saturationChart"
+                android:layout_marginTop="20dp"
+                android:id="@+id/saturationChartButtons"
+                android:layout_centerHorizontal="true">
+
+            <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/saturationChartLeft"
+                    android:text="&lt;"/>
+
+            <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/saturationResetChartButton"
+                    android:layout_toEndOf="@+id/saturationChartLeft"
+                    android:text="RESET"/>
+
+            <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@+id/saturationResetChartButton"
+                    android:id="@+id/saturationChartRight"
+                    android:text=">"/>
+
+        </RelativeLayout>
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/saturationChartButtons"
+                android:layout_marginTop="15dp"
+                android:layout_marginStart="20dp"
+                android:text="Srednia wyników: 123"
+                android:id="@+id/meanSaturationResults"/>
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/meanSaturationResults"
+                android:layout_marginTop="15dp"
+                android:layout_marginStart="20dp"
+                android:text="Ostatni wynik: 123"
+                android:id="@+id/lastSaturationResult"/>
+
+        <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/lastSaturationResult"
+                android:layout_marginTop="20dp"
+                android:id="@+id/saturationListviewButtons"
+                android:layout_centerHorizontal="true">
+
+            <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/previousSaturationResults"
+                    android:text="&lt;"/>
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@+id/previousSaturationResults"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="15dp"
+                    android:id="@+id/saturationListviewText"/>
+
+            <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/nextSaturationResults"
+                    android:layout_toEndOf="@+id/saturationListviewText"
+                    android:layout_marginStart="20dp"
+                    android:text=">"/>
+
+        </RelativeLayout>
+
+        <ListView
+                android:layout_width="wrap_content"
+                android:layout_height="400dp"
+                android:layout_below="@+id/saturationListviewButtons"
+                android:layout_marginTop="20dp"
+                android:divider="@color/white"
+                android:dividerHeight="1dp"
+                android:textAlignment="center"
+                android:scrollingCache="false"
+                android:smoothScrollbar="true"
+                android:id="@+id/saturationListview"/>
+
+    </RelativeLayout>
+</ScrollView>

@@ -38,8 +38,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private TextView sugarInfo;
+    private TextView bloodPressureInfo;
     private int lastSugarResult;
     private double lastTemperatureResult;
+    private int lastSystolicBloodPressureResult;
+    private int lastDiastolicBloodPressureResult;
+    private int lastPulseResult;
+    private int lastSaturationResult;
     private static final int REQUEST_CALL = 1;
     private String number;
 
@@ -52,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setSupportActionBar(toolbar);
 
         sugarInfo = findViewById(R.id.sugar);
+        bloodPressureInfo = findViewById(R.id.blood_pressure);
 
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
@@ -78,12 +84,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         String json = sharedPreferences.getString("sugar", null);
         String json1 = sharedPreferences.getString("temperature", null);
+        String json2 = sharedPreferences.getString("bloodPressure", null);
 
         Type type = new TypeToken<ArrayList<SugarResult>>() {}.getType();
         Type type1 = new TypeToken<ArrayList<TemperatureResult>>() {}.getType();
+        Type type2 = new TypeToken<ArrayList<BloodPressureResult>>() {}.getType();
 
         ArrayList<SugarResult> sugarResultsArrayList = gson.fromJson(json, type);
         ArrayList<TemperatureResult> temperatureResultArrayList = gson.fromJson(json1, type1);
+        ArrayList<BloodPressureResult> bloodPressureResultArrayList = gson.fromJson(json2, type2);
 
         if (sugarResultsArrayList == null) {
             sugarResultsArrayList = new ArrayList<>();
@@ -93,11 +102,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             temperatureResultArrayList = new ArrayList<>();
         }
 
-        ArrayList<SugarResult> sorted = sortSugarResults(sugarResultsArrayList);
+        if (bloodPressureResultArrayList == null) {
+            bloodPressureResultArrayList = new ArrayList<>();
+        }
+
+        ArrayList<SugarResult> sorted = SortHelperClass.sortSugarResults(sugarResultsArrayList);
         lastSugarResult = (int) sorted.get(sorted.size() - 1).getResult();
-        ArrayList<TemperatureResult> sortedTemperature = sortTemperatureResults(temperatureResultArrayList);
+
+        ArrayList<TemperatureResult> sortedTemperature = SortHelperClass.sortTemperatureResults(temperatureResultArrayList);
         lastTemperatureResult = sortedTemperature.get(sortedTemperature.size() - 1).getResult();
 
+        ArrayList<BloodPressureResult> sortedBloodPressure = SortHelperClass.sortBloodPressureResults(bloodPressureResultArrayList);
+        lastSystolicBloodPressureResult = sortedBloodPressure.get(sortedBloodPressure.size() - 1).getSystolicResult();
+        lastDiastolicBloodPressureResult = sortedBloodPressure.get(sortedBloodPressure.size() - 1).getDiastolicResult();
+        lastPulseResult = sortedBloodPressure.get(sortedBloodPressure.size() - 1).getPulse();
+        lastSaturationResult = sortedBloodPressure.get(sortedBloodPressure.size() - 1).getSaturation();
+
+        bloodPressureInfo.setText(lastSystolicBloodPressureResult + " / " + lastDiastolicBloodPressureResult + "\t " + lastPulseResult + " BPM");
         sugarInfo.setText("Poziom cukru \nwe krwi: " + lastSugarResult + " mg/dl");
 
     }
@@ -131,52 +152,39 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             managerCompat.notify(100, builder.build());
         }
 
-    }
+        if (lastSystolicBloodPressureResult > 135 || lastDiastolicBloodPressureResult > 85 || lastSystolicBloodPressureResult < 100 || lastDiastolicBloodPressureResult < 60){
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "My Notification")
+                    .setSmallIcon(R.drawable.ic_notification_icon)
+                    .setContentTitle("Nieprawidłowe ciśnienie krwi!")
+                    .setContentText("Twój ostatni wprowadzony wynik badania ciśnienia tętniczego krwi nie mieścił się w granicach normy")
+                    .setPriority(NotificationCompat.PRIORITY_HIGH);
 
-    public static ArrayList<SugarResult> sortSugarResults(ArrayList<SugarResult> sugarResultsArrayList) {
-        ArrayList<SugarResult> sorted = sugarResultsArrayList;
-
-        int pos;
-        SugarResult temp;
-
-        for(int i = 0; i < sorted.size() - 1; i++){
-            pos = i;
-            for (int j = i + 1; j < sorted.size(); j++){
-                if(sorted.get(j).getNumber() < sorted.get(pos).getNumber()){
-                    pos = j;
-                }
-            }
-
-            temp = sorted.get(pos);
-            sorted.set(pos, sorted.get(i));
-            sorted.set(i, temp);
-
+            NotificationManagerCompat managerCompat = NotificationManagerCompat.from(this);
+            managerCompat.notify(100, builder.build());
         }
 
-        return sorted;
-    }
+        if (lastPulseResult > 100 || lastPulseResult < 50){
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "My Notification")
+                    .setSmallIcon(R.drawable.ic_notification_icon)
+                    .setContentTitle("Nieprawidłowe tętno!")
+                    .setContentText("Twój ostatni wprowadzony wynik badania tętna nie mieścił się w granicach normy")
+                    .setPriority(NotificationCompat.PRIORITY_HIGH);
 
-    public static ArrayList<TemperatureResult> sortTemperatureResults(ArrayList<TemperatureResult> temperatureResultArrayList) {
-        ArrayList<TemperatureResult> sorted = temperatureResultArrayList;
-
-        int pos;
-        TemperatureResult temp;
-
-        for(int i = 0; i < sorted.size() - 1; i++){
-            pos = i;
-            for (int j = i + 1; j < sorted.size(); j++){
-                if(sorted.get(j).getNumber() < sorted.get(pos).getNumber()){
-                    pos = j;
-                }
-            }
-
-            temp = sorted.get(pos);
-            sorted.set(pos, sorted.get(i));
-            sorted.set(i, temp);
-
+            NotificationManagerCompat managerCompat = NotificationManagerCompat.from(this);
+            managerCompat.notify(100, builder.build());
         }
 
-        return sorted;
+        if (lastSaturationResult < 90){
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "My Notification")
+                    .setSmallIcon(R.drawable.ic_notification_icon)
+                    .setContentTitle("Nieprawidłowa saturacja!")
+                    .setContentText("Twój ostatni wprowadzony wynik saturacji krwi był poniżej normy")
+                    .setPriority(NotificationCompat.PRIORITY_HIGH);
+
+            NotificationManagerCompat managerCompat = NotificationManagerCompat.from(this);
+            managerCompat.notify(100, builder.build());
+        }
+
     }
 
     private Intent intent = new Intent(MainActivity.this, ReminderService.class);
@@ -316,6 +324,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         switch (item.getItemId()){
             case R.id.temperatureNav:
                 intent = new Intent(this, TemperatureActivity.class);
+                startActivity(intent);
+                break;
+
+            case R.id.bloodPressureNav:
+                intent = new Intent(this, BloodPressureActivity.class);
+                intent.putExtra("type", "Ciśnienie krwi");
+                startActivity(intent);
+                break;
+
+            case R.id.pulseNav:
+                intent = new Intent(this, BloodPressureActivity.class);
+                intent.putExtra("type", "Tętno");
+                startActivity(intent);
+                break;
+
+            case R.id.saturationNav:
+                intent = new Intent(this, BloodPressureActivity.class);
+                intent.putExtra("type", "Saturacja krwi");
                 startActivity(intent);
                 break;
 

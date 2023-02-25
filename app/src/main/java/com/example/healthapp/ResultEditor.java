@@ -71,6 +71,12 @@ public class ResultEditor extends AppCompatActivity{
                 break;
 
             case "Ciśnienie krwi, puls i saturacja":
+                Bundle bundle1 = new Bundle();
+                bundle1.putInt("position", position);
+
+                BloodPressureEditorFragment bloodPressureEditorFragment = new BloodPressureEditorFragment();
+                bloodPressureEditorFragment.setArguments(bundle1);
+                ft.replace(R.id.resultEdit, bloodPressureEditorFragment);
                 break;
 
             case "Temperatura ciała":
