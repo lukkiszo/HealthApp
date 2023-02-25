@@ -3,11 +3,11 @@
 
     <item android:title="Wyniki badań">
         <menu>
-            <item android:title="Ciśnienie tętnicze" android:icon="@drawable/ic_bloodpressure"/>
+            <item android:title="Ciśnienie tętnicze" android:id="@+id/bloodPressureNav" android:icon="@drawable/ic_bloodpressure"/>
 
-            <item android:title="Puls" android:icon="@drawable/ic_heartrate"/>
+            <item android:title="Puls" android:id="@+id/pulseNav" android:icon="@drawable/ic_heartrate"/>
 
-            <item android:title="Saturacja" android:icon="@drawable/ic_saturation"/>
+            <item android:title="Saturacja" android:id="@+id/saturationNav" android:icon="@drawable/ic_saturation"/>
 
             <item android:title="Poziom cukru we krwi" android:id="@+id/sugarNav" android:icon="@drawable/ic_sugar"/>
 

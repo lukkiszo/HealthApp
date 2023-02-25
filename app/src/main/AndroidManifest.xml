@@ -19,7 +19,9 @@
         </activity>
 
         <service android:name=".ReminderService"/>
-
+        <activity android:name=".BloodPressureActivity"
+            android:screenOrientation="portrait">
+        </activity>
         <activity
                 android:name=".ResultEditor"
                 android:screenOrientation="portrait">

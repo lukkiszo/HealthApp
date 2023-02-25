@@ -169,7 +169,6 @@ public class TemperatureResultsFragment extends Fragment implements OnChartValue
 
     @SuppressLint("DefaultLocale")
     private void previousListViewResults(){
-
         lastResultIndex -= 7;
         if (lastResultIndex < 0){
             lastResultIndex = 6;
@@ -189,8 +188,10 @@ public class TemperatureResultsFragment extends Fragment implements OnChartValue
         LineDataSet lineDataSet = new LineDataSet(chartArrayList, "Temperatura ciała [°C]");
         LineData lineData = new LineData(lineDataSet);
         lineDataSet.setColors(Color.RED);
+        lineDataSet.setLineWidth(2f);
         lineDataSet.setValueTextColor(Color.BLACK);
         lineDataSet.setValueTextSize(10f);
+        
         XAxis xAxis = chart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setDrawGridLines(true);
@@ -362,7 +363,7 @@ public class TemperatureResultsFragment extends Fragment implements OnChartValue
 
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        ArrayList<TemperatureResult> sorted = MainActivity.sortTemperatureResults(results);
+        ArrayList<TemperatureResult> sorted = SortHelperClass.sortTemperatureResults(results);
         String json1 = gson.toJson(sorted);
         editor.putString("temperature", json1);
         editor.apply();
@@ -375,7 +376,7 @@ public class TemperatureResultsFragment extends Fragment implements OnChartValue
 
         int numberOfElementsOnPage = 0;
         temperatureResultArrayList = sortTemperatureResults(temperatureResultArrayList);
-        listViewArrayList = MainActivity.sortTemperatureResults(listViewArrayList);
+        listViewArrayList = SortHelperClass.sortTemperatureResults(listViewArrayList);
 
         for (TemperatureResult temperatureResult : listViewArrayList) {
             results.add(temperatureResult.getDate() + ", " + temperatureResult.getHour());

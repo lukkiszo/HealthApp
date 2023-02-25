@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
+
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:text="Data wykonania badania"
+                android:layout_marginTop="20dp"
+                android:id="@+id/blood_dateText"/>
+
+        <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/blood_date_picker_button"
+                android:layout_centerHorizontal="true"
+                android:textAlignment="center"
+                android:layout_marginTop="5dp"
+                android:textSize="25sp"
+                style="?android:spinnerStyle"
+                android:layout_below="@+id/blood_dateText"
+                />
+
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:text="Godzina wykonania badania"
+                android:layout_below="@id/blood_date_picker_button"
+                android:layout_marginTop="20dp"
+                android:id="@+id/blood_hourText"/>
+
+        <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/blood_time_picker_button"
+                android:layout_centerHorizontal="true"
+                android:textAlignment="center"
+                android:layout_marginTop="5dp"
+                android:textSize="30sp"
+                style="?android:spinnerStyle"
+                android:layout_below="@+id/blood_hourText"
+                />
+
+        <TextView
+                android:id="@+id/bloodPressureText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="20dp"
+                android:layout_below="@id/blood_time_picker_button"
+                android:text="Ciśnienie krwi" />
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/bloodPressureText"
+                android:layout_marginLeft="20dp"
+                android:id="@+id/bloodPressureResultLayout"
+                android:layout_marginRight="20dp"
+                android:orientation="horizontal" >
+
+            <NumberPicker
+                    android:layout_width="20dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/systolicBloodPressureValue"
+                    android:layout_weight="1"
+                    android:textSize="25sp"
+                    android:textAlignment="center"/>
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="10dp"
+                    android:gravity="center"
+                    android:text="/"
+                    android:textSize="16sp"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <NumberPicker
+                    android:layout_width="20dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:id="@+id/diastolicBloodPressureValue"
+                    android:layout_weight="1"
+                    android:textSize="25sp"
+                    android:textAlignment="center"/>
+
+            <TextView
+                    android:id="@+id/temperature_value_unit_symbol"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="mmHg"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+        </LinearLayout>
+
+        <TextView
+                android:id="@+id/pulseText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="20dp"
+                android:layout_below="@id/bloodPressureResultLayout"
+                android:text="Poziom tętna" />
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/pulseText"
+                android:layout_marginStart="20dp"
+                android:id="@+id/pulseResultLayout"
+                android:layout_marginEnd="20dp"
+                android:orientation="horizontal" >
+
+            <EditText
+                    android:id="@+id/pulseValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textSize="25sp"
+                    android:textAlignment="center"
+                    android:inputType="numberDecimal"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                    android:id="@+id/pulse_unit_symbol"
+                    android:layout_width="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_height="25dp"
+                    android:text="BPM"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+        </LinearLayout>
+
+        <TextView
+                android:id="@+id/saturationText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="20dp"
+                android:layout_below="@id/pulseResultLayout"
+                android:text="Saturacja krwi" />
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/saturationText"
+                android:layout_marginStart="20dp"
+                android:id="@+id/saturationResultLayout"
+                android:layout_marginEnd="20dp"
+                android:orientation="horizontal" >
+
+            <EditText
+                    android:id="@+id/saturationValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textSize="25sp"
+                    android:textAlignment="center"
+                    android:inputType="numberDecimal"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                    android:id="@+id/saturation_unit_symbol"
+                    android:layout_width="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_height="25dp"
+                    android:text="%"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+        </LinearLayout>
+
+        <TextView
+                android:id="@+id/bloodTypeText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="20dp"
+                android:layout_below="@id/saturationResultLayout"
+                android:text="Dodatkowe informacje o badaniu" />
+
+        <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/bloodType"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
+                android:layout_width="match_parent"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="10dp"
+                android:theme="@style/Theme.MaterialComponents.DayNight"
+                android:layout_marginTop="5dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/bloodTypeText"
+                android:textAlignment="center"
+                >
+
+            <AutoCompleteTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/bloodType_items"
+                    android:textAlignment="center"
+                    android:focusable="false"
+                    android:inputType="none"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <ImageButton
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:layout_below="@+id/bloodType"
+                android:background="@drawable/roundedbutton"
+                android:id="@+id/blood_deleteResultButton"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="50dp"
+                android:layout_marginTop="50dp"
+                android:layout_marginBottom="30dp"
+                android:src="@drawable/ic_delete"/>
+
+        <ImageButton
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:layout_below="@+id/bloodType"
+                android:background="@drawable/roundedbutton"
+                android:id="@+id/blood_confirmResultButton"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="50dp"
+                android:layout_marginTop="50dp"
+                android:layout_marginBottom="30dp"
+                android:src="@drawable/ic_add_result"/>
+
+    </RelativeLayout>
+</ScrollView>
