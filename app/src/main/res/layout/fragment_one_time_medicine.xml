@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             tools:context=".OneTimeMedicineFragment">
+
+    <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:text="Data przyjęcia leku"
+            android:layout_marginTop="20dp"
+            android:id="@+id/once_medicine_dateText"/>
+
+    <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/once_medicine_date_picker_button"
+            android:layout_centerHorizontal="true"
+            android:textAlignment="center"
+            android:layout_marginTop="5dp"
+            android:textSize="25sp"
+            style="?android:spinnerStyle"
+            android:layout_below="@+id/once_medicine_dateText"
+            />
+
+</RelativeLayout>
