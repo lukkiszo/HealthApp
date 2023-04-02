@@ -11,7 +11,7 @@
 
             <item android:title="Poziom cukru we krwi" android:id="@+id/sugarNav" android:icon="@drawable/ic_sugar"/>
 
-            <item android:title="Liczba wykonanych kroków" android:icon="@drawable/ic_steps"/>
+            <item android:title="Liczba wykonanych kroków" android:id="@+id/stepsNav" android:icon="@drawable/ic_steps"/>
 
             <item android:title="Temperatura ciała" android:id="@+id/temperatureNav" android:icon="@drawable/ic_temperature"/>
         </menu>
@@ -19,7 +19,7 @@
 
     <item android:title="Harmonogram">
         <menu>
-            <item android:title="Harmonogram leków" android:icon="@drawable/ic_timesheet"/>
+            <item android:title="Harmonogram leków" android:id="@+id/medicineScheduleNav" android:icon="@drawable/ic_timesheet"/>
 
             <item android:title="Kalendarz wizyt" android:icon="@drawable/ic_timesheet2"/>
 

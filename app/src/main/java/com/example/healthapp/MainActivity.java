@@ -2,12 +2,14 @@ package com.example.healthapp;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
+import android.app.*;
 import android.content.*;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -30,23 +32,35 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, SensorEventListener {
 
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private TextView sugarInfo;
     private TextView bloodPressureInfo;
+    private TextView stepsInfo;
+    private TextView medicinesInfo;
     private int lastSugarResult;
     private double lastTemperatureResult;
+    private int todayStepsResult = 0;
     private int lastSystolicBloodPressureResult;
     private int lastDiastolicBloodPressureResult;
     private int lastPulseResult;
     private int lastSaturationResult;
     private static final int REQUEST_CALL = 1;
     private String number;
+    private SensorManager sensorManager;
+    private Sensor stepSensor;
+    private Boolean isCounterSensorPresent;
+    int steps = 0;
+    private Boolean isCounterRead = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +72,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         sugarInfo = findViewById(R.id.sugar);
         bloodPressureInfo = findViewById(R.id.blood_pressure);
+        stepsInfo = findViewById(R.id.steps);
+        medicinesInfo = findViewById(R.id.medicines);
+
+        if(ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACTIVITY_RECOGNITION) == PackageManager.PERMISSION_DENIED){ //ask for permission
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                requestPermissions(new String[]{Manifest.permission.ACTIVITY_RECOGNITION}, 0);
+            }
+        }
+
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+
+        if (sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER) != null){
+            stepSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
+            isCounterSensorPresent = true;
+        } else {
+            isCounterSensorPresent = false;
+        }
 
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
@@ -74,25 +108,31 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         checkResults();
 
         startNewService();
-
     }
 
     @SuppressLint("SetTextI18n")
     private void getLastResults(){
         SharedPreferences sharedPreferences = getSharedPreferences("results", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences1 = getSharedPreferences("schedule", Context.MODE_PRIVATE);
         Gson gson = new Gson();
 
         String json = sharedPreferences.getString("sugar", null);
         String json1 = sharedPreferences.getString("temperature", null);
         String json2 = sharedPreferences.getString("bloodPressure", null);
+        String json3 = sharedPreferences.getString("steps", null);
+        String json4 = sharedPreferences1.getString("medicines", null);
 
         Type type = new TypeToken<ArrayList<SugarResult>>() {}.getType();
         Type type1 = new TypeToken<ArrayList<TemperatureResult>>() {}.getType();
         Type type2 = new TypeToken<ArrayList<BloodPressureResult>>() {}.getType();
+        Type type3 = new TypeToken<ArrayList<StepsResult>>() {}.getType();
+        Type type4 = new TypeToken<ArrayList<MedicineScheduleItem>>() {}.getType();
 
         ArrayList<SugarResult> sugarResultsArrayList = gson.fromJson(json, type);
         ArrayList<TemperatureResult> temperatureResultArrayList = gson.fromJson(json1, type1);
         ArrayList<BloodPressureResult> bloodPressureResultArrayList = gson.fromJson(json2, type2);
+        ArrayList<StepsResult> stepsResultArrayList = gson.fromJson(json3, type3);
+        ArrayList<MedicineScheduleItem> medicineScheduleItemArrayList = gson.fromJson(json4, type4);
 
         if (sugarResultsArrayList == null) {
             sugarResultsArrayList = new ArrayList<>();
@@ -106,21 +146,102 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             bloodPressureResultArrayList = new ArrayList<>();
         }
 
+        if (stepsResultArrayList == null) {
+            stepsResultArrayList = new ArrayList<>();
+        }
+
+        if (medicineScheduleItemArrayList == null) {
+            medicineScheduleItemArrayList = new ArrayList<>();
+        }
+
         ArrayList<SugarResult> sorted = SortHelperClass.sortSugarResults(sugarResultsArrayList);
-        lastSugarResult = (int) sorted.get(sorted.size() - 1).getResult();
+        if (sorted.size() > 0){
+            lastSugarResult = (int) sorted.get(sorted.size() - 1).getResult();
+        }
+
 
         ArrayList<TemperatureResult> sortedTemperature = SortHelperClass.sortTemperatureResults(temperatureResultArrayList);
-        lastTemperatureResult = sortedTemperature.get(sortedTemperature.size() - 1).getResult();
+        if (sortedTemperature.size() > 0) {
+            lastTemperatureResult = sortedTemperature.get(sortedTemperature.size() - 1).getResult();
+        }
 
         ArrayList<BloodPressureResult> sortedBloodPressure = SortHelperClass.sortBloodPressureResults(bloodPressureResultArrayList);
-        lastSystolicBloodPressureResult = sortedBloodPressure.get(sortedBloodPressure.size() - 1).getSystolicResult();
-        lastDiastolicBloodPressureResult = sortedBloodPressure.get(sortedBloodPressure.size() - 1).getDiastolicResult();
-        lastPulseResult = sortedBloodPressure.get(sortedBloodPressure.size() - 1).getPulse();
-        lastSaturationResult = sortedBloodPressure.get(sortedBloodPressure.size() - 1).getSaturation();
+        if (sortedBloodPressure.size() > 0) {
+            lastSystolicBloodPressureResult = sortedBloodPressure.get(sortedBloodPressure.size() - 1).getSystolicResult();
+            lastDiastolicBloodPressureResult = sortedBloodPressure.get(sortedBloodPressure.size() - 1).getDiastolicResult();
+            lastPulseResult = sortedBloodPressure.get(sortedBloodPressure.size() - 1).getPulse();
+            lastSaturationResult = sortedBloodPressure.get(sortedBloodPressure.size() - 1).getSaturation();
+        }
+
+        ArrayList<StepsResult> sortedSteps = SortHelperClass.sortStepsResults(stepsResultArrayList);
+        for (StepsResult stepsResult : sortedSteps) {
+            Log.d("stepsResult", stepsResult.getDate());
+            Log.d("stepsResult", String.valueOf(stepsResult.getResult()));
+            Log.d("stepsResult", String.valueOf(stepsResult.getAbsoluteResult()));
+        }
+        if (sortedSteps.size() > 0) {
+            String currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
+            todayStepsResult = sortedSteps.get(sortedSteps.size() - 1).getAbsoluteResult();
+
+            if (sortedSteps.get(sortedSteps.size() - 1).getDay() == Integer.parseInt(currentDate.split("-")[0])
+                    && sortedSteps.get(sortedSteps.size() - 1).getMonth() == Integer.parseInt(currentDate.split("-")[1])){
+                isCounterRead = true;
+            }
+        }
+
+        ArrayList<MedicineScheduleItem> todayMedicines = new ArrayList<>();
+        Calendar currentDate = Calendar.getInstance();
+        int year = currentDate.get(Calendar.YEAR);
+        int month = currentDate.get(Calendar.MONTH);
+        int day = currentDate.get(Calendar.DAY_OF_MONTH);
+        int dayOfWeek = currentDate.get(Calendar.DAY_OF_WEEK);
+
+        for (MedicineScheduleItem medicineItem : medicineScheduleItemArrayList) {
+            if (medicineItem.getPeriodicity().equals("Codziennie")){
+                todayMedicines.add(medicineItem);
+            } else if (medicineItem.getPeriodicity().equals("Cyklicznie") && medicineItem.getDayOfWeek().equals(MedicinesActivity.getDayString(dayOfWeek - 1))){
+                todayMedicines.add(medicineItem);
+            } else if (medicineItem.getPeriodicity().equals("W zakresie dat")){
+                Calendar medicineDateFrom = Calendar.getInstance();
+                medicineDateFrom.set(medicineItem.getYearFrom(), medicineItem.getMonthFrom(), medicineItem.getDayFrom());
+                Calendar medicineDateTo = Calendar.getInstance();
+                medicineDateTo.set(medicineItem.getYearTo(), medicineItem.getMonthTo(), medicineItem.getDayTo());
+
+                if (currentDate.compareTo(medicineDateFrom) >= 0 && currentDate.compareTo(medicineDateTo) <= 0){
+                    todayMedicines.add(medicineItem);
+                }
+            } else if (medicineItem.getDay() == day && medicineItem.getMonth() == month && medicineItem.getYear() == year){
+                todayMedicines.add(medicineItem);
+            }
+        }
+
+        if (todayMedicines.size() == 0){
+            medicinesInfo.setText("Brak leków do zażycia dzisiaj");
+        } else {
+            ArrayList<MedicineScheduleItem> sortedMedicines = SortHelperClass.sortMedicineItems(todayMedicines);
+            MedicineScheduleItem closestMedicine = sortedMedicines.get(0);
+            int hour = currentDate.get(Calendar.HOUR_OF_DAY);
+            int minute = currentDate.get(Calendar.MINUTE);
+            int closest = 24 * 60;
+            for (MedicineScheduleItem item : sortedMedicines){
+                if ((item.getNumber() - hour * 60 - minute) > 0 && (item.getNumber() - hour * 60 - minute) < closest){
+                    closest = item.getNumber() - hour * 60 - minute;
+                    closestMedicine = item;
+                }
+            }
+            if (closest > 60){
+                int hourToGet = (int) Math.floor(closest / 60);
+                int minutesToGet = closest - hourToGet * 60;
+                medicinesInfo.setText("Przyjmij " + closestMedicine.getMedicineName() + "\nza " + hourToGet + " h " + minutesToGet + " min" );
+            } else {
+                medicinesInfo.setText("Przyjmij " + closestMedicine.getMedicineName() + "\nza " + closest + " min" );
+            }
+        }
 
         bloodPressureInfo.setText(lastSystolicBloodPressureResult + " / " + lastDiastolicBloodPressureResult + "\t " + lastPulseResult + " BPM");
         sugarInfo.setText("Poziom cukru \nwe krwi: " + lastSugarResult + " mg/dl");
 
+        stepsInfo.setText("Liczba kroków:\n" + todayStepsResult + " / 6000");
     }
 
     private void checkResults(){
@@ -187,26 +308,71 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
+    private void getDailySteps(){
+        if(ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACTIVITY_RECOGNITION) == PackageManager.PERMISSION_DENIED){ //ask for permission
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                requestPermissions(new String[]{Manifest.permission.ACTIVITY_RECOGNITION}, 0);
+            }
+        }
+
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.HOUR_OF_DAY, 23);
+        c.set(Calendar.MINUTE, 59);
+        c.set(Calendar.SECOND, 0);
+
+        startAlarm(c);
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        if (event.sensor == stepSensor){
+            steps = (int) event.values[0];
+            stepsInfo.setText("Liczba kroków:\n" + (steps - todayStepsResult) + " / 6000");
+
+            if (!isCounterRead){
+                getDailySteps();
+            }
+        }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+    }
+
+    private void startAlarm(Calendar c){
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, StepsReceiver.class);
+        intent.putExtra("steps", steps);
+        PendingIntent pendingIntent = null;
+
+        pendingIntent = PendingIntent.getBroadcast(this, 1, intent, PendingIntent.FLAG_MUTABLE);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent);
+        }
+    }
+
     private Intent intent = new Intent(MainActivity.this, ReminderService.class);
 
     private void startNewService(){
-//        bindService(new Intent(getBaseContext(), ReminderService.class), connection, BIND_AUTO_CREATE);
+        bindService(new Intent(getBaseContext(), ReminderService.class), connection, BIND_AUTO_CREATE);
         startService(new Intent(MainActivity.this, ReminderService.class));
     }
 
-//    private Boolean bound;
-//
-//    private ServiceConnection connection = new ServiceConnection() {
-//        @Override
-//        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-//            bound = true;
-//        }
-//
-//        @Override
-//        public void onServiceDisconnected(ComponentName componentName) {
-//            bound = false;
-//        }
-//    };
+    private Boolean bound;
+
+    private ServiceConnection connection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            bound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            bound = false;
+        }
+    };
 
 
     private void customizeDimension(){
@@ -345,8 +511,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 startActivity(intent);
                 break;
 
+            case R.id.stepsNav:
+                intent = new Intent(this, StepsActivity.class);
+                startActivity(intent);
+                break;
+
             case R.id.sugarNav:
                 intent = new Intent(this, SugarActivity.class);
+                startActivity(intent);
+                break;
+
+            case R.id.medicineScheduleNav:
+                intent = new Intent(this, MedicinesActivity.class);
                 startActivity(intent);
                 break;
 
@@ -380,6 +556,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setProfilePhoto();
         getLastResults();
         super.onResume();
+        if (sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER) != null){
+            sensorManager.registerListener(this, stepSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER) != null){
+            sensorManager.unregisterListener(this, stepSensor);
+        }
     }
 
     private void setProfilePhoto(){

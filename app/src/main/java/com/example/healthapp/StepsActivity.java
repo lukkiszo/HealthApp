@@ -1,49 +1,31 @@
 package com.example.healthapp;
 
-import android.content.Intent;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ImageButton;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentTransaction;
 
-public class TemperatureActivity extends AppCompatActivity {
-    private ImageButton addNewResultButton;
+public class StepsActivity extends AppCompatActivity{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_temperature);
+        setContentView(R.layout.activity_steps);
 
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.temperatureResults, new TemperatureResultsFragment());
+        ft.replace(R.id.stepsResults, new StepsResultsFragment());
         ft.commit();
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.temperature_activity_toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.steps_activity_toolbar);
         setSupportActionBar(toolbar);
 
         if (getSupportActionBar() != null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
-            getSupportActionBar().setTitle("Temperatura");
+            getSupportActionBar().setTitle("Kroki");
         }
 
-        addNewResultButton = findViewById(R.id.addTemperatureResultButton);
-        addNewResultButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                addNewResult();
-            }
-        });
-
-    }
-
-    private void addNewResult(){
-        Intent intent = new Intent(this, ResultEditor.class);
-        intent.putExtra("type", "Temperatura ciała");
-        startActivity(intent);
     }
 
     @Override
@@ -54,4 +36,6 @@ public class TemperatureActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+
 }
