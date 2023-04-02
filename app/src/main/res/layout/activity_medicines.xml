@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".MedicinesActivity">
+
+    <androidx.appcompat.widget.Toolbar
+            android:id="@+id/medicines_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:navigationIcon="?attr/homeAsUpIndicator">
+
+        <ImageButton
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_add"
+                android:layout_gravity="end"
+                android:layout_marginEnd="15dp"
+                android:id="@+id/addMedicineScheduleButton"
+                android:background="@drawable/roundedbutton"
+                android:scaleType="centerCrop"
+                android:maxHeight="40dp"
+                android:maxWidth="40dp"
+                android:adjustViewBounds="true"
+                android:contentDescription="Add Medicine Schedule"/>
+    </androidx.appcompat.widget.Toolbar>
+
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/medicineDate"
+            android:gravity="center"
+            android:layout_marginTop="20dp"
+            android:layout_below="@+id/medicines_toolbar">
+
+        <Button
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:text="&lt;-"
+                android:id="@+id/date_dayBefore"
+                />
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Poniedziałek\n27.03.2023"
+                android:textAlignment="center"
+                android:textSize="18sp"
+                android:layout_toEndOf="@+id/date_dayBefore"
+                android:id="@+id/medicine_dateText"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp"
+                android:layout_centerInParent="true"/>
+
+        <Button
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:text="->"
+                android:id="@+id/date_dayAfter"
+                android:layout_toEndOf="@+id/medicine_dateText"
+                />
+
+    </RelativeLayout>
+
+    <ListView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/medicines_listview"
+            android:layout_below="@+id/medicineDate"
+            android:layout_marginTop="30dp"/>
+
+
+</RelativeLayout>
