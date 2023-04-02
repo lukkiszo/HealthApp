@@ -437,7 +437,6 @@ public class SugarResultsFragment extends Fragment implements OnChartValueSelect
                 else {
                     intent.putExtra("position", sugarResultsArrayList.size() - 7 * (currentListViewPage - 1) + position - finalNumberOfElementsOnPage);
                 }
-                Log.d("posio", String.valueOf(position));
                 startActivity(intent);
             }
         });

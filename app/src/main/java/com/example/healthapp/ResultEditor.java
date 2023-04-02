@@ -2,6 +2,7 @@ package com.example.healthapp;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
@@ -11,12 +12,16 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentTransaction;
 import com.google.android.material.textfield.TextInputLayout;
 
-public class ResultEditor extends AppCompatActivity{
+public class ResultEditor extends AppCompatActivity implements DayChosenInterface{
 
-    String[] items = {"Cukier", "Ciśnienie krwi, puls i saturacja", "Temperatura ciała"};
+    String[] items = {"Cukier", "Ciśnienie krwi, puls i saturacja", "Temperatura ciała", "Harmonogram przyjmowania leku"};
 
     TextInputLayout textInputLayout;
     AutoCompleteTextView autoCompleteTextView;
+    public static String medicineDayChosen = "";
+    public static String medicineDateChosen = "";
+    public static String medicineDateFromChosen = "";
+    public static String medicineDateToChosen = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,14 +52,36 @@ public class ResultEditor extends AppCompatActivity{
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id){
                 String item = parent.getItemAtPosition(position).toString();
-                Toast.makeText(parent.getContext(), "Selected: " + item, Toast.LENGTH_LONG).show();
-
                 changeFragment(item, intent.getIntExtra("position", -1));
-
             }
         });
 
     }
+
+    @Override
+    public void onDaySelected(String option) {
+        medicineDayChosen = option;
+    }
+
+    @Override
+    public void onDateFromSelected(String dateFrom) {
+        medicineDateFromChosen = dateFrom;
+        Log.d("dayChosenDateFrom", medicineDateFromChosen);
+    }
+
+    @Override
+    public void onDateToSelected(String dateTo) {
+        medicineDateToChosen = dateTo;
+        Log.d("dayChosenDateTo", medicineDateToChosen);
+    }
+
+    @Override
+    public void onDateSelected(String date) {
+        medicineDateChosen = date;
+        Log.d("dayChosenDate", medicineDateChosen);
+    }
+
+
 
     private void changeFragment(String choice, int position){
         // zmiana wyświetlanych fragmentów
@@ -86,6 +113,24 @@ public class ResultEditor extends AppCompatActivity{
                 TemperatureEditorFragment temperatureEditorFragment = new TemperatureEditorFragment();
                 temperatureEditorFragment.setArguments(bundle2);
                 ft.replace(R.id.resultEdit, temperatureEditorFragment);
+                break;
+
+            case "Kroki":
+                Bundle bundle3 = new Bundle();
+                bundle3.putInt("position", position);
+
+                StepsEditorFragment stepsEditorFragment = new StepsEditorFragment();
+                stepsEditorFragment.setArguments(bundle3);
+                ft.replace(R.id.resultEdit, stepsEditorFragment);
+                break;
+
+            case "Harmonogram przyjmowania leku":
+                Bundle bundle4 = new Bundle();
+                bundle4.putInt("position", position);
+
+                MedicineEditorFragment medicineEditorFragment = new MedicineEditorFragment();
+                medicineEditorFragment.setArguments(bundle4);
+                ft.replace(R.id.resultEdit, medicineEditorFragment);
                 break;
 
             default:

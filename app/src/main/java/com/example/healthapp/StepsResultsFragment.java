@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.*;
 import androidx.annotation.NonNull;
@@ -15,15 +14,11 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.components.YAxis;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.data.*;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
-import com.github.mikephil.charting.highlight.Highlight;
-import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.jetbrains.annotations.NotNull;
@@ -33,22 +28,22 @@ import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-public class TemperatureResultsFragment extends Fragment implements OnChartValueSelectedListener {
-    private static ArrayList<TemperatureResult> temperatureResultArrayList;
-    private static ArrayList<TemperatureResult> last7DaysTemperatureResultsArrayList;
+public class StepsResultsFragment extends Fragment {
+    private static ArrayList<StepsResult> stepsResultArrayList;
+    private static ArrayList<StepsResult> last7DaysStepsResultsArrayList;
     private View currentView;
     private ListView listView;
     private TextView lastResult;
     private TextView meanResults;
     private List<String> results = new ArrayList<>();
     private ArrayList chartArrayList;
-    private LineChart chart;
+    private BarChart chart;
     private Button resetChartButton;
     private Button previousListViewResultsButton;
     private Button nextListViewResultsButton;
     private Integer lastResultIndex;
     private TextView listViewResultsInfo;
-    private ArrayList<TemperatureResult> listViewArrayList;
+    private ArrayList<StepsResult> listViewArrayList;
     private Integer currentListViewPage;
     private Date todayDate;
     private Date chartLastDay;
@@ -59,7 +54,7 @@ public class TemperatureResultsFragment extends Fragment implements OnChartValue
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        currentView = inflater.inflate(R.layout.fragment_temperature_results, container, false);
+        currentView = inflater.inflate(R.layout.fragment_steps_results, container, false);
         return currentView;
     }
 
@@ -67,16 +62,16 @@ public class TemperatureResultsFragment extends Fragment implements OnChartValue
     public void onViewCreated(@NonNull @NotNull View view, @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
         todayDate = new Date();
         chartLastDay = todayDate;
-        listView = view.findViewById(R.id.temperatureListview);
-        lastResult = view.findViewById(R.id.lastTemperatureResult);
-        meanResults = view.findViewById(R.id.meanTemperatureResults);
-        resetChartButton = view.findViewById(R.id.temperatureResetChartButton);
-        previousListViewResultsButton = view.findViewById(R.id.previousTemperatureResults);
-        nextListViewResultsButton = view.findViewById(R.id.nextTemperatureResults);
-        listViewResultsInfo = view.findViewById(R.id.temperatureListviewText);
-        chartLeftButton = view.findViewById(R.id.temperatureChartLeft);
-        chartRightButton = view.findViewById(R.id.temperatureChartRight);
-        chart = (LineChart) view.findViewById(R.id.temperatureChart);
+        listView = view.findViewById(R.id.stepsListview);
+        lastResult = view.findViewById(R.id.lastStepsResult);
+        meanResults = view.findViewById(R.id.meanStepsResults);
+        resetChartButton = view.findViewById(R.id.stepsResetChartButton);
+        previousListViewResultsButton = view.findViewById(R.id.previousStepsResults);
+        nextListViewResultsButton = view.findViewById(R.id.nextStepsResults);
+        listViewResultsInfo = view.findViewById(R.id.stepsListviewText);
+        chartLeftButton = view.findViewById(R.id.stepsChartLeft);
+        chartRightButton = view.findViewById(R.id.stepsChartRight);
+        chart = (BarChart) view.findViewById(R.id.stepsChart);
 
         currentListViewPage = 1;
         nextListViewResultsButton.setEnabled(false);
@@ -107,11 +102,11 @@ public class TemperatureResultsFragment extends Fragment implements OnChartValue
         });
 
         loadResults();
-        lastResultIndex = temperatureResultArrayList.size() - 1;
+        lastResultIndex = stepsResultArrayList.size() - 1;
         if (lastResultIndex < 7) {
             previousListViewResultsButton.setEnabled(false);
         }
-        last7DaysTemperatureResultsArrayList = getLast7DaysResults();
+        last7DaysStepsResultsArrayList = getLast7DaysResults();
         loadLastResults();
         loadChart();
 
@@ -123,18 +118,18 @@ public class TemperatureResultsFragment extends Fragment implements OnChartValue
         listViewArrayList = new ArrayList<>();
         int i = 0;
         while   (listViewArrayList.size() < 7 &&
-                (i < temperatureResultArrayList.size() || temperatureResultArrayList.size() < 2) &&
+                (i < stepsResultArrayList.size() || stepsResultArrayList.size() < 2) &&
                 (lastResultIndex - i) >= 0 &&
-                (lastResultIndex - i) < temperatureResultArrayList.size()){
+                (lastResultIndex - i) < stepsResultArrayList.size()){
 
-            TemperatureResult result = new TemperatureResult(temperatureResultArrayList.get(lastResultIndex - i).getDate(),
-                    temperatureResultArrayList.get(lastResultIndex - i).getHour(),
-                    temperatureResultArrayList.get(lastResultIndex - i).getResult()
+            StepsResult result = new StepsResult(stepsResultArrayList.get(lastResultIndex - i).getDate(),
+                    stepsResultArrayList.get(lastResultIndex - i).getResult(),
+                    stepsResultArrayList.get(lastResultIndex - i).getAbsoluteResult()
             );
             listViewArrayList.add(result);
 
             i += 1;
-            if (temperatureResultArrayList.size() < 2) {
+            if (stepsResultArrayList.size() < 2) {
                 break;
             }
         }
@@ -147,16 +142,15 @@ public class TemperatureResultsFragment extends Fragment implements OnChartValue
 
             reloadListView();
         }
-
     }
 
     @SuppressLint("DefaultLocale")
     private void nextListViewResults(){
         lastResultIndex += 7;
-        if (lastResultIndex >= temperatureResultArrayList.size()){
-            lastResultIndex = temperatureResultArrayList.size() - 1;
+        if (lastResultIndex >= stepsResultArrayList.size()){
+            lastResultIndex = stepsResultArrayList.size() - 1;
         }
-        if (lastResultIndex >= temperatureResultArrayList.size() - 7){
+        if (lastResultIndex >= stepsResultArrayList.size() - 7){
             nextListViewResultsButton.setEnabled(false);
         }
         if (lastResultIndex >= 7){
@@ -172,7 +166,7 @@ public class TemperatureResultsFragment extends Fragment implements OnChartValue
         if (lastResultIndex < 0){
             lastResultIndex = 6;
         }
-        if (lastResultIndex < temperatureResultArrayList.size() - 7){
+        if (lastResultIndex < stepsResultArrayList.size() - 7){
             nextListViewResultsButton.setEnabled(true);
         }
         if (lastResultIndex < 7){
@@ -184,20 +178,20 @@ public class TemperatureResultsFragment extends Fragment implements OnChartValue
 
     private void loadChart(){
         getData();
-        LineDataSet lineDataSet = new LineDataSet(chartArrayList, "Temperatura ciała [°C]");
-        LineData lineData = new LineData(lineDataSet);
-        lineDataSet.setColors(Color.RED);
-        lineDataSet.setLineWidth(2f);
-        lineDataSet.setValueTextColor(Color.BLACK);
-        lineDataSet.setValueTextSize(10f);
-        
+        BarDataSet barDataSet = new BarDataSet(chartArrayList, "Wykonane kroki");
+        BarData barData = new BarData(barDataSet);
+        barDataSet.setColors(Color.GREEN);
+        barData.setBarWidth(0.5f);
+        barDataSet.setValueTextColor(Color.BLACK);
+        barDataSet.setValueTextSize(10f);
+
         XAxis xAxis = chart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setDrawGridLines(true);
         xAxis.setLabelCount(chartArrayList.size() - 1);
         xAxis.setValueFormatter(new IndexAxisValueFormatter(getXAxisValues()));
         chart.getDescription().setEnabled(false);
-        chart.setData(lineData);
+        chart.setData(barData);
         chart.animateXY(2000, 2000);
         chart.notifyDataSetChanged();
         chart.getAxisRight().setEnabled(true);
@@ -207,14 +201,14 @@ public class TemperatureResultsFragment extends Fragment implements OnChartValue
     @Override
     public void onStart() {
         loadResults();
-        lastResultIndex = temperatureResultArrayList.size() - 1;
+        lastResultIndex = stepsResultArrayList.size() - 1;
         currentListViewPage = 1;
         nextListViewResultsButton.setEnabled(false);
         previousListViewResultsButton.setEnabled(true);
         if (lastResultIndex < 7) {
             previousListViewResultsButton.setEnabled(false);
         }
-        last7DaysTemperatureResultsArrayList = getLast7DaysResults();
+        last7DaysStepsResultsArrayList = getLast7DaysResults();
         loadLastResults();
         loadChart();
         reloadListView();
@@ -224,14 +218,14 @@ public class TemperatureResultsFragment extends Fragment implements OnChartValue
     @Override
     public void onResume() {
         loadResults();
-        lastResultIndex = temperatureResultArrayList.size() - 1;
+        lastResultIndex = stepsResultArrayList.size() - 1;
         currentListViewPage = 1;
         nextListViewResultsButton.setEnabled(false);
         previousListViewResultsButton.setEnabled(true);
         if (lastResultIndex < 7) {
             previousListViewResultsButton.setEnabled(false);
         }
-        last7DaysTemperatureResultsArrayList = getLast7DaysResults();
+        last7DaysStepsResultsArrayList = getLast7DaysResults();
         loadLastResults();
         loadChart();
         reloadListView();
@@ -241,10 +235,10 @@ public class TemperatureResultsFragment extends Fragment implements OnChartValue
     private void getData(){
         chartArrayList = new ArrayList();
         int i = 0;
-        temperatureResultArrayList = sortTemperatureResults(temperatureResultArrayList);
-        last7DaysTemperatureResultsArrayList = sortTemperatureResults(last7DaysTemperatureResultsArrayList);
-        for(TemperatureResult temperatureResult : last7DaysTemperatureResultsArrayList){
-            chartArrayList.add(new Entry(i, (float) temperatureResult.getResult()));
+        stepsResultArrayList = sortStepsResults(stepsResultArrayList);
+        last7DaysStepsResultsArrayList = sortStepsResults(last7DaysStepsResultsArrayList);
+        for(StepsResult stepsResult : last7DaysStepsResultsArrayList){
+            chartArrayList.add(new BarEntry(i, (float) stepsResult.getResult()));
             i += 1;
         }
     }
@@ -269,8 +263,8 @@ public class TemperatureResultsFragment extends Fragment implements OnChartValue
         }
     }
 
-    private ArrayList<TemperatureResult> getLast7DaysResults(){
-        ArrayList<TemperatureResult> chartArrayList = new ArrayList<>();
+    private ArrayList<StepsResult> getLast7DaysResults(){
+        ArrayList<StepsResult> chartArrayList = new ArrayList<>();
 
         Date date = chartLastDay;
         Calendar ca = Calendar.getInstance();
@@ -292,12 +286,12 @@ public class TemperatureResultsFragment extends Fragment implements OnChartValue
             ca.add(Calendar.DATE, -1);
             date = ca.getTime();
 
-            TemperatureResult blankResult = new TemperatureResult(day + " " + SugarEditorFragment.getMonthFormat(month) + " " + year, "00:00", 0);
+            StepsResult blankResult = new StepsResult(day + " " + SugarEditorFragment.getMonthFormat(month) + " " + year, 0, 0);
             chartArrayList.add(blankResult);
 
-            for (TemperatureResult temperatureResult : temperatureResultArrayList){
-                if (temperatureResult.getDay() == day && temperatureResult.getMonth() == month && temperatureResult.getYear() == year){
-                    chartArrayList.set(i, temperatureResult);
+            for (StepsResult stepsResult : stepsResultArrayList){
+                if (stepsResult.getDay() == day && stepsResult.getMonth() == month && stepsResult.getYear() == year){
+                    chartArrayList.set(i, stepsResult);
                 }
             }
         }
@@ -307,31 +301,31 @@ public class TemperatureResultsFragment extends Fragment implements OnChartValue
 
     private ArrayList getXAxisValues() {
         ArrayList xAxis = new ArrayList();
-        temperatureResultArrayList = sortTemperatureResults(temperatureResultArrayList);
-        for(TemperatureResult temperatureResult : last7DaysTemperatureResultsArrayList){
-            xAxis.add(String.format(Locale.getDefault(), "%02d.%02d", temperatureResult.getDay(), temperatureResult.getMonth()));
+        stepsResultArrayList = sortStepsResults(stepsResultArrayList);
+        for(StepsResult stepsResult : last7DaysStepsResultsArrayList){
+            xAxis.add(String.format(Locale.getDefault(), "%02d.%02d", stepsResult.getDay(), stepsResult.getMonth()));
         }
         return xAxis;
     }
 
     private void getLastResult(){
-        lastResult.setText(MessageFormat.format("Ostatni wynik = {0} °C", 0));
-        if (!temperatureResultArrayList.isEmpty()){
-            lastResult.setText(MessageFormat.format("Ostatni wynik = {0} °C", temperatureResultArrayList.get(temperatureResultArrayList.size() - 1).getResult()));
+        lastResult.setText(MessageFormat.format("Ostatni wynik: {0} kroków", 0));
+        if (!stepsResultArrayList.isEmpty()){
+            lastResult.setText(MessageFormat.format("Ostatni wynik = {0} kroków", stepsResultArrayList.get(stepsResultArrayList.size() - 1).getResult()));
         }
     }
 
-    private void meanTemperatureResults(){
+    private void meanStepsResults(){
         double sum = 0;
-        for (TemperatureResult temperatureResult : temperatureResultArrayList) {
-            sum += temperatureResult.getResult();
+        for (StepsResult stepsResult : stepsResultArrayList) {
+            sum += stepsResult.getResult();
         }
-        meanResults.setText(MessageFormat.format("Średnia wyników = {0} °C", sum/temperatureResultArrayList.size()));
+        meanResults.setText(MessageFormat.format("Średnia wyników = {0} kroków", sum/stepsResultArrayList.size()));
     }
 
     private void reloadChart(){
         chart.fitScreen();
-        last7DaysTemperatureResultsArrayList = getLast7DaysResults();
+        last7DaysStepsResultsArrayList = getLast7DaysResults();
         loadChart();
     }
 
@@ -344,27 +338,26 @@ public class TemperatureResultsFragment extends Fragment implements OnChartValue
         SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences("results", Context.MODE_PRIVATE);
         Gson gson = new Gson();
 
-        String json = sharedPreferences.getString("temperature", null);
+        String json = sharedPreferences.getString("steps", null);
 
-        Type type = new TypeToken<ArrayList<TemperatureResult>>() {}.getType();
+        Type type = new TypeToken<ArrayList<StepsResult>>() {}.getType();
 
-        temperatureResultArrayList = gson.fromJson(json, type);
+        stepsResultArrayList = gson.fromJson(json, type);
 
-        if (temperatureResultArrayList == null) {
-            temperatureResultArrayList = new ArrayList<>();
+        if (stepsResultArrayList == null) {
+            stepsResultArrayList = new ArrayList<>();
         }
     }
 
-    private ArrayList<TemperatureResult> sortTemperatureResults(ArrayList<TemperatureResult> results){
-
+    private ArrayList<StepsResult> sortStepsResults(ArrayList<StepsResult> results){
         SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences("results", Context.MODE_PRIVATE);
         Gson gson = new Gson();
 
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        ArrayList<TemperatureResult> sorted = SortHelperClass.sortTemperatureResults(results);
+        ArrayList<StepsResult> sorted = SortHelperClass.sortStepsResults(results);
         String json1 = gson.toJson(sorted);
-        editor.putString("temperature", json1);
+        editor.putString("steps", json1);
         editor.apply();
         return sorted;
     }
@@ -374,11 +367,11 @@ public class TemperatureResultsFragment extends Fragment implements OnChartValue
         results.clear();
 
         int numberOfElementsOnPage = 0;
-        temperatureResultArrayList = sortTemperatureResults(temperatureResultArrayList);
-        listViewArrayList = SortHelperClass.sortTemperatureResults(listViewArrayList);
+        stepsResultArrayList = sortStepsResults(stepsResultArrayList);
+        listViewArrayList = SortHelperClass.sortStepsResults(listViewArrayList);
 
-        for (TemperatureResult temperatureResult : listViewArrayList) {
-            results.add(temperatureResult.getDate() + ", " + temperatureResult.getHour());
+        for (StepsResult stepsResult : listViewArrayList) {
+            results.add(stepsResult.getDate());
             numberOfElementsOnPage += 1;
         }
 
@@ -391,19 +384,20 @@ public class TemperatureResultsFragment extends Fragment implements OnChartValue
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3)
             {
                 Intent intent = new Intent(getActivity(), ResultEditor.class);
-                intent.putExtra("type", "Temperatura ciała");
+                intent.putExtra("type", "Kroki");
                 if (finalNumberOfElementsOnPage == 7){
-                    intent.putExtra("position", temperatureResultArrayList.size() - 7 * currentListViewPage + position);
+                    intent.putExtra("position", stepsResultArrayList.size() - 7 * currentListViewPage + position);
                 }
                 else {
-                    intent.putExtra("position", temperatureResultArrayList.size() - 7 * (currentListViewPage - 1) + position - finalNumberOfElementsOnPage);
+                    intent.putExtra("position", stepsResultArrayList.size() - 7 * (currentListViewPage - 1) + position - finalNumberOfElementsOnPage);
                 }
+                Toast.makeText(getActivity(), String.valueOf(stepsResultArrayList.get(stepsResultArrayList.size() - 7 * currentListViewPage + position).getAbsoluteResult()), Toast.LENGTH_LONG).show();
                 startActivity(intent);
             }
         });
 
         getLastResult();
-        meanTemperatureResults();
+        meanStepsResults();
 
         listView.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -424,12 +418,5 @@ public class TemperatureResultsFragment extends Fragment implements OnChartValue
         });
 
     }
-
-    @Override
-    public void onValueSelected(Entry e, Highlight h) {
-    }
-
-    @Override
-    public void onNothingSelected() {}
 
 }

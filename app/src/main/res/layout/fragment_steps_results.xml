@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:id="@+id/stepsFragmentScrollView"
+            android:padding="10dp"
+            android:fillViewport="true">
+
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:context=".StepsActivity">
+
+        <com.github.mikephil.charting.charts.BarChart
+                android:id="@+id/stepsChart"
+                android:layout_width="match_parent"
+                android:layout_marginTop="20dp"
+                android:background="@color/white"
+                android:layout_height="270dp" />
+
+
+        <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/stepsChart"
+                android:layout_marginTop="20dp"
+                android:id="@+id/stepsChartButtons"
+                android:layout_centerHorizontal="true">
+
+            <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/stepsChartLeft"
+                    android:text="&lt;"/>
+
+            <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/stepsResetChartButton"
+                    android:layout_toEndOf="@+id/stepsChartLeft"
+                    android:text="RESET"/>
+
+            <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@+id/stepsResetChartButton"
+                    android:id="@+id/stepsChartRight"
+                    android:text=">"/>
+
+        </RelativeLayout>
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/stepsChartButtons"
+                android:layout_marginTop="15dp"
+                android:layout_marginStart="20dp"
+                android:text="Srednia wyników: 123"
+                android:id="@+id/meanStepsResults"/>
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/meanStepsResults"
+                android:layout_marginTop="15dp"
+                android:layout_marginStart="20dp"
+                android:text="Ostatni wynik: 123"
+                android:id="@+id/lastStepsResult"/>
+
+        <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/lastStepsResult"
+                android:layout_marginTop="20dp"
+                android:id="@+id/stepsListviewButtons"
+                android:layout_centerHorizontal="true">
+
+            <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/previousStepsResults"
+                    android:text="&lt;"/>
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@+id/previousStepsResults"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="15dp"
+                    android:id="@+id/stepsListviewText"/>
+
+            <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/nextStepsResults"
+                    android:layout_toEndOf="@+id/stepsListviewText"
+                    android:layout_marginStart="20dp"
+                    android:text=">"/>
+
+        </RelativeLayout>
+
+
+        <ListView
+                android:layout_width="wrap_content"
+                android:layout_height="400dp"
+                android:layout_below="@+id/stepsListviewButtons"
+                android:layout_marginTop="20dp"
+                android:divider="@color/white"
+                android:dividerHeight="1dp"
+                android:textAlignment="center"
+                android:scrollingCache="false"
+                android:smoothScrollbar="true"
+                android:id="@+id/stepsListview"/>
+
+    </RelativeLayout>
+</ScrollView>

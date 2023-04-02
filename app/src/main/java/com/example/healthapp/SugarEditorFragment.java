@@ -162,7 +162,6 @@ public class SugarEditorFragment extends Fragment {
     }
 
     private void addNewResult(String givenDate, String givenHour, int givenResult, String givenAnnotations){
-
         SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences("results", Context.MODE_PRIVATE);
         Gson gson = new Gson();
 
