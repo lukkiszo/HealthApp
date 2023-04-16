@@ -22,6 +22,8 @@ public class ResultEditor extends AppCompatActivity implements DayChosenInterfac
     public static String medicineDateChosen = "";
     public static String medicineDateFromChosen = "";
     public static String medicineDateToChosen = "";
+    private ImageButton addResultFromCamera;
+    private String type = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,15 +46,34 @@ public class ResultEditor extends AppCompatActivity implements DayChosenInterfac
 
         ArrayAdapter<String> itemAdapter = new ArrayAdapter<>(ResultEditor.this, R.layout.dropdown_item, items);
         autoCompleteTextView.setAdapter(itemAdapter);
-        autoCompleteTextView.setText(intent.getStringExtra("type"), false);
+        type = intent.getStringExtra("type");
+        autoCompleteTextView.setText(type, false);
 
-        changeFragment(intent.getStringExtra("type"), intent.getIntExtra("position", -1));
+        addResultFromCamera = findViewById(R.id.openCamera);
+        addResultFromCamera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (autoCompleteTextView.getText().toString().equals("Harmonogram przyjmowania leku")){
+                    Toast.makeText(getApplicationContext(), "Nie ma możliwości dodania rekordu za pomocą kamery", Toast.LENGTH_LONG).show();
+                } else {
+                    Intent intent = new Intent(getApplicationContext(), TextRecognitionActivity.class);
+                    intent.putExtra("type", type);
+                    startActivity(intent);
+                }
+
+            }
+        });
+
+        changeFragment(type, intent.getIntExtra("position", -1));
 
         autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id){
-                String item = parent.getItemAtPosition(position).toString();
-                changeFragment(item, intent.getIntExtra("position", -1));
+                type = parent.getItemAtPosition(position).toString();
+                Toast.makeText(parent.getContext(), "Selected: " + type, Toast.LENGTH_LONG).show();
+
+
+                changeFragment(type, intent.getIntExtra("position", -1));
             }
         });
 

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             tools:context=".CameraFragment">
+
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Zrób zdjęcie"
+                android:id="@+id/buttonTakePhoto"/>
+
+        <SurfaceView
+                android:layout_width="400dp"
+                android:layout_height="600dp"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/buttonTakePhoto"
+                android:id="@+id/camera2View"
+                android:layout_centerVertical="true"/>
+
+    </RelativeLayout>
+</FrameLayout>

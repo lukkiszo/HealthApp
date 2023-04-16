@@ -33,7 +33,8 @@ public class SugarEditorFragment extends Fragment {
     private Button timeButton;
     private int hour, minute;
     private int year, month, day;
-    EditText result;
+    private EditText result;
+    public static double valueFromCamera = -1;
     private ImageButton addButton;
     private ImageButton deleteButton;
     private String annot = "";
@@ -64,7 +65,6 @@ public class SugarEditorFragment extends Fragment {
         result = view.findViewById(R.id.sugarValue);
         addButton = view.findViewById(R.id.confirmResultButton);
         deleteButton = view.findViewById(R.id.deleteResultButton);
-
 
         if (clickedItem >= 0){
             dateButton.setText(sugarResultsArrayList.get(clickedItem).getDate());
@@ -130,6 +130,16 @@ public class SugarEditorFragment extends Fragment {
         });
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (result != null){
+            if (valueFromCamera != -1){
+                result.setText(String.valueOf((int) valueFromCamera));
+            }
+        }
+    }
+
     private void deleteResult(){
         if(clickedItem >= 0){
             SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences("results", Context.MODE_PRIVATE);
@@ -143,6 +153,7 @@ public class SugarEditorFragment extends Fragment {
             editor.putString("sugar", json1);
             editor.apply();
         }
+        valueFromCamera = -1;
         getActivity().finish();
     }
 
@@ -176,6 +187,7 @@ public class SugarEditorFragment extends Fragment {
         String json1 = gson.toJson(sugarResultsArrayList);
         editor.putString("sugar", json1);
         editor.apply();
+        valueFromCamera = -1;
         getActivity().finish();
     }
 

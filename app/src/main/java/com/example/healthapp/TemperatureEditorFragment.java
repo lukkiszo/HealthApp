@@ -37,6 +37,7 @@ public class TemperatureEditorFragment extends Fragment {
     private ImageButton addButton;
     private ImageButton deleteButton;
     private int clickedItem;
+    public static double valueFromCamera = -1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -130,7 +131,19 @@ public class TemperatureEditorFragment extends Fragment {
             editor.putString("temperature", json1);
             editor.apply();
         }
+        valueFromCamera = -1;
         getActivity().finish();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (valuePicker != null && value1Picker != null){
+            if (valueFromCamera != -1){
+                valuePicker.setValue((int) Math.floor(valueFromCamera));
+                value1Picker.setValue((int) (10*(valueFromCamera - Math.floor(valueFromCamera))));
+            }
+        }
     }
 
     private void loadResults(){
@@ -164,6 +177,7 @@ public class TemperatureEditorFragment extends Fragment {
         String json1 = gson.toJson(temperatureResultArrayList);
         editor.putString("temperature", json1);
         editor.apply();
+        valueFromCamera = -1;
         getActivity().finish();
     }
 
