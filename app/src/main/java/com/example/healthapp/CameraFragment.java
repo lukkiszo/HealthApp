@@ -91,6 +91,13 @@ public class CameraFragment extends Fragment {
     }
 
     @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_camera, container, false);
+    }
+
+    @Override
     public void onViewCreated(@NonNull @NotNull View view, @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
         surfaceView = view.findViewById(R.id.camera2View);
         takePhotoButton = view.findViewById(R.id.buttonTakePhoto);
