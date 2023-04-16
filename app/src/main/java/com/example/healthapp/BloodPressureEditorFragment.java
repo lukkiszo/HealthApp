@@ -44,6 +44,10 @@ public class BloodPressureEditorFragment extends Fragment {
     private ImageButton addButton;
     private ImageButton deleteButton;
     private String annotation = "";
+    public static double value1FromCamera = -1;
+    public static double value2FromCamera = -1;
+    public static double value3FromCamera = -1;
+    public static double value4FromCamera = -1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -158,6 +162,25 @@ public class BloodPressureEditorFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (pulseValue != null && saturationValue != null && systolicValuePicker != null && diastolicValuePicker != null){
+            if (value1FromCamera != -1){
+                systolicValuePicker.setValue((int) Math.floor(value1FromCamera));
+            }
+            if (value2FromCamera != -1){
+                diastolicValuePicker.setValue((int) Math.floor(value2FromCamera));
+            }
+            if (value3FromCamera != -1){
+                pulseValue.setText(String.valueOf((int) value3FromCamera));
+            }
+            if (value4FromCamera != -1){
+                saturationValue.setText(String.valueOf((int) value4FromCamera));
+            }
+        }
+    }
+
     private void loadResults(){
         SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences("results", Context.MODE_PRIVATE);
         Gson gson = new Gson();
@@ -187,6 +210,10 @@ public class BloodPressureEditorFragment extends Fragment {
             editor.putString("bloodPressure", json1);
             editor.apply();
         }
+        value1FromCamera = -1;
+        value2FromCamera = -1;
+        value3FromCamera = -1;
+        value4FromCamera = -1;
         getActivity().finish();
     }
 
@@ -208,6 +235,10 @@ public class BloodPressureEditorFragment extends Fragment {
         String json1 = gson.toJson(bloodPressureResultArrayList);
         editor.putString("bloodPressure", json1);
         editor.apply();
+        value1FromCamera = -1;
+        value2FromCamera = -1;
+        value3FromCamera = -1;
+        value4FromCamera = -1;
         getActivity().finish();
     }
 
