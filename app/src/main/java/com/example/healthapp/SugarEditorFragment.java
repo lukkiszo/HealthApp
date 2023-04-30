@@ -94,8 +94,6 @@ public class SugarEditorFragment extends Fragment {
             }
         });
 
-        autoCompleteTextView.setText(items[0]);
-
         ArrayAdapter<String> itemAdapter = new ArrayAdapter<>(getActivity(), R.layout.dropdown_item, items);
         autoCompleteTextView.setAdapter(itemAdapter);
         autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

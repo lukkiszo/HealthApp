@@ -55,7 +55,7 @@ public class StepsReceiver extends BroadcastReceiver {
             result = new StepsResult(day + " " + SugarEditorFragment.getMonthFormat(month) + " " + year, stepCount, stepCount);
             stepsResultArrayList.add(result);
         } else if (stepsResultArrayList.get(stepsResultArrayList.size() - 1).getDay() != day
-                && stepsResultArrayList.get(stepsResultArrayList.size() - 1).getMonth() != month){
+                || stepsResultArrayList.get(stepsResultArrayList.size() - 1).getMonth() != month){
             lastDaySteps = stepsResultArrayList.get(stepsResultArrayList.size() - 1).getAbsoluteResult();
 
             if (lastDaySteps > stepCount){

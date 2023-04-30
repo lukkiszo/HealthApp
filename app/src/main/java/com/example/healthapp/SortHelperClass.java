@@ -119,4 +119,27 @@ public class SortHelperClass {
         return sorted;
     }
 
+    public static ArrayList<MedicalVisitScheduleItem> sortVisits(ArrayList<MedicalVisitScheduleItem> visitsArrayList) {
+        ArrayList<MedicalVisitScheduleItem> sorted = visitsArrayList;
+
+        int pos;
+        MedicalVisitScheduleItem temp;
+
+        for(int i = 0; i < sorted.size() - 1; i++){
+            pos = i;
+            for (int j = i + 1; j < sorted.size(); j++){
+                if(sorted.get(j).getNumber() < sorted.get(pos).getNumber()){
+                    pos = j;
+                }
+            }
+
+            temp = sorted.get(pos);
+            sorted.set(pos, sorted.get(i));
+            sorted.set(i, temp);
+
+        }
+
+        return sorted;
+    }
+
 }

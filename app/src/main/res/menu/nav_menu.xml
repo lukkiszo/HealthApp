@@ -21,7 +21,7 @@
         <menu>
             <item android:title="Harmonogram leków" android:id="@+id/medicineScheduleNav" android:icon="@drawable/ic_timesheet"/>
 
-            <item android:title="Kalendarz wizyt" android:icon="@drawable/ic_timesheet2"/>
+            <item android:title="Kalendarz wizyt" android:id="@+id/visitScheduleNav" android:icon="@drawable/ic_timesheet2"/>
 
             <item android:title="Podsumowanie miesiąca" android:icon="@drawable/ic_month_summary"/>
         </menu>
