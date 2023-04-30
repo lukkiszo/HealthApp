@@ -6,6 +6,7 @@ import android.app.*;
 import android.content.*;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -18,6 +19,7 @@ import android.util.Log;
 import android.view.*;
 import android.widget.*;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -27,6 +29,11 @@ import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.PackageManagerCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DecodeFormat;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.google.android.material.navigation.NavigationView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -106,8 +113,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setProfilePhoto();
         customizeDimension();
         checkResults();
-
-        startNewService();
+        checkIfResultsAddedToday();
     }
 
     @SuppressLint("SetTextI18n")
@@ -174,11 +180,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         ArrayList<StepsResult> sortedSteps = SortHelperClass.sortStepsResults(stepsResultArrayList);
-        for (StepsResult stepsResult : sortedSteps) {
-            Log.d("stepsResult", stepsResult.getDate());
-            Log.d("stepsResult", String.valueOf(stepsResult.getResult()));
-            Log.d("stepsResult", String.valueOf(stepsResult.getAbsoluteResult()));
-        }
         if (sortedSteps.size() > 0) {
             String currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
             todayStepsResult = sortedSteps.get(sortedSteps.size() - 1).getAbsoluteResult();
@@ -246,66 +247,101 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void checkResults(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-            NotificationChannel channel = new NotificationChannel("My Notification", "My Notification", NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationChannel channelSugar = new NotificationChannel("Sugar", "My Notification", NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationChannel channelTemperature = new NotificationChannel("Temperature", "My Notification", NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationChannel channelBloodPressure = new NotificationChannel("BloodPressure", "My Notification", NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationChannel channelPulse = new NotificationChannel("Pulse", "My Notification", NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationChannel channelSaturation = new NotificationChannel("Saturation", "My Notification", NotificationManager.IMPORTANCE_DEFAULT);
             NotificationManager manager = getSystemService(NotificationManager.class);
-            manager.createNotificationChannel(channel);
+            manager.createNotificationChannel(channelSugar);
+            manager.createNotificationChannel(channelTemperature);
+            manager.createNotificationChannel(channelBloodPressure);
+            manager.createNotificationChannel(channelPulse);
+            manager.createNotificationChannel(channelSaturation);
         }
 
         if (lastSugarResult > 100 || lastSugarResult < 70){
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "My Notification")
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "Sugar")
                     .setSmallIcon(R.drawable.ic_notification_icon)
                     .setContentTitle("Nieprawidłowy poziom cukru we krwi!")
                     .setContentText("Twój ostatni wprowadzony wynik badania poziomu cukru we krwi nie mieścił się w granicach normy")
                     .setPriority(NotificationCompat.PRIORITY_HIGH);
 
             NotificationManagerCompat managerCompat = NotificationManagerCompat.from(this);
-            managerCompat.notify(100, builder.build());
+            managerCompat.notify(1001, builder.build());
         }
 
         if (lastTemperatureResult > 37.5 || lastTemperatureResult < 36){
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "My Notification")
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "Temperature")
                     .setSmallIcon(R.drawable.ic_notification_icon)
                     .setContentTitle("Nieprawidłowa temperatura ciała!")
                     .setContentText("Twój ostatni wprowadzony wynik badania temperatury ciała nie mieścił się w granicach normy")
                     .setPriority(NotificationCompat.PRIORITY_HIGH);
 
             NotificationManagerCompat managerCompat = NotificationManagerCompat.from(this);
-            managerCompat.notify(100, builder.build());
+            managerCompat.notify(1002, builder.build());
         }
 
         if (lastSystolicBloodPressureResult > 135 || lastDiastolicBloodPressureResult > 85 || lastSystolicBloodPressureResult < 100 || lastDiastolicBloodPressureResult < 60){
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "My Notification")
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "BloodPressure")
                     .setSmallIcon(R.drawable.ic_notification_icon)
                     .setContentTitle("Nieprawidłowe ciśnienie krwi!")
                     .setContentText("Twój ostatni wprowadzony wynik badania ciśnienia tętniczego krwi nie mieścił się w granicach normy")
                     .setPriority(NotificationCompat.PRIORITY_HIGH);
 
             NotificationManagerCompat managerCompat = NotificationManagerCompat.from(this);
-            managerCompat.notify(100, builder.build());
+            managerCompat.notify(1003, builder.build());
         }
 
         if (lastPulseResult > 100 || lastPulseResult < 50){
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "My Notification")
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "Pulse")
                     .setSmallIcon(R.drawable.ic_notification_icon)
                     .setContentTitle("Nieprawidłowe tętno!")
                     .setContentText("Twój ostatni wprowadzony wynik badania tętna nie mieścił się w granicach normy")
                     .setPriority(NotificationCompat.PRIORITY_HIGH);
 
             NotificationManagerCompat managerCompat = NotificationManagerCompat.from(this);
-            managerCompat.notify(100, builder.build());
+            managerCompat.notify(1004, builder.build());
         }
 
         if (lastSaturationResult < 90){
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "My Notification")
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "Saturation")
                     .setSmallIcon(R.drawable.ic_notification_icon)
                     .setContentTitle("Nieprawidłowa saturacja!")
                     .setContentText("Twój ostatni wprowadzony wynik saturacji krwi był poniżej normy")
                     .setPriority(NotificationCompat.PRIORITY_HIGH);
 
             NotificationManagerCompat managerCompat = NotificationManagerCompat.from(this);
-            managerCompat.notify(100, builder.build());
+            managerCompat.notify(1005, builder.build());
         }
 
+    }
+
+    private void checkIfResultsAddedToday(){
+        if(ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACTIVITY_RECOGNITION) == PackageManager.PERMISSION_DENIED){ //ask for permission
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                requestPermissions(new String[]{Manifest.permission.ACTIVITY_RECOGNITION}, 1);
+            }
+        }
+
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.HOUR_OF_DAY, 16);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+
+        showNotification(c);
+    }
+
+    private void showNotification(Calendar c){
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, ReminderBroadcastReceiver.class);
+        PendingIntent pendingIntent1 = PendingIntent.getBroadcast(this, 2, intent, PendingIntent.FLAG_MUTABLE);
+        Log.d("reminderBroadcast", pendingIntent1.toString());
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent1);
+        }
     }
 
     private void getDailySteps(){
@@ -329,7 +365,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (event.sensor == stepSensor){
             steps = (int) event.values[0];
             stepsInfo.setText("Liczba kroków:\n" + (steps - todayStepsResult) + " / 6000");
-
             if (!isCounterRead){
                 getDailySteps();
             }
@@ -344,36 +379,33 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(this, StepsReceiver.class);
         intent.putExtra("steps", steps);
-        PendingIntent pendingIntent = null;
-
-        pendingIntent = PendingIntent.getBroadcast(this, 1, intent, PendingIntent.FLAG_MUTABLE);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intent, PendingIntent.FLAG_MUTABLE);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent);
         }
     }
 
-    private Intent intent = new Intent(MainActivity.this, ReminderService.class);
+    private void startFallDetectionService(){
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
 
-    private void startNewService(){
-        bindService(new Intent(getBaseContext(), ReminderService.class), connection, BIND_AUTO_CREATE);
-        startService(new Intent(MainActivity.this, ReminderService.class));
+            int PERMISSION_ALL = 1;
+            String[] PERMISSIONS = {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.SEND_SMS};
+            ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSION_ALL);
+//            return;
+        }
+
+        Intent intent = new Intent(getApplicationContext(), FallDetectionService.class);
+        startService(intent);
+
     }
 
-    private Boolean bound;
-
-    private ServiceConnection connection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            bound = true;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName componentName) {
-            bound = false;
-        }
-    };
-
+    @Override
+    protected void onDestroy() {
+        startFallDetectionService();
+        super.onDestroy();
+    }
 
     private void customizeDimension(){
         View bloodpressure = findViewById(R.id.blood_pressure);
@@ -544,6 +576,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 exit(findViewById(android.R.id.content).getRootView());
                 break;
 
+            case R.id.visitScheduleNav:
+                intent = new Intent(this, VisitScheduleActivity.class);
+                startActivity(intent);
+                break;
+
             default:
                 break;
         }
@@ -553,6 +590,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     protected void onResume() {
+        startFallDetectionService();
         setProfilePhoto();
         getLastResults();
         super.onResume();
@@ -582,9 +620,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         String photo = sharedPref.getString("photo", "");
         String name = sharedPref.getString("username", "");
 
-        headerProfile.setImageURI(Uri.parse(photo));
-        nav_user.setText(name);
-        navigationPhoto.setImageURI(Uri.parse(photo));
+        Uri imageUri = Uri.parse(photo);
+        if (imageUri != null) {
+
+            // Skaluj i skompresuj zdjęcie z wykorzystaniem biblioteki Glide
+            Glide.with(this)
+                    .asBitmap()
+                    .load(imageUri)
+                    .apply(new RequestOptions()
+                            .override(256) // Ustaw maksymalną szerokość lub wysokość na 1024 pikseli
+                            .format(DecodeFormat.PREFER_RGB_565) // Ustaw format zdjęcia na RGB_565
+                            .encodeQuality(80)) // Ustaw jakość kompresji na 80%
+                    .into(new SimpleTarget<Bitmap>() {
+                        @Override
+                        public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                            // Wyświetl skompresowane i przeskalowane zdjęcie w widoku ImageView
+                            headerProfile.setImageBitmap(resource);
+                            nav_user.setText(name);
+                            navigationPhoto.setImageBitmap(resource);
+                        }
+                    });
+        }
     }
 
     @Override

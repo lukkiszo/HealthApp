@@ -4,119 +4,123 @@
             android:layout_width="match_parent">
 
     <RelativeLayout
+            xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical" >
+            tools:context=".MedicalVisitEditorFragment">
 
         <TextView
-                android:id="@+id/receptionTypeText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:id="@+id/nameText"
                 android:layout_marginStart="15dp"
-                android:layout_marginTop="20dp"
-                android:text="Cykliczność przyjmowania" />
-
-        <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/receptionType"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
-                android:layout_width="match_parent"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="10dp"
-                android:theme="@style/Theme.MaterialComponents.DayNight"
                 android:layout_marginTop="5dp"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/receptionTypeText"
-                android:textAlignment="center"
-                >
+                android:text="Nazwa wizyty"/>
 
-            <AutoCompleteTextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/receptionType_items"
-                    android:textAlignment="center"
-                    android:focusable="false"
-                    android:inputType="none"/>
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <FrameLayout
+        <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/additionalInfoMedicine"
-                android:layout_below="@+id/receptionType"/>
+                android:id="@+id/visitNameEdit"
+                android:layout_centerHorizontal="true"
+                android:textAlignment="center"
+                android:layout_marginTop="5dp"
+                android:textSize="25sp"
+                android:layout_below="@+id/nameText"
+                android:inputType="text"/>
 
         <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
-                android:text="Godzina przyjęcia leku"
-                android:layout_below="@id/additionalInfoMedicine"
+                android:text="Data wizyty"
                 android:layout_marginTop="20dp"
-                android:id="@+id/medicineHourText"/>
+                android:layout_below="@+id/visitNameEdit"
+                android:id="@+id/visitDateText"/>
 
         <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/medicine_time_picker_button"
+                android:id="@+id/visit_date_picker_button"
                 android:layout_centerHorizontal="true"
                 android:textAlignment="center"
                 android:layout_marginTop="5dp"
-                android:textSize="30sp"
+                android:textSize="25sp"
                 style="?android:spinnerStyle"
-                android:layout_below="@+id/medicineHourText"
+                android:layout_below="@+id/visitDateText"
                 />
 
         <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
-                android:layout_below="@+id/medicine_time_picker_button"
-                android:text="Nazwa leku"
+                android:text="Godzina wizyty"
+                android:layout_below="@id/visit_date_picker_button"
                 android:layout_marginTop="20dp"
-                android:id="@+id/medicineNameText"/>
+                android:id="@+id/visitHourText"/>
+
+        <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/visit_time_picker_button"
+                android:layout_centerHorizontal="true"
+                android:textAlignment="center"
+                android:layout_marginTop="5dp"
+                android:textSize="30sp"
+                style="?android:spinnerStyle"
+                android:layout_below="@+id/visitHourText"
+                />
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/addressText"
+                android:layout_marginTop="5dp"
+                android:layout_marginStart="15dp"
+                android:layout_below="@+id/visit_time_picker_button"
+                android:text="Adres"/>
 
         <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/medicineNameEdit"
+                android:id="@+id/visitAddressEdit"
                 android:layout_centerHorizontal="true"
                 android:textAlignment="center"
                 android:layout_marginTop="5dp"
                 android:textSize="25sp"
-                android:layout_below="@+id/medicineNameText"
+                android:layout_below="@+id/addressText"
                 android:inputType="text"/>
 
         <TextView
-                android:id="@+id/doseText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:id="@+id/doctorText"
                 android:layout_marginStart="15dp"
-                android:layout_marginTop="20dp"
-                android:layout_below="@id/medicineNameEdit"
-                android:text="Dawka" />
+                android:layout_marginTop="5dp"
+                android:layout_below="@+id/visitAddressEdit"
+                android:text="Lekarz"/>
 
         <EditText
-                android:id="@+id/doseValue"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/doseText"
+                android:id="@+id/visitDoctorEdit"
                 android:layout_centerHorizontal="true"
-                android:textSize="25sp"
                 android:textAlignment="center"
-                android:inputType="text"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:layout_marginTop="5dp"
+                android:textSize="25sp"
+                android:layout_below="@+id/doctorText"
+                android:inputType="text"/>
 
         <TextView
-                android:id="@+id/additionalInfoMedicineText"
+                android:id="@+id/visitStatusText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
+                android:layout_below="@+id/visitDoctorEdit"
                 android:layout_marginTop="20dp"
-                android:layout_below="@id/doseValue"
-                android:text="Dodatkowe informacje" />
+                android:text="Status wizyty" />
 
         <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/additionalInfo"
+                android:id="@+id/visitStatus"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
                 android:layout_width="match_parent"
                 android:layout_marginStart="20dp"
@@ -124,14 +128,14 @@
                 android:theme="@style/Theme.MaterialComponents.DayNight"
                 android:layout_marginTop="5dp"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/additionalInfoMedicineText"
+                android:layout_below="@+id/visitStatusText"
                 android:textAlignment="center"
                 >
 
             <AutoCompleteTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/additionalInfo_items"
+                    android:id="@+id/visitStatus_items"
                     android:textAlignment="center"
                     android:focusable="false"
                     android:inputType="none"/>
@@ -141,9 +145,9 @@
         <ImageButton
                 android:layout_width="90dp"
                 android:layout_height="90dp"
-                android:layout_below="@+id/additionalInfo"
+                android:layout_below="@+id/visitStatus"
                 android:background="@drawable/roundedbutton"
-                android:id="@+id/deleteMedicineButton"
+                android:id="@+id/deleteVisitButton"
                 android:layout_alignParentStart="true"
                 android:layout_marginStart="50dp"
                 android:layout_marginTop="50dp"
@@ -153,9 +157,9 @@
         <ImageButton
                 android:layout_width="90dp"
                 android:layout_height="90dp"
-                android:layout_below="@+id/additionalInfo"
+                android:layout_below="@+id/visitStatus"
                 android:background="@drawable/roundedbutton"
-                android:id="@+id/confirmMedicineButton"
+                android:id="@+id/confirmVisitButton"
                 android:layout_alignParentEnd="true"
                 android:layout_marginEnd="50dp"
                 android:layout_marginTop="50dp"

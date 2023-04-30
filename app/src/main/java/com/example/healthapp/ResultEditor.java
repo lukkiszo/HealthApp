@@ -12,9 +12,11 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentTransaction;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.util.Calendar;
+
 public class ResultEditor extends AppCompatActivity implements DayChosenInterface{
 
-    String[] items = {"Cukier", "Ciśnienie krwi, puls i saturacja", "Temperatura ciała", "Harmonogram przyjmowania leku"};
+    String[] items = {"Cukier", "Ciśnienie krwi, puls i saturacja", "Temperatura ciała", "Harmonogram przyjmowania leku", "Harmonogram wizyt"};
 
     TextInputLayout textInputLayout;
     AutoCompleteTextView autoCompleteTextView;
@@ -24,6 +26,7 @@ public class ResultEditor extends AppCompatActivity implements DayChosenInterfac
     public static String medicineDateToChosen = "";
     private ImageButton addResultFromCamera;
     private String type = "";
+    private String date = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,11 +52,15 @@ public class ResultEditor extends AppCompatActivity implements DayChosenInterfac
         type = intent.getStringExtra("type");
         autoCompleteTextView.setText(type, false);
 
+        if (type.equals("Harmonogram wizyt")){
+            date = intent.getStringExtra("date");
+        }
+
         addResultFromCamera = findViewById(R.id.openCamera);
         addResultFromCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (autoCompleteTextView.getText().toString().equals("Harmonogram przyjmowania leku")){
+                if (autoCompleteTextView.getText().toString().equals("Harmonogram przyjmowania leku") || autoCompleteTextView.getText().toString().equals("Harmonogram wizyt")){
                     Toast.makeText(getApplicationContext(), "Nie ma możliwości dodania rekordu za pomocą kamery", Toast.LENGTH_LONG).show();
                 } else {
                     Intent intent = new Intent(getApplicationContext(), TextRecognitionActivity.class);
@@ -64,7 +71,7 @@ public class ResultEditor extends AppCompatActivity implements DayChosenInterfac
             }
         });
 
-        changeFragment(type, intent.getIntExtra("position", -1));
+        changeFragment(type, intent.getIntExtra("position", -1), date);
 
         autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -72,8 +79,12 @@ public class ResultEditor extends AppCompatActivity implements DayChosenInterfac
                 type = parent.getItemAtPosition(position).toString();
                 Toast.makeText(parent.getContext(), "Selected: " + type, Toast.LENGTH_LONG).show();
 
+                if (type.equals("Harmonogram wizyt")){
+                    Calendar cal = Calendar.getInstance();
+                    date = cal.get(Calendar.DAY_OF_MONTH) + " " + (cal.get(Calendar.MONTH) + 1) + " " + cal.get(Calendar.YEAR);
+                }
 
-                changeFragment(type, intent.getIntExtra("position", -1));
+                changeFragment(type, intent.getIntExtra("position", -1), date);
             }
         });
 
@@ -104,7 +115,7 @@ public class ResultEditor extends AppCompatActivity implements DayChosenInterfac
 
 
 
-    private void changeFragment(String choice, int position){
+    private void changeFragment(String choice, int position, String date){
         // zmiana wyświetlanych fragmentów
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         // Replace the contents of the container with the new fragment
@@ -153,6 +164,16 @@ public class ResultEditor extends AppCompatActivity implements DayChosenInterfac
                 medicineEditorFragment.setArguments(bundle4);
                 ft.replace(R.id.resultEdit, medicineEditorFragment);
                 break;
+
+            case "Harmonogram wizyt":
+                Bundle bundle5 = new Bundle();
+                bundle5.putInt("position", position);
+                bundle5.putString("date", date);
+                MedicalVisitEditorFragment visitEditorFragment = new MedicalVisitEditorFragment();
+                visitEditorFragment.setArguments(bundle5);
+                ft.replace(R.id.resultEdit, visitEditorFragment);
+                break;
+
 
             default:
                 break;

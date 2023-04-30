@@ -152,8 +152,6 @@ public class MedicineEditorFragment extends Fragment{
                             addNewRangeMedicine(ResultEditor.medicineDateFromChosen, ResultEditor.medicineDateToChosen, timeButton.getText().toString(), medicineNameEditText.getText().toString(), doseEditText.getText().toString(), annotation);
                             break;
                     }
-
-//                    addNewResult(dateButton.getText().toString(), timeButton.getText().toString(), Integer.parseInt(result.getText().toString()), annot);
                 }
                 else {
                     Toast.makeText(getActivity(), "Proszę uzupełnić wszystkie wartości", Toast.LENGTH_LONG).show();
