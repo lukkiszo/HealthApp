@@ -23,7 +23,7 @@
 
             <item android:title="Kalendarz wizyt" android:id="@+id/visitScheduleNav" android:icon="@drawable/ic_timesheet2"/>
 
-            <item android:title="Podsumowanie miesiąca" android:icon="@drawable/ic_month_summary"/>
+            <item android:title="Podsumowanie miesiąca" android:id="@+id/summaryNav" android:icon="@drawable/ic_month_summary"/>
         </menu>
     </item>
 

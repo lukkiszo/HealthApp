@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".MonthSummaryActivity">
+
+    <androidx.appcompat.widget.Toolbar
+            android:id="@+id/summary_activity_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:navigationIcon="?attr/homeAsUpIndicator">
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/summaryDate"
+            android:gravity="center"
+            android:layout_marginTop="20dp"
+            android:layout_below="@+id/summary_activity_toolbar">
+
+        <Button
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:text="&lt;-"
+                android:id="@+id/summaryDate_monthBefore"
+                />
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:textSize="18sp"
+                android:layout_toEndOf="@+id/summaryDate_monthBefore"
+                android:id="@+id/summary_dateText"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp"
+                android:layout_centerInParent="true"/>
+
+        <Button
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:text="->"
+                android:id="@+id/summaryDate_monthAfter"
+                android:layout_toEndOf="@+id/summary_dateText"
+                />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/summarySugar"
+            android:gravity="center"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/border"
+            android:layout_below="@+id/summaryDate">
+
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Cukier"
+                android:textAlignment="center"
+                android:id="@+id/sugarSummaryText"
+                android:textSize="24sp"
+                android:textStyle="bold"/>
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginStart="10dp"
+                android:text="Średnia : 85 mg/dl"
+                android:id="@+id/sugarSummaryMean"
+                android:layout_below="@+id/sugarSummaryText"
+                android:textSize="24sp"
+                android:textStyle="bold"/>
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginBottom="5dp"
+                android:text="Liczba dni w normie : 23 / 31"
+                android:id="@+id/sugarSummaryDays"
+                android:layout_below="@+id/sugarSummaryMean"
+                android:textSize="24sp"
+                android:textStyle="bold"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/summarySteps"
+            android:gravity="center"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/border"
+            android:layout_below="@+id/summarySugar">
+
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Kroki"
+                android:textAlignment="center"
+                android:id="@+id/stepsSummaryText"
+                android:textSize="24sp"
+                android:textStyle="bold"/>
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginStart="10dp"
+                android:text="Średnia : 3214"
+                android:id="@+id/stepsSummaryMean"
+                android:layout_below="@+id/stepsSummaryText"
+                android:textSize="24sp"
+                android:textStyle="bold"/>
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginBottom="5dp"
+                android:text="Liczba dni w normie : 23 / 31"
+                android:id="@+id/stepsSummaryDays"
+                android:layout_below="@+id/stepsSummaryMean"
+                android:textSize="24sp"
+                android:textStyle="bold"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/summaryBloodPressure"
+            android:gravity="center"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/border"
+            android:layout_below="@+id/summarySteps">
+
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Ciśnienie krwi"
+                android:textAlignment="center"
+                android:id="@+id/bloodPressureSummaryText"
+                android:textSize="24sp"
+                android:textStyle="bold"/>
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginStart="10dp"
+                android:text="Średnie ciśnienie : 124 / 94"
+                android:id="@+id/bloodPressureSummaryMean"
+                android:layout_below="@+id/bloodPressureSummaryText"
+                android:textSize="24sp"
+                android:textStyle="bold"/>
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginStart="10dp"
+                android:text="Średnia saturacja : 99 %"
+                android:id="@+id/saturationSummaryMean"
+                android:layout_below="@+id/bloodPressureSummaryMean"
+                android:textSize="24sp"
+                android:textStyle="bold"/>
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginStart="10dp"
+                android:text="Średnie tętno : 77 BPM"
+                android:id="@+id/pulseSummaryMean"
+                android:layout_below="@+id/saturationSummaryMean"
+                android:textSize="24sp"
+                android:textStyle="bold"/>
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginBottom="5dp"
+                android:text="Liczba dni w normie : 23 / 31"
+                android:id="@+id/bloodPressureSummaryDays"
+                android:layout_below="@+id/pulseSummaryMean"
+                android:textSize="24sp"
+                android:textStyle="bold"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/summaryTemperature"
+            android:gravity="center"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/border"
+            android:layout_below="@+id/summaryBloodPressure">
+
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Temperatura"
+                android:textAlignment="center"
+                android:id="@+id/temperatureSummaryText"
+                android:textSize="24sp"
+                android:textStyle="bold"/>
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginStart="10dp"
+                android:text="Średnia : 36.6 °C"
+                android:id="@+id/temperatureSummaryMean"
+                android:layout_below="@+id/temperatureSummaryText"
+                android:textSize="24sp"
+                android:textStyle="bold"/>
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginBottom="5dp"
+                android:text="Liczba dni w normie : 23 / 31"
+                android:id="@+id/temperatureSummaryDays"
+                android:layout_below="@+id/temperatureSummaryMean"
+                android:textSize="24sp"
+                android:textStyle="bold"/>
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

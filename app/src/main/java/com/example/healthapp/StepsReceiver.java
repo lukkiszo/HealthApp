@@ -43,7 +43,13 @@ public class StepsReceiver extends BroadcastReceiver {
 
         stepsResultArrayList = gson.fromJson(json, type);
 
-        String currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
+        Date dt = new Date();
+        Calendar c = Calendar.getInstance();
+        c.setTime(dt);
+        c.add(Calendar.DATE, -1);
+        dt = c.getTime();
+
+        String currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(dt);
         int day = Integer.parseInt(currentDate.split("-")[0]);
         int month = Integer.parseInt(currentDate.split("-")[1]);
         int year = Integer.parseInt(currentDate.split("-")[2]);

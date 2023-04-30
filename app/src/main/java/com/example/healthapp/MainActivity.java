@@ -304,7 +304,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             managerCompat.notify(1004, builder.build());
         }
 
-        if (lastSaturationResult < 90){
+        if (lastSaturationResult < 95){
             NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "Saturation")
                     .setSmallIcon(R.drawable.ic_notification_icon)
                     .setContentTitle("Nieprawidłowa saturacja!")
@@ -353,8 +353,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         Calendar c = Calendar.getInstance();
-        c.set(Calendar.HOUR_OF_DAY, 23);
-        c.set(Calendar.MINUTE, 59);
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 1);
         c.set(Calendar.SECOND, 0);
 
         startAlarm(c);
@@ -555,6 +555,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             case R.id.medicineScheduleNav:
                 intent = new Intent(this, MedicinesActivity.class);
+                startActivity(intent);
+                break;
+
+            case R.id.summaryNav:
+                intent = new Intent(this, MonthSummaryActivity.class);
                 startActivity(intent);
                 break;
 
