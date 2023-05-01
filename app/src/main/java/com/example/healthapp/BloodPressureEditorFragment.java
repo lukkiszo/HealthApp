@@ -103,8 +103,8 @@ public class BloodPressureEditorFragment extends Fragment {
         }
         else
         {
-            dateButton.setText(SugarEditorFragment.getTodayDate());
-            timeButton.setText(SugarEditorFragment.getCurrentTime());
+            dateButton.setText(Utils.getTodayDate());
+            timeButton.setText(Utils.getCurrentTime());
             autoCompleteTextView.setText(items[0]);
         }
 
@@ -263,7 +263,7 @@ public class BloodPressureEditorFragment extends Fragment {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                 month += 1;
-                String date = SugarEditorFragment.makeDateString(day, month, year);
+                String date = Utils.makeDateString(day, month, year);
                 dateButton.setText(date);
             }
         };

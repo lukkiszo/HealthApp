@@ -286,7 +286,7 @@ public class StepsResultsFragment extends Fragment {
             ca.add(Calendar.DATE, -1);
             date = ca.getTime();
 
-            StepsResult blankResult = new StepsResult(day + " " + SugarEditorFragment.getMonthFormat(month) + " " + year, 0, 0);
+            StepsResult blankResult = new StepsResult(day + " " + Utils.getMonthFormat(month) + " " + year, 0, 0);
             chartArrayList.add(blankResult);
 
             for (StepsResult stepsResult : stepsResultArrayList){

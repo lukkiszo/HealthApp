@@ -296,7 +296,7 @@ public class SugarResultsFragment extends Fragment implements OnChartValueSelect
             ca.add(Calendar.DATE, -1);
             date = ca.getTime();
 
-            SugarResult blankResult = new SugarResult(day + " " + SugarEditorFragment.getMonthFormat(month) + " " + year, "00:00", 0, "");
+            SugarResult blankResult = new SugarResult(day + " " + Utils.getMonthFormat(month) + " " + year, "00:00", 0, "");
             chartArrayList.add(blankResult);
 
             for (SugarResult sugarResult : sugarResultsArrayList){

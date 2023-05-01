@@ -20,7 +20,7 @@ public class SugarResult implements Comparable<SugarResult>{
         this.result = res;
         this.annotation = annot;
         this.year = Integer.parseInt(addedDate.split(" ")[2]);
-        this.month = getMonthInt(addedDate.split(" ")[1]);
+        this.month = Utils.getMonthInt(addedDate.split(" ")[1]);
         this.day = Integer.parseInt(addedDate.split(" ")[0]);
         this.thour = Integer.parseInt(addedHour.split(":")[0]);
         this.minutes = Integer.parseInt(addedHour.split(":")[1]);
@@ -78,47 +78,6 @@ public class SugarResult implements Comparable<SugarResult>{
     public void setMonth(int month) { this.month = month; }
 
     public void setYear(int year) { this.year = year; }
-
-    public static int getMonthInt(String month){
-        switch (month) {
-            case "Styczeń":
-                return 1;
-
-            case "Luty":
-                return 2;
-
-            case "Marzec":
-                return 3;
-
-            case "Kwiecień":
-                return 4;
-
-            case "Maj":
-                return 5;
-
-            case "Czerwiec":
-                return 6;
-
-            case "Lipiec":
-                return 7;
-
-            case "Sierpień":
-                return 8;
-
-            case "Wrzesień":
-                return 9;
-
-            case "Październik":
-                return 10;
-
-            case "Listopad":
-                return 11;
-
-            case "Grudzień":
-                return 12;
-        }
-        return 1;
-    }
 
     public int compareTo(SugarResult compareResult) {
 

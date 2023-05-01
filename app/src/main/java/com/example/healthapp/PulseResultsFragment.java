@@ -294,7 +294,7 @@ public class PulseResultsFragment extends Fragment {
             ca.add(Calendar.DATE, -1);
             date = ca.getTime();
 
-            BloodPressureResult blankResult = new BloodPressureResult(day + " " + SugarEditorFragment.getMonthFormat(month) + " " + year, "00:00", 0, 0, 0, 0, "");
+            BloodPressureResult blankResult = new BloodPressureResult(day + " " + Utils.getMonthFormat(month) + " " + year, "00:00", 0, 0, 0, 0, "");
             chartArrayList.add(blankResult);
 
             for (BloodPressureResult bloodPressureResult : bloodPressureResultArrayList){

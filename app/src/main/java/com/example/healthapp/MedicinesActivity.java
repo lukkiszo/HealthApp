@@ -53,7 +53,7 @@ public class MedicinesActivity extends AppCompatActivity {
         dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
 
         dateText = findViewById(R.id.medicine_dateText);
-        dateText.setText(String.format("%s\n%s", getDayString(dayOfWeek - 1), SugarEditorFragment.makeDateString(day, month + 1, year)));
+        dateText.setText(String.format("%s\n%s", Utils.getDayString(dayOfWeek - 1), Utils.makeDateString(day, month + 1, year)));
 
         listView = findViewById(R.id.medicines_listview);
 
@@ -97,7 +97,7 @@ public class MedicinesActivity extends AppCompatActivity {
         month = cal.get(Calendar.MONTH);
         day = cal.get(Calendar.DAY_OF_MONTH);
         dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
-        dateText.setText(String.format("%s\n%s", getDayString(dayOfWeek - 1), SugarEditorFragment.makeDateString(day, month + 1, year)));
+        dateText.setText(String.format("%s\n%s", Utils.getDayString(dayOfWeek - 1), Utils.makeDateString(day, month + 1, year)));
         getDailyMedicines();
     }
 
@@ -107,7 +107,7 @@ public class MedicinesActivity extends AppCompatActivity {
         month = cal.get(Calendar.MONTH);
         day = cal.get(Calendar.DAY_OF_MONTH);
         dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
-        dateText.setText(String.format("%s\n%s", getDayString(dayOfWeek - 1), SugarEditorFragment.makeDateString(day, month + 1, year)));
+        dateText.setText(String.format("%s\n%s", Utils.getDayString(dayOfWeek - 1), Utils.makeDateString(day, month + 1, year)));
         getDailyMedicines();
     }
 
@@ -126,7 +126,7 @@ public class MedicinesActivity extends AppCompatActivity {
         for (MedicineScheduleItem medicineItem : medicineScheduleItemArrayList) {
             if (medicineItem.getPeriodicity().equals("Codziennie")){
                 listViewArrayList.add(medicineItem);
-            } else if (medicineItem.getPeriodicity().equals("Cyklicznie") && medicineItem.getDayOfWeek().equals(getDayString(dayOfWeek - 1))){
+            } else if (medicineItem.getPeriodicity().equals("Cyklicznie") && medicineItem.getDayOfWeek().equals(Utils.getDayString(dayOfWeek - 1))){
                 listViewArrayList.add(medicineItem);
             } else if (medicineItem.getPeriodicity().equals("W zakresie dat")){
                 Calendar medicineDateFrom = Calendar.getInstance();
@@ -228,33 +228,6 @@ public class MedicinesActivity extends AppCompatActivity {
             }
         });
 
-    }
-
-    public static String getDayString(int numberOfDay){
-        switch (numberOfDay) {
-            case 1:
-                return "Poniedziałek";
-
-            case 2:
-                return "Wtorek";
-
-            case 3:
-                return "Środa";
-
-            case 4:
-                return "Czwartek";
-
-            case 5:
-                return "Piątek";
-
-            case 6:
-                return "Sobota";
-
-            case 0:
-                return "Niedziela";
-
-        }
-        return "";
     }
 
     @Override

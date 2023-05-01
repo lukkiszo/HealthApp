@@ -59,7 +59,7 @@ public class MonthSummaryActivity extends AppCompatActivity {
         currentMonth = summaryMonth;
         currentYear = summaryYear;
 
-        monthTextView.setText(SugarEditorFragment.getMonthFormat(summaryMonth + 1) + " " + summaryYear);
+        monthTextView.setText(Utils.getMonthFormat(summaryMonth + 1) + " " + summaryYear);
 
         monthBeforeButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -283,7 +283,7 @@ public class MonthSummaryActivity extends AppCompatActivity {
             summaryMonth = 11;
             summaryYear -= 1;
         }
-        monthTextView.setText(SugarEditorFragment.getMonthFormat(summaryMonth + 1) + " " + summaryYear);
+        monthTextView.setText(Utils.getMonthFormat(summaryMonth + 1) + " " + summaryYear);
         checkSugarMonthResults();
         checkBloodPressureMonthResults();
         checkTemperatureMonthResults();
@@ -297,7 +297,7 @@ public class MonthSummaryActivity extends AppCompatActivity {
                 summaryMonth = 0;
                 summaryYear += 1;
             }
-            monthTextView.setText(SugarEditorFragment.getMonthFormat(summaryMonth + 1) + " " + summaryYear);
+            monthTextView.setText(Utils.getMonthFormat(summaryMonth + 1) + " " + summaryYear);
             checkSugarMonthResults();
             checkBloodPressureMonthResults();
             checkTemperatureMonthResults();

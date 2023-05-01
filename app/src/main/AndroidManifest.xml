@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION"/>
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
+    <uses-permission android:name="android.permission.SET_ALARM"/>
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
@@ -24,8 +25,11 @@
             android:supportsRtl="true"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
             tools:targetApi="m">
-        <activity android:name=".MonthSummaryActivity">
-        </activity>
+        <receiver
+                android:name=".VisitReminderReceiver"
+                android:enabled="true"
+                android:exported="true">
+        </receiver>
 
         <service
                 android:name=".FallDetectionService"
@@ -33,11 +37,21 @@
                 android:exported="true">
         </service>
 
-        <activity android:name=".VisitScheduleActivity">
+        <activity
+                android:name=".MonthSummaryActivity"
+                android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".TextRecognitionActivity">
+        <activity
+                android:name=".VisitScheduleActivity"
+                android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".MedicinesActivity">
+        <activity
+                android:name=".TextRecognitionActivity"
+                android:screenOrientation="portrait">
+        </activity>
+        <activity
+                android:name=".MedicinesActivity"
+                android:screenOrientation="portrait">
         </activity>
         <activity
                 android:name=".StepsActivity"

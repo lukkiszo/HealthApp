@@ -66,8 +66,8 @@ public class DateRangeMedicineFragment extends Fragment {
             dateButtonFrom.setText(medicineScheduleItemArrayList.get(clickedItem).getDateFrom());
             dateButtonTo.setText(medicineScheduleItemArrayList.get(clickedItem).getDateTo());
         } else {
-            dateButtonFrom.setText(SugarEditorFragment.getTodayDate());
-            dateButtonTo.setText(SugarEditorFragment.getTodayDate());
+            dateButtonFrom.setText(Utils.getTodayDate());
+            dateButtonTo.setText(Utils.getTodayDate());
         }
 
         dateButtonFrom.setOnClickListener(new View.OnClickListener() {
@@ -91,9 +91,9 @@ public class DateRangeMedicineFragment extends Fragment {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                 month += 1;
-                String date = SugarEditorFragment.makeDateString(day, month, year);
+                String date = Utils.makeDateString(day, month, year);
                 dateButtonFrom.setText(date);
-                listener.onDateFromSelected(SugarEditorFragment.makeDateString(day, month - 1, year));
+                listener.onDateFromSelected(Utils.makeDateString(day, month - 1, year));
             }
         };
 
@@ -107,7 +107,7 @@ public class DateRangeMedicineFragment extends Fragment {
         datePickerDialogFrom = new DatePickerDialog(getActivity(), style, dateSetListener, yearFrom, monthFrom, dayFrom);
         datePickerDialogFrom.getDatePicker().setMinDate(System.currentTimeMillis() - 10000);
 
-        ResultEditor.medicineDateFromChosen = SugarEditorFragment.makeDateString(dayFrom, monthFrom, yearFrom);
+        ResultEditor.medicineDateFromChosen = Utils.makeDateString(dayFrom, monthFrom, yearFrom);
     }
 
     private void initDateToPicker(){
@@ -115,9 +115,9 @@ public class DateRangeMedicineFragment extends Fragment {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                 month += 1;
-                String date = SugarEditorFragment.makeDateString(day, month, year);
+                String date = Utils.makeDateString(day, month, year);
                 dateButtonTo.setText(date);
-                listener.onDateToSelected(SugarEditorFragment.makeDateString(day, month - 1, year));
+                listener.onDateToSelected(Utils.makeDateString(day, month - 1, year));
             }
         };
 
@@ -130,7 +130,7 @@ public class DateRangeMedicineFragment extends Fragment {
 
         datePickerDialogTo = new DatePickerDialog(getActivity(), style, dateSetListener, yearTo, monthTo, dayTo);
         datePickerDialogTo.getDatePicker().setMinDate(System.currentTimeMillis() - 10000);
-        ResultEditor.medicineDateToChosen = SugarEditorFragment.makeDateString(dayTo, monthTo, yearTo);
+        ResultEditor.medicineDateToChosen = Utils.makeDateString(dayTo, monthTo, yearTo);
     }
 
     private void loadResults(){

@@ -68,7 +68,7 @@ public class StepsEditorFragment extends Fragment {
         }
         else
         {
-            dateButton.setText(SugarEditorFragment.getTodayDate());
+            dateButton.setText(Utils.getTodayDate());
         }
 
         dateButton.setOnClickListener(new View.OnClickListener() {
@@ -149,7 +149,7 @@ public class StepsEditorFragment extends Fragment {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                 month += 1;
-                String date = SugarEditorFragment.makeDateString(day, month, year);
+                String date = Utils.makeDateString(day, month, year);
                 dateButton.setText(date);
             }
         };

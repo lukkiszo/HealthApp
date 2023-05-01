@@ -61,7 +61,7 @@ public class OneTimeMedicineFragment extends Fragment {
         if (clickedItem >= 0){
             dateButton.setText(medicineScheduleItemArrayList.get(clickedItem).getDate());
         } else {
-            dateButton.setText(SugarEditorFragment.getTodayDate());
+            dateButton.setText(Utils.getTodayDate());
         }
 
         dateButton.setOnClickListener(new View.OnClickListener() {
@@ -93,9 +93,9 @@ public class OneTimeMedicineFragment extends Fragment {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                 month += 1;
-                String date = SugarEditorFragment.makeDateString(day, month, year);
+                String date = Utils.makeDateString(day, month, year);
                 dateButton.setText(date);
-                listener.onDateSelected(SugarEditorFragment.makeDateString(day, month - 1, year));
+                listener.onDateSelected(Utils.makeDateString(day, month - 1, year));
             }
         };
 
@@ -109,6 +109,6 @@ public class OneTimeMedicineFragment extends Fragment {
         datePickerDialog = new DatePickerDialog(getActivity(), style, dateSetListener, year, month, day);
         datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis() - 10000);
 
-        ResultEditor.medicineDateChosen = SugarEditorFragment.makeDateString(day, month, year);
+        ResultEditor.medicineDateChosen = Utils.makeDateString(day, month, year);
     }
 }
