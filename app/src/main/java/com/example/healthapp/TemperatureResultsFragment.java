@@ -292,7 +292,7 @@ public class TemperatureResultsFragment extends Fragment implements OnChartValue
             ca.add(Calendar.DATE, -1);
             date = ca.getTime();
 
-            TemperatureResult blankResult = new TemperatureResult(day + " " + SugarEditorFragment.getMonthFormat(month) + " " + year, "00:00", 0);
+            TemperatureResult blankResult = new TemperatureResult(day + " " + Utils.getMonthFormat(month) + " " + year, "00:00", 0);
             chartArrayList.add(blankResult);
 
             for (TemperatureResult temperatureResult : temperatureResultArrayList){

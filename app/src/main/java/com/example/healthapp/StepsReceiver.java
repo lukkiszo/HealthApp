@@ -58,16 +58,16 @@ public class StepsReceiver extends BroadcastReceiver {
 
         if (stepsResultArrayList == null || stepsResultArrayList.size() == 0) {
             stepsResultArrayList = new ArrayList<>();
-            result = new StepsResult(day + " " + SugarEditorFragment.getMonthFormat(month) + " " + year, stepCount, stepCount);
+            result = new StepsResult(day + " " + Utils.getMonthFormat(month) + " " + year, stepCount, stepCount);
             stepsResultArrayList.add(result);
         } else if (stepsResultArrayList.get(stepsResultArrayList.size() - 1).getDay() != day
                 || stepsResultArrayList.get(stepsResultArrayList.size() - 1).getMonth() != month){
             lastDaySteps = stepsResultArrayList.get(stepsResultArrayList.size() - 1).getAbsoluteResult();
 
             if (lastDaySteps > stepCount){
-                result = new StepsResult(day + " " + SugarEditorFragment.getMonthFormat(month) + " " + year, stepCount, stepCount);
+                result = new StepsResult(day + " " + Utils.getMonthFormat(month) + " " + year, stepCount, stepCount);
             } else {
-                result = new StepsResult(day + " " + SugarEditorFragment.getMonthFormat(month) + " " + year, stepCount - lastDaySteps, stepCount);
+                result = new StepsResult(day + " " + Utils.getMonthFormat(month) + " " + year, stepCount - lastDaySteps, stepCount);
             }
             stepsResultArrayList.add(result);
         }

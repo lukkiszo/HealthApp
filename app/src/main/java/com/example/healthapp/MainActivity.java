@@ -200,7 +200,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         for (MedicineScheduleItem medicineItem : medicineScheduleItemArrayList) {
             if (medicineItem.getPeriodicity().equals("Codziennie")){
                 todayMedicines.add(medicineItem);
-            } else if (medicineItem.getPeriodicity().equals("Cyklicznie") && medicineItem.getDayOfWeek().equals(MedicinesActivity.getDayString(dayOfWeek - 1))){
+            } else if (medicineItem.getPeriodicity().equals("Cyklicznie") && medicineItem.getDayOfWeek().equals(Utils.getDayString(dayOfWeek - 1))){
                 todayMedicines.add(medicineItem);
             } else if (medicineItem.getPeriodicity().equals("W zakresie dat")){
                 Calendar medicineDateFrom = Calendar.getInstance();
@@ -340,7 +340,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Log.d("reminderBroadcast", pendingIntent1.toString());
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent1);
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), 24 * 60 * 60 * 1000, pendingIntent1);
         }
     }
 
@@ -382,7 +382,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intent, PendingIntent.FLAG_MUTABLE);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent);
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), 24 * 60 * 60 * 1000 , pendingIntent);
         }
     }
 
@@ -393,12 +393,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             int PERMISSION_ALL = 1;
             String[] PERMISSIONS = {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.SEND_SMS};
             ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSION_ALL);
-//            return;
         }
 
         Intent intent = new Intent(getApplicationContext(), FallDetectionService.class);
         startService(intent);
-
     }
 
     @Override

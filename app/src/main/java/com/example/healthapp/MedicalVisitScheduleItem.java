@@ -21,7 +21,7 @@ public class MedicalVisitScheduleItem {
         this.date = date;
         this.time = time;
         this.year = Integer.parseInt(date.split(" ")[2]);
-        this.month = SugarResult.getMonthInt(date.split(" ")[1]);
+        this.month = Utils.getMonthInt(date.split(" ")[1]);
         this.day = Integer.parseInt(date.split(" ")[0]);
         this.hour = Integer.parseInt(time.split(":")[0]);
         this.minutes = Integer.parseInt(time.split(":")[1]);

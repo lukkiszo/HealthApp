@@ -99,7 +99,7 @@ public class VisitScheduleActivity extends AppCompatActivity {
         listViewArrayList = new ArrayList<>();
 
         for (MedicalVisitScheduleItem visit : medicalVisitScheduleItems){
-            if (visit.getDate().equals(SugarEditorFragment.makeDateString(Integer.parseInt(date.split(" ")[0]),
+            if (visit.getDate().equals(Utils.makeDateString(Integer.parseInt(date.split(" ")[0]),
                     Integer.parseInt(date.split(" ")[1]), Integer.parseInt(date.split(" ")[2])))){
                 listViewArrayList.add(visit);
             }

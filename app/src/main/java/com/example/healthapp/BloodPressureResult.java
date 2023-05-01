@@ -24,7 +24,7 @@ public class BloodPressureResult implements Comparable<BloodPressureResult>{
         this.saturation = res4;
         this.annotation = annot;
         this.year = Integer.parseInt(addedDate.split(" ")[2]);
-        this.month = SugarResult.getMonthInt(addedDate.split(" ")[1]);
+        this.month = Utils.getMonthInt(addedDate.split(" ")[1]);
         this.day = Integer.parseInt(addedDate.split(" ")[0]);
         this.thour = Integer.parseInt(addedHour.split(":")[0]);
         this.minutes = Integer.parseInt(addedHour.split(":")[1]);

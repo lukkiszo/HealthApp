@@ -1,9 +1,13 @@
 package com.example.healthapp;
 
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.*;
@@ -21,7 +25,11 @@ import com.google.gson.reflect.TypeToken;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Type;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -92,7 +100,7 @@ public class MedicineEditorFragment extends Fragment{
             periodicityAutoCompleteTextView.setText(periodicity[0]);
             periodicityChoice = periodicity[0];
             additionalInfoAutoCompleteTextView.setText(items[0]);
-            timeButton.setText(SugarEditorFragment.getCurrentTime());
+            timeButton.setText(Utils.getCurrentTime());
             changeFragment(periodicity[0], clickedItem);
         }
 
@@ -167,7 +175,9 @@ public class MedicineEditorFragment extends Fragment{
 
         MedicineScheduleItem medicineScheduleItem = new MedicineScheduleItem(date, hour, name, dose, annot);
         if(clickedItem >= 0){
+            MedicineScheduleItem item = medicineScheduleItemArrayList.get(clickedItem);
             medicineScheduleItemArrayList.remove(clickedItem);
+            deleteNotifications(item.getIdNumber(), item.getMedicineName());
         }
         medicineScheduleItemArrayList.add(medicineScheduleItem);
 
@@ -176,6 +186,7 @@ public class MedicineEditorFragment extends Fragment{
         String json1 = gson.toJson(medicineScheduleItemArrayList);
         editor.putString("medicines", json1);
         editor.apply();
+        addOneTimeNotification(medicineScheduleItem);
         getActivity().finish();
     }
 
@@ -185,7 +196,9 @@ public class MedicineEditorFragment extends Fragment{
 
         MedicineScheduleItem medicineScheduleItem = new MedicineScheduleItem("W zakresie dat", dateFrom, dateTo, hour, name, dose, annot);
         if(clickedItem >= 0){
+            MedicineScheduleItem item = medicineScheduleItemArrayList.get(clickedItem);
             medicineScheduleItemArrayList.remove(clickedItem);
+            deleteRangeNotifications(item);
         }
         medicineScheduleItemArrayList.add(medicineScheduleItem);
 
@@ -194,6 +207,7 @@ public class MedicineEditorFragment extends Fragment{
         String json1 = gson.toJson(medicineScheduleItemArrayList);
         editor.putString("medicines", json1);
         editor.apply();
+        addRangeNotifications(medicineScheduleItem);
         getActivity().finish();
     }
 
@@ -203,7 +217,9 @@ public class MedicineEditorFragment extends Fragment{
 
         MedicineScheduleItem medicineScheduleItem = new MedicineScheduleItem("Codziennie", "", hour, name, dose, annot);
         if(clickedItem >= 0){
+            MedicineScheduleItem item = medicineScheduleItemArrayList.get(clickedItem);
             medicineScheduleItemArrayList.remove(clickedItem);
+            deleteNotifications(item.getIdNumber(), item.getMedicineName());
         }
         medicineScheduleItemArrayList.add(medicineScheduleItem);
 
@@ -212,6 +228,7 @@ public class MedicineEditorFragment extends Fragment{
         String json1 = gson.toJson(medicineScheduleItemArrayList);
         editor.putString("medicines", json1);
         editor.apply();
+        addEverydayNotification(medicineScheduleItem);
         getActivity().finish();
     }
 
@@ -221,7 +238,9 @@ public class MedicineEditorFragment extends Fragment{
 
         MedicineScheduleItem medicineScheduleItem = new MedicineScheduleItem("Cyklicznie", day, hour, name, dose, annot);
         if(clickedItem >= 0){
+            MedicineScheduleItem item = medicineScheduleItemArrayList.get(clickedItem);
             medicineScheduleItemArrayList.remove(clickedItem);
+            deleteNotifications(item.getIdNumber(), item.getMedicineName());
         }
         medicineScheduleItemArrayList.add(medicineScheduleItem);
 
@@ -230,6 +249,7 @@ public class MedicineEditorFragment extends Fragment{
         String json1 = gson.toJson(medicineScheduleItemArrayList);
         editor.putString("medicines", json1);
         editor.apply();
+        addEveryWeekNotification(medicineScheduleItem);
         getActivity().finish();
     }
 
@@ -254,6 +274,7 @@ public class MedicineEditorFragment extends Fragment{
             SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences("schedule", Context.MODE_PRIVATE);
             Gson gson = new Gson();
 
+            MedicineScheduleItem item = medicineScheduleItemArrayList.get(clickedItem);
             medicineScheduleItemArrayList.remove(clickedItem);
 
             SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -261,6 +282,7 @@ public class MedicineEditorFragment extends Fragment{
             String json1 = gson.toJson(medicineScheduleItemArrayList);
             editor.putString("medicines", json1);
             editor.apply();
+            deleteNotifications(item.getIdNumber(), item.getMedicineName());
         }
         getActivity().finish();
     }
@@ -277,6 +299,140 @@ public class MedicineEditorFragment extends Fragment{
 
         if (medicineScheduleItemArrayList == null) {
             medicineScheduleItemArrayList = new ArrayList<>();
+        }
+    }
+
+    private void deleteNotifications(int id, String medicine){
+        AlarmManager alarmManager = (AlarmManager) Objects.requireNonNull(getActivity()).getSystemService(Context.ALARM_SERVICE);
+
+        Intent intent = new Intent(getActivity(), VisitReminderReceiver.class);
+        intent.putExtra("id", id);
+        intent.putExtra("time", "exact");
+        intent.putExtra("medicineName", medicine);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), id, intent, PendingIntent.FLAG_MUTABLE);
+
+        alarmManager.cancel(pendingIntent);
+        pendingIntent.cancel();
+    }
+
+    private void deleteRangeNotifications(MedicineScheduleItem item){
+        AlarmManager alarmManager = (AlarmManager) Objects.requireNonNull(getActivity()).getSystemService(Context.ALARM_SERVICE);
+
+        LocalDate startDateValue = null;
+        long days = 0;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("d/M/u");
+            String startDate = item.getDateFrom().split(" ")[0] + "/" + Utils.getMonthInt(item.getDateFrom().split(" ")[1]) + "/" + item.getDateFrom().split(" ")[2];
+            String endDate = item.getDateTo().split(" ")[0] + "/" + Utils.getMonthInt(item.getDateTo().split(" ")[1]) + "/" + item.getDateTo().split(" ")[2];
+            startDateValue = LocalDate.parse(startDate, dateFormatter);
+            LocalDate endDateValue = LocalDate.parse(endDate, dateFormatter);
+            days = ChronoUnit.DAYS.between(startDateValue, endDateValue) + 1;
+        }
+
+        for (long i = 0; i < days; i++){
+            Intent intent = new Intent(getActivity(), VisitReminderReceiver.class);
+            intent.putExtra("id", item.getIdNumber());
+            intent.putExtra("time", "exact");
+            intent.putExtra("medicineName", item.getMedicineName());
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), item.getIdNumber() + (int) i, intent, PendingIntent.FLAG_MUTABLE);
+
+            alarmManager.cancel(pendingIntent);
+            pendingIntent.cancel();
+        }
+    }
+
+
+    private void addOneTimeNotification(MedicineScheduleItem item){
+        AlarmManager alarmManager = (AlarmManager) Objects.requireNonNull(getActivity()).getSystemService(Context.ALARM_SERVICE);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(item.getYear(), item.getMonth(), item.getDay());
+        calendar.set(Calendar.HOUR_OF_DAY, item.getHour());
+        calendar.set(Calendar.MINUTE, item.getMinutes());
+        calendar.set(Calendar.SECOND, 0);
+
+        Intent intent = new Intent(getActivity(), VisitReminderReceiver.class);
+        intent.putExtra("id", item.getIdNumber());
+        intent.putExtra("time", "exact");
+        intent.putExtra("medicineName", item.getMedicineName());
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), item.getIdNumber(), intent, PendingIntent.FLAG_MUTABLE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+        }
+    }
+
+    private void addEverydayNotification(MedicineScheduleItem item){
+        AlarmManager alarmManager = (AlarmManager) Objects.requireNonNull(getActivity()).getSystemService(Context.ALARM_SERVICE);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, item.getHour());
+        calendar.set(Calendar.MINUTE, item.getMinutes());
+        calendar.set(Calendar.SECOND, 0);
+
+        Intent intent = new Intent(getActivity(), VisitReminderReceiver.class);
+        intent.putExtra("id", item.getIdNumber());
+        intent.putExtra("time", "exact");
+        intent.putExtra("medicineName", item.getMedicineName());
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), item.getIdNumber(), intent, PendingIntent.FLAG_MUTABLE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 24 * 60 * 60 * 1000, pendingIntent);
+        }
+    }
+
+    private void addEveryWeekNotification(MedicineScheduleItem item){
+        AlarmManager alarmManager = (AlarmManager) Objects.requireNonNull(getActivity()).getSystemService(Context.ALARM_SERVICE);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.DAY_OF_WEEK, Utils.getIntDayOfWeek(item.getDayOfWeek()));
+        calendar.set(Calendar.HOUR_OF_DAY, item.getHour());
+        calendar.set(Calendar.MINUTE, item.getMinutes());
+        calendar.set(Calendar.SECOND, 0);
+
+        Intent intent = new Intent(getActivity(), VisitReminderReceiver.class);
+        intent.putExtra("id", item.getIdNumber());
+        intent.putExtra("time", "exact");
+        intent.putExtra("medicineName", item.getMedicineName());
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), item.getIdNumber(), intent, PendingIntent.FLAG_MUTABLE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 7 * 24 * 60 * 60 * 1000, pendingIntent);
+        }
+    }
+
+    private void addRangeNotifications(MedicineScheduleItem item){
+        AlarmManager alarmManager = (AlarmManager) Objects.requireNonNull(getActivity()).getSystemService(Context.ALARM_SERVICE);
+
+        LocalDate startDateValue = null;
+        long days = 0;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("d/M/u");
+
+            String startDate = item.getDateFrom().split(" ")[0] + "/" +  Utils.getMonthInt(item.getDateFrom().split(" ")[1]) + "/" + item.getDateFrom().split(" ")[2];
+            String endDate = item.getDateTo().split(" ")[0] + "/" + Utils.getMonthInt(item.getDateTo().split(" ")[1]) + "/" + item.getDateTo().split(" ")[2];
+            startDateValue = LocalDate.parse(startDate, dateFormatter);
+            LocalDate endDateValue = LocalDate.parse(endDate, dateFormatter);
+            days = ChronoUnit.DAYS.between(startDateValue, endDateValue) + 1;
+        }
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(item.getDateFrom().split(" ")[0]));
+        calendar.set(Calendar.MONTH, Utils.getMonthInt(item.getDateFrom().split(" ")[1]));
+        calendar.set(Calendar.YEAR, Integer.parseInt(item.getDateFrom().split(" ")[2]));
+        calendar.set(Calendar.HOUR_OF_DAY, item.getHour());
+        calendar.set(Calendar.MINUTE, item.getMinutes());
+        calendar.set(Calendar.SECOND, 0);
+
+        for (long i = 0; i < days; i++){
+            if (i != 0){
+                calendar.add(Calendar.DATE, 1);
+            }
+            Intent intent = new Intent(getActivity(), VisitReminderReceiver.class);
+            intent.putExtra("id", item.getIdNumber());
+            intent.putExtra("time", "exact");
+            intent.putExtra("medicineName", item.getMedicineName());
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), item.getIdNumber() + (int) i, intent, PendingIntent.FLAG_MUTABLE);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+            }
         }
     }
 

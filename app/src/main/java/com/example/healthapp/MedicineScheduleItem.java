@@ -31,7 +31,7 @@ public class MedicineScheduleItem {
         this.date = date;
         this.time = time;
         this.year = Integer.parseInt(date.split(" ")[2]);
-        this.month = SugarResult.getMonthInt(date.split(" ")[1]);
+        this.month = Utils.getMonthInt(date.split(" ")[1]);
         this.day = Integer.parseInt(date.split(" ")[0]);
         this.hour = Integer.parseInt(time.split(":")[0]);
         this.minutes = Integer.parseInt(time.split(":")[1]);
@@ -59,11 +59,11 @@ public class MedicineScheduleItem {
         this.periodicity = periodicity;
         this.dateFrom = dateFrom;
         this.yearFrom = Integer.parseInt(dateFrom.split(" ")[2]);
-        this.monthFrom = SugarResult.getMonthInt(dateFrom.split(" ")[1]);
+        this.monthFrom = Utils.getMonthInt(dateFrom.split(" ")[1]);
         this.dayFrom = Integer.parseInt(dateFrom.split(" ")[0]);
         this.dateTo = dateTo;
         this.yearTo = Integer.parseInt(dateTo.split(" ")[2]);
-        this.monthTo = SugarResult.getMonthInt(dateTo.split(" ")[1]);
+        this.monthTo = Utils.getMonthInt(dateTo.split(" ")[1]);
         this.dayTo = Integer.parseInt(dateTo.split(" ")[0]);
         this.time = time;
         this.hour = Integer.parseInt(time.split(":")[0]);

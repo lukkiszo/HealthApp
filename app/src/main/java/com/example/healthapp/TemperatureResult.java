@@ -21,7 +21,7 @@ public class TemperatureResult implements Comparable<TemperatureResult>{
         this.hour = addedHour;
         this.result = res;
         this.year = Integer.parseInt(addedDate.split(" ")[2]);
-        this.month = SugarResult.getMonthInt(addedDate.split(" ")[1]);
+        this.month = Utils.getMonthInt(addedDate.split(" ")[1]);
         this.day = Integer.parseInt(addedDate.split(" ")[0]);
         this.thour = Integer.parseInt(addedHour.split(":")[0]);
         this.minutes = Integer.parseInt(addedHour.split(":")[1]);

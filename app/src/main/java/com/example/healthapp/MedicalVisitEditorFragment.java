@@ -1,10 +1,10 @@
 package com.example.healthapp;
 
-import android.app.AlertDialog;
-import android.app.DatePickerDialog;
-import android.app.TimePickerDialog;
+import android.app.*;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.*;
@@ -88,9 +88,9 @@ public class MedicalVisitEditorFragment extends Fragment {
         }
         else
         {
-            dateButton.setText(SugarEditorFragment.makeDateString(Integer.parseInt(date.split(" ")[0]),
+            dateButton.setText(Utils.makeDateString(Integer.parseInt(date.split(" ")[0]),
                     Integer.parseInt(date.split(" ")[1]), Integer.parseInt(date.split(" ")[2])));
-            timeButton.setText(SugarEditorFragment.getCurrentTime());
+            timeButton.setText(Utils.getCurrentTime());
             statusAutoCompleteTextView.setText(items[0]);
         }
 
@@ -155,6 +155,7 @@ public class MedicalVisitEditorFragment extends Fragment {
             SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences("schedule", Context.MODE_PRIVATE);
             Gson gson = new Gson();
 
+            MedicalVisitScheduleItem result = medicalVisitScheduleItemArrayList.get(clickedItem);
             medicalVisitScheduleItemArrayList.remove(clickedItem);
 
             SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -162,6 +163,7 @@ public class MedicalVisitEditorFragment extends Fragment {
             String json1 = gson.toJson(medicalVisitScheduleItemArrayList);
             editor.putString("visits", json1);
             editor.apply();
+            deleteNotifications(result.getNumberId());
         }
         getActivity().finish();
     }
@@ -187,7 +189,9 @@ public class MedicalVisitEditorFragment extends Fragment {
 
         MedicalVisitScheduleItem result = new MedicalVisitScheduleItem(givenDate, givenHour, givenName, givenAddress, givenDoctor, givenStatus);
         if(clickedItem >= 0){
+            MedicalVisitScheduleItem resultToDelete = medicalVisitScheduleItemArrayList.get(clickedItem);
             medicalVisitScheduleItemArrayList.remove(clickedItem);
+            deleteNotifications(resultToDelete.getNumberId());
         }
         medicalVisitScheduleItemArrayList.add(result);
 
@@ -196,6 +200,7 @@ public class MedicalVisitEditorFragment extends Fragment {
         String json1 = gson.toJson(medicalVisitScheduleItemArrayList);
         editor.putString("visits", json1);
         editor.apply();
+        addNotifications(result);
         getActivity().finish();
     }
 
@@ -220,18 +225,72 @@ public class MedicalVisitEditorFragment extends Fragment {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                 month += 1;
-                String date = SugarEditorFragment.makeDateString(day, month, year);
+                String date = Utils.makeDateString(day, month, year);
                 dateButton.setText(date);
             }
         };
 
         year = Integer.parseInt(date.split(" ")[2]);
-        month = SugarResult.getMonthInt(date.split(" ")[1]);
+        month = Utils.getMonthInt(date.split(" ")[1]);
         day = Integer.parseInt(date.split(" ")[0]);
 
         int style = AlertDialog.THEME_HOLO_DARK;
 
         datePickerDialog = new DatePickerDialog(getActivity(), style, dateSetListener, year, month - 1, day);
+    }
+
+    private void deleteNotifications(int id){
+        AlarmManager alarmManager = (AlarmManager) Objects.requireNonNull(getActivity()).getSystemService(Context.ALARM_SERVICE);
+
+        Intent intent = new Intent(getActivity(), VisitReminderReceiver.class);
+        intent.putExtra("id", id);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), id, intent, PendingIntent.FLAG_MUTABLE);
+
+        alarmManager.cancel(pendingIntent);
+        pendingIntent.cancel();
+
+        Intent intent1 = new Intent(getActivity(), VisitReminderReceiver.class);
+        intent1.putExtra("id", -1 * id);
+        PendingIntent pendingIntent1 = PendingIntent.getBroadcast(getActivity(), -1 * id, intent1, PendingIntent.FLAG_MUTABLE);
+
+        alarmManager.cancel(pendingIntent1);
+        pendingIntent1.cancel();
+    }
+
+    private void addNotifications(MedicalVisitScheduleItem item){
+        AlarmManager alarmManager = (AlarmManager) Objects.requireNonNull(getActivity()).getSystemService(Context.ALARM_SERVICE);
+
+        // powiadomienie godzine przed wizyta
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(item.getYear(), item.getMonth() - 1, item.getDay());
+        calendar.set(Calendar.HOUR_OF_DAY, item.getHour() - 1);
+        calendar.set(Calendar.MINUTE, item.getMinutes());
+        calendar.set(Calendar.SECOND, 0);
+
+        Intent intent = new Intent(getActivity(), VisitReminderReceiver.class);
+        intent.putExtra("id", item.getNumberId());
+        intent.putExtra("time", "hour");
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), item.getNumberId(), intent, PendingIntent.FLAG_MUTABLE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+        }
+
+        // powiadomienie dzien przed wizyta
+        Calendar calendar1 = Calendar.getInstance();
+        calendar1.set(item.getYear(), item.getMonth() - 1, item.getDay());
+        calendar1.add(Calendar.DATE, -1);
+        calendar1.set(Calendar.HOUR_OF_DAY, item.getHour());
+        calendar1.set(Calendar.MINUTE, item.getMinutes());
+        calendar1.set(Calendar.SECOND, 0);
+
+        Intent intent1 = new Intent(getActivity(), VisitReminderReceiver.class);
+        intent1.putExtra("id", item.getNumberId());
+        intent1.putExtra("time", "day");
+        PendingIntent pendingIntent1 = PendingIntent.getBroadcast(getActivity(), -1 * item.getNumberId(), intent1, PendingIntent.FLAG_MUTABLE);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar1.getTimeInMillis(), pendingIntent1);
+        }
     }
 
 }

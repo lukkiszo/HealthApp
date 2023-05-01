@@ -13,7 +13,7 @@ public class StepsResult {
         this.date = addedDate;
         this.result = res;
         this.year = Integer.parseInt(addedDate.split(" ")[2]);
-        this.month = SugarResult.getMonthInt(addedDate.split(" ")[1]);
+        this.month = Utils.getMonthInt(addedDate.split(" ")[1]);
         this.day = Integer.parseInt(addedDate.split(" ")[0]);
         this.absoluteResult = absoluteResult;
         this.number = (year-2020) * 365 * 1440 + month * 31 * 1440 + day * 1440 + 23 * 60;

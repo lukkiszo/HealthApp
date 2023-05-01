@@ -74,8 +74,8 @@ public class SugarEditorFragment extends Fragment {
         }
         else
         {
-            dateButton.setText(getTodayDate());
-            timeButton.setText(getCurrentTime());
+            dateButton.setText(Utils.getTodayDate());
+            timeButton.setText(Utils.getCurrentTime());
             autoCompleteTextView.setText(items[0]);
         }
 
@@ -189,22 +189,6 @@ public class SugarEditorFragment extends Fragment {
         getActivity().finish();
     }
 
-    public static String getTodayDate(){
-        Calendar cal = Calendar.getInstance();
-        int year = cal.get(Calendar.YEAR);
-        int month = cal.get(Calendar.MONTH);
-        month += 1;
-        int day = cal.get(Calendar.DAY_OF_MONTH);
-        return makeDateString(day, month, year);
-    }
-
-    public static String getCurrentTime(){
-        Calendar cal = Calendar.getInstance();
-        int currentHour = cal.get(Calendar.HOUR_OF_DAY);
-        int currentMinute = cal.get(Calendar.MINUTE);
-        return String.format(Locale.getDefault(), "%02d:%02d", currentHour, currentMinute);
-    }
-
     public void timePicker(){
         TimePickerDialog.OnTimeSetListener onTimeSetListener = new TimePickerDialog.OnTimeSetListener() {
             @Override
@@ -226,7 +210,7 @@ public class SugarEditorFragment extends Fragment {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                 month += 1;
-                String date = makeDateString(day, month, year);
+                String date = Utils.makeDateString(day, month, year);
                 dateButton.setText(date);
             }
         };
@@ -240,51 +224,6 @@ public class SugarEditorFragment extends Fragment {
 
         datePickerDialog = new DatePickerDialog(getActivity(), style, dateSetListener, year, month, day);
         datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
-    }
-
-    public static String makeDateString(int day, int month, int year){
-        return day + " " + getMonthFormat(month) + " " + year;
-    }
-
-    public static String getMonthFormat(int month){
-        switch (month) {
-            case 1:
-                return "Styczeń";
-
-            case 2:
-                return "Luty";
-
-            case 3:
-                return "Marzec";
-
-            case 4:
-                return "Kwiecień";
-
-            case 5:
-                return "Maj";
-
-            case 6:
-                return "Czerwiec";
-
-            case 7:
-                return "Lipiec";
-
-            case 8:
-                return "Sierpień";
-
-            case 9:
-                return "Wrzesień";
-
-            case 10:
-                return "Październik";
-
-            case 11:
-                return "Listopad";
-
-            case 12:
-                return "Grudzień";
-        }
-        return "";
     }
 
 }
