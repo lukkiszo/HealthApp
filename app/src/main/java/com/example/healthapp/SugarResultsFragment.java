@@ -188,7 +188,7 @@ public class SugarResultsFragment extends Fragment implements OnChartValueSelect
 
     private void loadChart(){
         getData();
-        LineDataSet lineDataSet = new LineDataSet(chartArrayList, "Poziom cukru we krwi [mg/dl]");
+        LineDataSet lineDataSet = new LineDataSet(chartArrayList, getString(R.string.SugarChartLabel));
         LineData lineData = new LineData(lineDataSet);
         lineDataSet.setColors(Color.GREEN);
         lineDataSet.setLineWidth(2f);
@@ -319,9 +319,10 @@ public class SugarResultsFragment extends Fragment implements OnChartValueSelect
     }
 
     private void getLastResult(){
-        lastResult.setText(MessageFormat.format("Ostatni wynik = {0} mg/dl", 0));
+        lastResult.setText(MessageFormat.format("{0} {1} mg/dl", getString(R.string.LastResult), 0));
         if (!sugarResultsArrayList.isEmpty()){
-            lastResult.setText(MessageFormat.format("Ostatni wynik = {0} mg/dl", (int) sugarResultsArrayList.get(sugarResultsArrayList.size() - 1).getResult()));
+            lastResult.setText(MessageFormat.format("{0} {1} mg/dl",
+                    getString(R.string.LastResult), (int) sugarResultsArrayList.get(sugarResultsArrayList.size() - 1).getResult()));
         }
     }
 
@@ -330,7 +331,7 @@ public class SugarResultsFragment extends Fragment implements OnChartValueSelect
         for (SugarResult sugarResult : sugarResultsArrayList) {
             sum += sugarResult.getResult();
         }
-        meanResults.setText(MessageFormat.format("Średnia wyników = {0} mg/dl", sum/sugarResultsArrayList.size()));
+        meanResults.setText(MessageFormat.format("{0} {1} mg/dl", getString(R.string.MeanResult), sum/sugarResultsArrayList.size()));
     }
 
     private void reloadChart(){
@@ -357,31 +358,31 @@ public class SugarResultsFragment extends Fragment implements OnChartValueSelect
         if(BMI < 17 || BMI >= 30){
             BMI_text.setTextColor(Color.RED);
             if(BMI < 17){
-                BMI_info.setText("Stan wychudzenia!");
-                if(BMI < 16) BMI_info.setText("Stan wygłodzenia!");
+                BMI_info.setText(R.string.BMI_Emaciation);
+                if(BMI < 16) BMI_info.setText(R.string.BMI_Starvation);
             }
 
             if(BMI >= 30){
-                BMI_info.setText("Stan otyłości 1 stopnia!");
-                if(BMI >= 35) BMI_info.setText("Stan otyłości 2 stopnia!");
-                if(BMI >= 40) BMI_info.setText("Stan otyłości 3 stopnia!");
+                BMI_info.setText(R.string.BMI_Obesity1);
+                if(BMI >= 35) BMI_info.setText(R.string.BMI_Obesity2);
+                if(BMI >= 40) BMI_info.setText(R.string.BMI_Obesity3);
             }
 
         }
         else if (BMI < 18.5 || BMI >= 25){
-            if (BMI < 18.5) BMI_info.setText("Stan niedowagi!");
-            if (BMI >= 25) BMI_info.setText("Stan nadwagi!");
+            if (BMI < 18.5) BMI_info.setText(R.string.BMI_Underweight);
+            if (BMI >= 25) BMI_info.setText(R.string.BMI_Overweight);
 
             BMI_text.setTextColor(Color.YELLOW);
         }
         else {
             BMI_text.setTextColor(Color.GREEN);
-            BMI_info.setText("BMI prawidłowe.");
+            BMI_info.setText(R.string.BMI_Correct);
         }
     }
 
     private void loadResults(){
-        SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences("results", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences(MainActivity.resultsPreferencesName, Context.MODE_PRIVATE);
         Gson gson = new Gson();
 
         String json = sharedPreferences.getString("sugar", null);
@@ -397,7 +398,7 @@ public class SugarResultsFragment extends Fragment implements OnChartValueSelect
 
     private ArrayList<SugarResult> sortSugarResults(ArrayList<SugarResult> results){
 
-        SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences("results", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences(MainActivity.resultsPreferencesName, Context.MODE_PRIVATE);
         Gson gson = new Gson();
 
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -430,7 +431,7 @@ public class SugarResultsFragment extends Fragment implements OnChartValueSelect
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3)
             {
                 Intent intent = new Intent(getActivity(), ResultEditor.class);
-                intent.putExtra("type", "Cukier");
+                intent.putExtra("type", getString(R.string.Sugar));
                 if (finalNumberOfElementsOnPage == 7){
                     intent.putExtra("position", sugarResultsArrayList.size() - 7 * currentListViewPage + position);
                 }

@@ -9,10 +9,12 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.appcompat.widget.Toolbar;
+import androidx.preference.PreferenceManager;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.text.MessageFormat;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -31,11 +33,14 @@ public class MonthSummaryActivity extends AppCompatActivity {
     private ArrayList<BloodPressureResult> bloodPressureResults;
     private ArrayList<TemperatureResult> temperatureResults;
     private ArrayList<StepsResult> stepsResults;
+    private String stepsDailyGoal;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this /* Activity context */);
+        stepsDailyGoal = sharedPreferences.getString("stepsGoal", "");
         setContentView(R.layout.activity_month_summary);
 
         loadResults();
@@ -46,7 +51,7 @@ public class MonthSummaryActivity extends AppCompatActivity {
         if (getSupportActionBar() != null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
-            getSupportActionBar().setTitle("Podsumowanie miesiąca");
+            getSupportActionBar().setTitle(R.string.MonthSummary);
         }
 
         monthAfterButton = findViewById(R.id.summaryDate_monthAfter);
@@ -59,7 +64,11 @@ public class MonthSummaryActivity extends AppCompatActivity {
         currentMonth = summaryMonth;
         currentYear = summaryYear;
 
-        monthTextView.setText(Utils.getMonthFormat(summaryMonth + 1) + " " + summaryYear);
+        if (MainActivity.language.equals("English")){
+            monthTextView.setText(Utils.getMonthFormatEnglish(summaryMonth + 1) + " " + summaryYear);
+        } else {
+            monthTextView.setText(Utils.getMonthFormat(summaryMonth + 1) + " " + summaryYear);
+        }
 
         monthBeforeButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -82,7 +91,7 @@ public class MonthSummaryActivity extends AppCompatActivity {
     }
 
     private void loadResults(){
-        SharedPreferences sharedPreferences = this.getSharedPreferences("results", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = this.getSharedPreferences(MainActivity.resultsPreferencesName, Context.MODE_PRIVATE);
         Gson gson = new Gson();
 
         String json = sharedPreferences.getString("sugar", null);
@@ -144,11 +153,13 @@ public class MonthSummaryActivity extends AppCompatActivity {
         }
 
         if (summaryMonthResults.size() != 0){
-            meanResultsTextView.setText("Średnia : " + String.format("%.2f", (sum / summaryMonthResults.size())) + " mg/dl");
+            meanResultsTextView.setText(MessageFormat.format("{0} {1} mg/dl",
+                    getString(R.string.SummaryMean),
+                    String.format("%.2f", (sum / summaryMonthResults.size()))));
         } else {
-            meanResultsTextView.setText("Średnia : brak danych");
+            meanResultsTextView.setText(R.string.SummaryMeanNoValues);
         }
-        normTextView.setText("Liczba dni w normie : " + numberOfDaysInNorm + " / " + daysInMonth);
+        normTextView.setText(MessageFormat.format("{0} {1} / {2}", getString(R.string.SummaryNoDaysInNorm), numberOfDaysInNorm, daysInMonth));
     }
 
     private void checkBloodPressureMonthResults(){
@@ -179,7 +190,7 @@ public class MonthSummaryActivity extends AppCompatActivity {
         }
         TextView meanBloodPressureResultsTextView = findViewById(R.id.bloodPressureSummaryMean);
         TextView meanSaturationResultsTextView = findViewById(R.id.saturationSummaryMean);
-        TextView meanPulseResultsTextView = findViewById(R.id.temperatureSummaryMean);
+        TextView meanPulseResultsTextView = findViewById(R.id.pulseSummaryMean);
         TextView normTextView = findViewById(R.id.bloodPressureSummaryDays);
 
         int daysInMonth = 0;
@@ -191,15 +202,15 @@ public class MonthSummaryActivity extends AppCompatActivity {
         }
 
         if (summaryMonthResults.size() != 0){
-            meanBloodPressureResultsTextView.setText("Średnie ciśnienie : " + (int)(sumSystolic / summaryMonthResults.size()) + " / " + (int)(sumDiastolic / summaryMonthResults.size()));
-            meanSaturationResultsTextView.setText("Średnia saturacja : " + String.format("%.1f", (sumSaturation / summaryMonthResults.size())) + " %");
-            meanPulseResultsTextView.setText("Średnie tętno : " + (int)(sumPulse / summaryMonthResults.size()) + " BPM");
+            meanBloodPressureResultsTextView.setText(MessageFormat.format("{0} {1} / {2}", getString(R.string.SummaryMeanBloodPressure), (int) (sumSystolic / summaryMonthResults.size()), (int) (sumDiastolic / summaryMonthResults.size())));
+            meanSaturationResultsTextView.setText(MessageFormat.format("{0} {1} %", getString(R.string.SummaryMeanSaturation), String.format("%.1f", (sumSaturation / summaryMonthResults.size()))));
+            meanPulseResultsTextView.setText(MessageFormat.format("{0} {1} BPM", getString(R.string.SummaryMeanPulse), (int) (sumPulse / summaryMonthResults.size())));
         } else {
-            meanBloodPressureResultsTextView.setText("Średnie ciśnienie : brak danych");
-            meanSaturationResultsTextView.setText("Średnia saturacja : brak danych");
-            meanPulseResultsTextView.setText("Średnie tętno : brak danych");
+            meanBloodPressureResultsTextView.setText(R.string.SummaryMeanBloodPressureNoResults);
+            meanSaturationResultsTextView.setText(R.string.SummaryMeanSaturationNoResults);
+            meanPulseResultsTextView.setText(R.string.SummaryMeanPulseNoResults);
         }
-        normTextView.setText("Liczba dni w normie : " + numberOfDaysInNorm + " / " + daysInMonth);
+        normTextView.setText(MessageFormat.format("{0} {1} / {2}", getString(R.string.SummaryNoDaysInNorm), numberOfDaysInNorm, daysInMonth));
     }
 
     private void checkTemperatureMonthResults(){
@@ -232,11 +243,11 @@ public class MonthSummaryActivity extends AppCompatActivity {
         }
 
         if (summaryMonthResults.size() != 0){
-            meanResultsTextView.setText("Średnia : " + String.format("%.1f", (sum / summaryMonthResults.size())) + " °C");
+            meanResultsTextView.setText(MessageFormat.format("{0} {1} °C", getString(R.string.SummaryMean), String.format("%.1f", (sum / summaryMonthResults.size()))));
         } else {
-            meanResultsTextView.setText("Średnia : brak danych");
+            meanResultsTextView.setText(R.string.SummaryMeanNoValues);
         }
-        normTextView.setText("Liczba dni w normie : " + numberOfDaysInNorm + " / " + daysInMonth);
+        normTextView.setText(MessageFormat.format("{0} {1} / {2}", getString(R.string.SummaryNoDaysInNorm), numberOfDaysInNorm, daysInMonth));
     }
 
     private void checkStepsMonthResults(){
@@ -253,7 +264,7 @@ public class MonthSummaryActivity extends AppCompatActivity {
 
         for (StepsResult result : summaryMonthResults){
             sum += result.getResult();
-            if (result.getResult() >= 6000){
+            if (result.getResult() >= Integer.parseInt(stepsDailyGoal)){
                 numberOfDaysInNorm++;
             }
         }
@@ -269,11 +280,11 @@ public class MonthSummaryActivity extends AppCompatActivity {
         }
 
         if (summaryMonthResults.size() != 0){
-            meanResultsTextView.setText("Średnia : " + (int)(sum / summaryMonthResults.size()));
+            meanResultsTextView.setText(MessageFormat.format("{0} {1}", getString(R.string.SummaryMean), (int) (sum / summaryMonthResults.size())));
         } else {
-            meanResultsTextView.setText("Średnia : brak danych");
+            meanResultsTextView.setText(R.string.SummaryMeanNoValues);
         }
-        normTextView.setText("Liczba dni z osiągniętym celem : " + numberOfDaysInNorm + " / " + daysInMonth);
+        normTextView.setText(MessageFormat.format("{0} {1} / {2}", getString(R.string.SummaryStepsNoDays), numberOfDaysInNorm, daysInMonth));
     }
 
 
@@ -283,7 +294,11 @@ public class MonthSummaryActivity extends AppCompatActivity {
             summaryMonth = 11;
             summaryYear -= 1;
         }
-        monthTextView.setText(Utils.getMonthFormat(summaryMonth + 1) + " " + summaryYear);
+        if (MainActivity.language.equals("English")){
+            monthTextView.setText(Utils.getMonthFormatEnglish(summaryMonth + 1) + " " + summaryYear);
+        } else {
+            monthTextView.setText(Utils.getMonthFormat(summaryMonth + 1) + " " + summaryYear);
+        }
         checkSugarMonthResults();
         checkBloodPressureMonthResults();
         checkTemperatureMonthResults();
@@ -297,7 +312,12 @@ public class MonthSummaryActivity extends AppCompatActivity {
                 summaryMonth = 0;
                 summaryYear += 1;
             }
-            monthTextView.setText(Utils.getMonthFormat(summaryMonth + 1) + " " + summaryYear);
+            if (MainActivity.language.equals("English")){
+                monthTextView.setText(Utils.getMonthFormatEnglish(summaryMonth + 1) + " " + summaryYear);
+            } else {
+                monthTextView.setText(Utils.getMonthFormat(summaryMonth + 1) + " " + summaryYear);
+            }
+
             checkSugarMonthResults();
             checkBloodPressureMonthResults();
             checkTemperatureMonthResults();

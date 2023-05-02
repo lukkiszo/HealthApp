@@ -36,8 +36,7 @@
             android:layout_centerHorizontal="true"
             android:textAlignment="center"
             android:textSize="24sp"
-            android:hint="Imię i nazwisko"
-            android:contentDescription="Imię i nazwisko"
+            android:hint="@string/ProfileNameHint"
             android:inputType="textPersonName"/>
 
     <TextView
@@ -47,7 +46,7 @@
             android:layout_alignParentStart="true"
             android:layout_marginStart="100dp"
             android:textSize="22sp"
-            android:text="Wiek"
+            android:text="@string/Age"
             android:textStyle="bold"
             android:gravity="bottom"
             android:id="@+id/age_text"
@@ -65,8 +64,7 @@
             android:gravity="center"
             android:textAlignment="center"
             android:textSize="22sp"
-            android:hint="Wiek"
-            android:contentDescription="Wiek"
+            android:hint="@string/Age"
             android:inputType="number"/>
 
     <TextView
@@ -76,7 +74,7 @@
             android:layout_alignParentStart="true"
             android:layout_marginStart="100dp"
             android:textSize="22sp"
-            android:text="Wzrost"
+            android:text="@string/Height"
             android:textStyle="bold"
             android:gravity="bottom"
             android:id="@+id/height_text"
@@ -94,8 +92,7 @@
             android:gravity="center"
             android:textAlignment="center"
             android:textSize="22sp"
-            android:hint="Wzrost"
-            android:contentDescription="Wzrost"
+            android:hint="@string/Height"
             android:inputType="number"/>
 
     <TextView
@@ -105,7 +102,7 @@
             android:layout_alignParentStart="true"
             android:layout_marginStart="100dp"
             android:textSize="22sp"
-            android:text="Waga"
+            android:text="@string/Weight"
             android:textStyle="bold"
             android:gravity="bottom"
             android:id="@+id/weight_text"
@@ -123,8 +120,7 @@
             android:gravity="center"
             android:textAlignment="center"
             android:textSize="22sp"
-            android:hint="Waga"
-            android:contentDescription="Waga"
+            android:hint="@string/Weight"
             android:inputType="number"/>
 
 
@@ -137,8 +133,7 @@
             android:layout_centerHorizontal="true"
             android:textAlignment="center"
             android:textSize="24sp"
-            android:hint="Telefon do bliskiej osoby"
-            android:contentDescription="Numer telefonu do bliskiej osoby"
+            android:hint="@string/ProfilePhoneNumber"
             android:inputType="phone"
             android:maxLength="15"/>
 

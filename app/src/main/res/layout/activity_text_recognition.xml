@@ -17,7 +17,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="22sp"
-            android:text="Typ wprowadzanego badania : "
+            android:text="@string/ResultTypeHint"
             android:layout_centerHorizontal="true"
             android:textAlignment="center"
             android:layout_below="@+id/camera_toolbar"
@@ -30,8 +30,7 @@
             android:layout_below="@+id/camera_type"
             android:layout_marginTop="20dp"
             android:layout_marginStart="10dp"
-            android:textSize="18sp"
-            android:text="Wynik 1 : 123"/>
+            android:textSize="18sp"/>
 
     <TextView
             android:layout_width="wrap_content"
@@ -40,8 +39,7 @@
             android:layout_below="@+id/value1TextView"
             android:layout_marginTop="20dp"
             android:layout_marginStart="10dp"
-            android:textSize="18sp"
-            android:text="Wynik 2 : 123"/>
+            android:textSize="18sp"/>
 
     <TextView
             android:layout_width="wrap_content"
@@ -50,8 +48,7 @@
             android:layout_below="@+id/value2TextView"
             android:layout_marginTop="20dp"
             android:layout_marginStart="10dp"
-            android:textSize="18sp"
-            android:text="Wynik 3 : 123"/>
+            android:textSize="18sp"/>
 
     <TextView
             android:layout_width="wrap_content"
@@ -60,8 +57,7 @@
             android:layout_below="@+id/value3TextView"
             android:layout_marginTop="20dp"
             android:layout_marginStart="10dp"
-            android:textSize="18sp"
-            android:text="Wynik 4 : 123"/>
+            android:textSize="18sp"/>
 
     <RelativeLayout
             android:layout_width="match_parent"
@@ -75,7 +71,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/buttonStart"
-                android:text="Rozpocznij odczyt"
+                android:text="@string/StartCamera"
                 android:onClick="buttonStart"/>
 
         <Button
@@ -84,7 +80,7 @@
                 android:id="@+id/buttonConfirm"
                 android:layout_toEndOf="@+id/buttonStart"
                 android:layout_marginStart="10dp"
-                android:text="Zatwierdź wynik"
+                android:text="@string/ConfirmCamera"
                 android:layout_centerHorizontal="true"/>
 
     </RelativeLayout>
@@ -93,7 +89,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/camera_buttons"
-            android:text="Odczytana wartość :"
+            android:text="@string/ValueReadFromCamera"
             android:id="@+id/textRecognitionTextView"
             android:layout_marginTop="30dp"/>
 

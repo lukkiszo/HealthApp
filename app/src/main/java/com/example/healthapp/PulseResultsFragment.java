@@ -186,7 +186,7 @@ public class PulseResultsFragment extends Fragment {
 
     private void loadChart(){
         getData();
-        LineDataSet lineDataSet = new LineDataSet(chartArrayList, "Tętno [BPM]");
+        LineDataSet lineDataSet = new LineDataSet(chartArrayList, getString(R.string.PulseChartLabel));
         LineData data = new LineData(lineDataSet);
         lineDataSet.setColors(Color.RED);
         lineDataSet.setLineWidth(2f);
@@ -317,9 +317,10 @@ public class PulseResultsFragment extends Fragment {
     }
 
     private void getLastResult(){
-        lastResult.setText(MessageFormat.format("Ostatni wynik = {0} BPM", 0, 0));
+        lastResult.setText(MessageFormat.format("{0} {1} BPM", getString(R.string.LastResult), 0));
         if (!bloodPressureResultArrayList.isEmpty()){
-            lastResult.setText(MessageFormat.format("Ostatni wynik = {0} BPM ",
+            lastResult.setText(MessageFormat.format("{0} {1} BPM ",
+                    getString(R.string.LastResult),
                     bloodPressureResultArrayList.get(bloodPressureResultArrayList.size() - 1).getPulse()));
         }
     }
@@ -329,7 +330,8 @@ public class PulseResultsFragment extends Fragment {
         for (BloodPressureResult bloodPressureResult : bloodPressureResultArrayList) {
             sum += bloodPressureResult.getPulse();
         }
-        meanResults.setText(MessageFormat.format("Średnia wyników = {0} BPM", sum/bloodPressureResultArrayList.size()));
+        meanResults.setText(MessageFormat.format("{0} {1} BPM",
+                getString(R.string.MeanResult), sum/bloodPressureResultArrayList.size()));
     }
 
     private void reloadChart(){
@@ -344,7 +346,7 @@ public class PulseResultsFragment extends Fragment {
     }
 
     private void loadResults(){
-        SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences("results", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences(MainActivity.resultsPreferencesName, Context.MODE_PRIVATE);
         Gson gson = new Gson();
 
         String json = sharedPreferences.getString("bloodPressure", null);
@@ -359,7 +361,7 @@ public class PulseResultsFragment extends Fragment {
     }
 
     private ArrayList<BloodPressureResult> sortBloodPressureResults(ArrayList<BloodPressureResult> results){
-        SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences("results", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences(MainActivity.resultsPreferencesName, Context.MODE_PRIVATE);
         Gson gson = new Gson();
 
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -393,7 +395,7 @@ public class PulseResultsFragment extends Fragment {
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3)
             {
                 Intent intent = new Intent(getActivity(), ResultEditor.class);
-                intent.putExtra("type", "Ciśnienie krwi, puls i saturacja");
+                intent.putExtra("type", getString(R.string.Blood_Pressure_Pulse_Saturation));
                 if (finalNumberOfElementsOnPage == 7){
                     intent.putExtra("position", bloodPressureResultArrayList.size() - 7 * currentListViewPage + position);
                 }

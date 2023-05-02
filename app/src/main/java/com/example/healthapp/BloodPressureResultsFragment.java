@@ -188,13 +188,13 @@ public class BloodPressureResultsFragment extends Fragment {
 
     private void loadChart(){
         getData();
-        LineDataSet lineDataSet = new LineDataSet(chartSystolicArrayList, "Ciśnienie skurczowe [mmHg]");
+        LineDataSet lineDataSet = new LineDataSet(chartSystolicArrayList, getString(R.string.SystolicBloodPressureChartLabel));
         lineDataSet.setColors(Color.RED);
         lineDataSet.setLineWidth(2f);
         lineDataSet.setValueTextColor(Color.BLACK);
         lineDataSet.setValueTextSize(10f);
 
-        LineDataSet lineDataSet1 = new LineDataSet(chartDiastolicArrayList, "Ciśnienie rozkurczowe [mmHg]");
+        LineDataSet lineDataSet1 = new LineDataSet(chartDiastolicArrayList, getString(R.string.DiastolicBloodPressureChartLabel));
         lineDataSet1.setColors(Color.BLUE);
         lineDataSet1.setLineWidth(2f);
         lineDataSet1.setValueTextColor(Color.BLACK);
@@ -333,9 +333,10 @@ public class BloodPressureResultsFragment extends Fragment {
     }
 
     private void getLastResult(){
-        lastResult.setText(MessageFormat.format("Ostatni wynik = {0} / {1}", 0, 0));
+        lastResult.setText(MessageFormat.format("{0} {1} / {2}", getString(R.string.LastResult), 0, 0));
         if (!bloodPressureResultArrayList.isEmpty()){
-            lastResult.setText(MessageFormat.format("Ostatni wynik = {0} / {1} [ mmHg / mmHg ]",
+            lastResult.setText(MessageFormat.format("{0} {1} / {2} [ mmHg / mmHg ]",
+                    getString(R.string.LastResult),
                     bloodPressureResultArrayList.get(bloodPressureResultArrayList.size() - 1).getSystolicResult(),
                     bloodPressureResultArrayList.get(bloodPressureResultArrayList.size() - 1).getDiastolicResult()));
         }
@@ -348,7 +349,8 @@ public class BloodPressureResultsFragment extends Fragment {
             sum1 += bloodPressureResult.getSystolicResult();
             sum2 += bloodPressureResult.getDiastolicResult();
         }
-        meanResults.setText(MessageFormat.format("Średnia wyników = {0} / {1} [ mmHg / mmHg ]", sum1/bloodPressureResultArrayList.size(), sum2/bloodPressureResultArrayList.size() ));
+        meanResults.setText(MessageFormat.format("{0} {1} / {2} [ mmHg / mmHg ]", getString(R.string.MeanResult),
+                sum1/bloodPressureResultArrayList.size(), sum2/bloodPressureResultArrayList.size() ));
     }
 
     private void reloadChart(){
@@ -363,7 +365,7 @@ public class BloodPressureResultsFragment extends Fragment {
     }
 
     private void loadResults(){
-        SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences("results", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences(MainActivity.resultsPreferencesName, Context.MODE_PRIVATE);
         Gson gson = new Gson();
 
         String json = sharedPreferences.getString("bloodPressure", null);
@@ -378,7 +380,7 @@ public class BloodPressureResultsFragment extends Fragment {
     }
 
     private ArrayList<BloodPressureResult> sortBloodPressureResults(ArrayList<BloodPressureResult> results){
-        SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences("results", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences(MainActivity.resultsPreferencesName, Context.MODE_PRIVATE);
         Gson gson = new Gson();
 
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -412,7 +414,7 @@ public class BloodPressureResultsFragment extends Fragment {
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3)
             {
                 Intent intent = new Intent(getActivity(), ResultEditor.class);
-                intent.putExtra("type", "Ciśnienie krwi, puls i saturacja");
+                intent.putExtra("type", getString(R.string.Blood_Pressure_Pulse_Saturation));
                 if (finalNumberOfElementsOnPage == 7){
                     intent.putExtra("position", bloodPressureResultArrayList.size() - 7 * currentListViewPage + position);
                 }

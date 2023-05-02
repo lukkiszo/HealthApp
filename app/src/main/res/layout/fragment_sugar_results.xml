@@ -40,7 +40,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/resetChartButton"
                     android:layout_toEndOf="@+id/chartLeft"
-                    android:text="RESET"/>
+                    android:text="@string/Reset"/>
 
             <Button
                     android:layout_width="wrap_content"
@@ -57,7 +57,6 @@
                 android:layout_below="@+id/chartButtons"
                 android:layout_marginTop="15dp"
                 android:layout_marginStart="20dp"
-                android:text="Srednia wyników: 123"
                 android:id="@+id/meanSugarResults"/>
 
         <TextView
@@ -66,7 +65,6 @@
                 android:layout_below="@+id/meanSugarResults"
                 android:layout_marginTop="15dp"
                 android:layout_marginStart="20dp"
-                android:text="Ostatni wynik: 123"
                 android:id="@+id/lastSugarResult"/>
 
         <TextView
@@ -83,7 +81,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/BMI_info"
-                android:text="BMI Prawidłowe"
                 android:layout_below="@+id/BMI"
                 android:layout_marginTop="15dp"
                 android:textAlignment="center"

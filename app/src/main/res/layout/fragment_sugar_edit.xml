@@ -9,7 +9,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
-            android:text="Data wykonania badania"
+            android:text="@string/ResultDate"
             android:layout_marginTop="20dp"
             android:id="@+id/dateText"/>
 
@@ -29,7 +29,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
-            android:text="Godzina wykonania badania"
+            android:text="@string/ResultHour"
             android:layout_below="@id/date_picker_button"
             android:layout_marginTop="20dp"
             android:id="@+id/hourText"/>
@@ -53,15 +53,15 @@
             android:layout_marginStart="15dp"
             android:layout_marginTop="20dp"
             android:layout_below="@id/time_picker_button"
-            android:text="Cukier we krwi" />
+            android:text="@string/SugarInBlood" />
 
     <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/sugarText"
-            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
             android:id="@+id/sugarResultLayout"
-            android:layout_marginRight="20dip"
+            android:layout_marginEnd="20dp"
             android:orientation="horizontal" >
 
         <EditText
@@ -89,7 +89,7 @@
             android:layout_marginStart="15dp"
             android:layout_marginTop="20dp"
             android:layout_below="@id/sugarResultLayout"
-            android:text="Podczas posiłku" />
+            android:text="@string/SugarAdditionalInfo" />
 
     <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/sugarType"

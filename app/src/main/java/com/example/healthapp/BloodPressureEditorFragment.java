@@ -27,7 +27,9 @@ import java.util.Locale;
 import java.util.Objects;
 
 public class BloodPressureEditorFragment extends Fragment {
-    String[] items = {"Nieokreślone", "Po wysiłku", "W trakcie wysiłku", "Zdenerwowany/a", "Po przebudzeniu"};
+    String[] items;
+    String[] itemsPl = {"Nieokreślone", "Po wysiłku", "W trakcie wysiłku", "Zdenerwowany/a", "Po przebudzeniu"};
+    String[] itemsEn = {"Undefined", "After workout", "During workout", "Nervous", "After Wake up"};
     TextInputLayout textInputLayout;
     AutoCompleteTextView autoCompleteTextView;
     private int clickedItem;
@@ -52,6 +54,13 @@ public class BloodPressureEditorFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (MainActivity.language.equals("English")){
+            items = itemsEn;
+        } else {
+            items = itemsPl;
+        }
+
         if (getArguments() != null) {
             clickedItem = getArguments().getInt("position");
         }
@@ -154,7 +163,7 @@ public class BloodPressureEditorFragment extends Fragment {
                             Integer.parseInt(saturationValue.getText().toString()), annotation);
                 }
                 else {
-                    Toast.makeText(getActivity(), "Proszę uzupełnić wszystkie wartości", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), getString(R.string.FillAllValues), Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -182,7 +191,7 @@ public class BloodPressureEditorFragment extends Fragment {
     }
 
     private void loadResults(){
-        SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences("results", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences(MainActivity.resultsPreferencesName, Context.MODE_PRIVATE);
         Gson gson = new Gson();
 
         String json = sharedPreferences.getString("bloodPressure", null);
@@ -199,7 +208,7 @@ public class BloodPressureEditorFragment extends Fragment {
 
     private void deleteResult(){
         if(clickedItem >= 0){
-            SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences("results", Context.MODE_PRIVATE);
+            SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences(MainActivity.resultsPreferencesName, Context.MODE_PRIVATE);
             Gson gson = new Gson();
 
             bloodPressureResultArrayList.remove(clickedItem);
@@ -219,7 +228,7 @@ public class BloodPressureEditorFragment extends Fragment {
 
     private void addNewResult(String givenDate, String givenHour, int givenSystolicBloodPressureResult,
                               int givenDiastolicBloodPressureResult, int givenPulseResult, int givenSaturationResult, String givenAnnotations){
-        SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences("results", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences(MainActivity.resultsPreferencesName, Context.MODE_PRIVATE);
         Gson gson = new Gson();
 
         BloodPressureResult result = new BloodPressureResult(givenDate, givenHour, givenSystolicBloodPressureResult,
@@ -254,7 +263,7 @@ public class BloodPressureEditorFragment extends Fragment {
 
         int style = AlertDialog.THEME_HOLO_DARK;
         TimePickerDialog timePickerDialog = new TimePickerDialog(getActivity(), style, onTimeSetListener,  hour, minute, true);
-        timePickerDialog.setTitle("Wybierz czas wykonania badania");
+        timePickerDialog.setTitle(getString(R.string.PickTimeOfTest));
         timePickerDialog.show();
     }
 
@@ -263,7 +272,13 @@ public class BloodPressureEditorFragment extends Fragment {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                 month += 1;
-                String date = Utils.makeDateString(day, month, year);
+                String date;
+                if (MainActivity.language.equals("English")){
+                    date = Utils.makeDateStringEnglish(day, month, year);
+                } else {
+                    date = Utils.makeDateString(day, month, year);
+                }
+
                 dateButton.setText(date);
             }
         };

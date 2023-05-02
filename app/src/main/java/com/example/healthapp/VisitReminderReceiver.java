@@ -41,14 +41,14 @@ public class VisitReminderReceiver extends BroadcastReceiver {
         if (notificationType.equals("day")){
             builder = new NotificationCompat.Builder(currentContext, "MedicalVisits")
                     .setSmallIcon(R.drawable.ic_timesheet2)
-                    .setContentTitle("Zbliżająca się wizyta!")
-                    .setContentText("Twoja wizyta lekarska odbędzie się jutro.")
+                    .setContentTitle(currentContext.getString(R.string.VisitNotifTitle))
+                    .setContentText(currentContext.getString(R.string.VisitNotifTextTomorrow))
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT);
         } else if (notificationType.equals("hour")){
             builder = new NotificationCompat.Builder(currentContext, "MedicalVisits")
                     .setSmallIcon(R.drawable.ic_timesheet2)
-                    .setContentTitle("Zbliżająca się wizyta!")
-                    .setContentText("Twoja wizyta lekarska odbędzie się za godzinę!")
+                    .setContentTitle(currentContext.getString(R.string.VisitNotifTitle))
+                    .setContentText(currentContext.getString(R.string.VisitNotifTextHour))
                     .setPriority(NotificationCompat.PRIORITY_HIGH);
         }
 
@@ -68,8 +68,8 @@ public class VisitReminderReceiver extends BroadcastReceiver {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(currentContext, "Medicines")
                 .setSmallIcon(R.drawable.ic_timesheet)
-                .setContentTitle("Przyjmij lek!")
-                .setContentText("Przyjmij lek - " + medicineName + "!")
+                .setContentTitle(currentContext.getString(R.string.MedicineNotifTitle))
+                .setContentText(currentContext.getString(R.string.MedicineNotifText) + medicineName + "!")
                 .setPriority(NotificationCompat.PRIORITY_HIGH);
 
         NotificationManagerCompat managerCompat = NotificationManagerCompat.from(currentContext);

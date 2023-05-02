@@ -23,7 +23,7 @@ public class StepsActivity extends AppCompatActivity{
         if (getSupportActionBar() != null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
-            getSupportActionBar().setTitle("Kroki");
+            getSupportActionBar().setTitle(R.string.Steps);
         }
 
     }

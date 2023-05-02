@@ -26,7 +26,9 @@ public class OnceAWeekMedicineFragment extends Fragment {
     private ArrayList<MedicineScheduleItem> medicineScheduleItemArrayList;
     private int clickedItem;
     private String dayChosen = "";
-    String[] days = {"Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota", "Niedziela"};
+    String[] days;
+    String[] daysPl = {"Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota", "Niedziela"};
+    String[] daysEn = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
     TextInputLayout textInputLayout;
     AutoCompleteTextView autoCompleteTextView;
     private DayChosenInterface listener;
@@ -34,6 +36,13 @@ public class OnceAWeekMedicineFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (MainActivity.language.equals("English")){
+            days = daysEn;
+        } else {
+            days = daysPl;
+        }
+
         if (getArguments() != null) {
             clickedItem = getArguments().getInt("position");
         }
@@ -78,7 +87,7 @@ public class OnceAWeekMedicineFragment extends Fragment {
     }
 
     private void loadResults(){
-        SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences("schedule", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences(MainActivity.schedulePreferencesName, Context.MODE_PRIVATE);
         Gson gson = new Gson();
 
         String json = sharedPreferences.getString("medicines", null);

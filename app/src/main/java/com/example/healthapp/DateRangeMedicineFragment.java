@@ -91,9 +91,18 @@ public class DateRangeMedicineFragment extends Fragment {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                 month += 1;
-                String date = Utils.makeDateString(day, month, year);
+                String date;
+                if (MainActivity.language.equals("English")){
+                    date = Utils.makeDateStringEnglish(day, month, year);
+                } else {
+                    date = Utils.makeDateString(day, month, year);
+                }
                 dateButtonFrom.setText(date);
-                listener.onDateFromSelected(Utils.makeDateString(day, month - 1, year));
+                if (MainActivity.language.equals("English")){
+                    listener.onDateToSelected(Utils.makeDateStringEnglish(day, month - 1, year));
+                } else {
+                    listener.onDateToSelected(Utils.makeDateString(day, month - 1, year));
+                }
             }
         };
 
@@ -115,9 +124,19 @@ public class DateRangeMedicineFragment extends Fragment {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                 month += 1;
-                String date = Utils.makeDateString(day, month, year);
+                String date;
+                if (MainActivity.language.equals("English")){
+                    date = Utils.makeDateStringEnglish(day, month, year);
+                } else {
+                    date = Utils.makeDateString(day, month, year);
+                }
                 dateButtonTo.setText(date);
-                listener.onDateToSelected(Utils.makeDateString(day, month - 1, year));
+
+                if (MainActivity.language.equals("English")){
+                    listener.onDateToSelected(Utils.makeDateStringEnglish(day, month - 1, year));
+                } else {
+                    listener.onDateToSelected(Utils.makeDateString(day, month - 1, year));
+                }
             }
         };
 
@@ -134,7 +153,7 @@ public class DateRangeMedicineFragment extends Fragment {
     }
 
     private void loadResults(){
-        SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences("schedule", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences(MainActivity.schedulePreferencesName, Context.MODE_PRIVATE);
         Gson gson = new Gson();
 
         String json = sharedPreferences.getString("medicines", null);

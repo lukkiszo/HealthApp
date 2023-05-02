@@ -1,41 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:title="Wyniki badań">
+    <item android:id="@+id/ResultsNav" android:title="@string/TestResults">
         <menu>
-            <item android:title="Ciśnienie tętnicze" android:id="@+id/bloodPressureNav" android:icon="@drawable/ic_bloodpressure"/>
+            <item android:title="@string/BloodPressure" android:id="@+id/bloodPressureNav" android:icon="@drawable/ic_bloodpressure"/>
 
-            <item android:title="Puls" android:id="@+id/pulseNav" android:icon="@drawable/ic_heartrate"/>
+            <item android:title="@string/Pulse" android:id="@+id/pulseNav" android:icon="@drawable/ic_heartrate"/>
 
-            <item android:title="Saturacja" android:id="@+id/saturationNav" android:icon="@drawable/ic_saturation"/>
+            <item android:title="@string/Saturation" android:id="@+id/saturationNav" android:icon="@drawable/ic_saturation"/>
 
-            <item android:title="Poziom cukru we krwi" android:id="@+id/sugarNav" android:icon="@drawable/ic_sugar"/>
+            <item android:title="@string/SugarNavLabel" android:id="@+id/sugarNav" android:icon="@drawable/ic_sugar"/>
 
-            <item android:title="Liczba wykonanych kroków" android:id="@+id/stepsNav" android:icon="@drawable/ic_steps"/>
+            <item android:title="@string/StepsNavLabel" android:id="@+id/stepsNav" android:icon="@drawable/ic_steps"/>
 
-            <item android:title="Temperatura ciała" android:id="@+id/temperatureNav" android:icon="@drawable/ic_temperature"/>
+            <item android:title="@string/Temperature" android:id="@+id/temperatureNav" android:icon="@drawable/ic_temperature"/>
         </menu>
     </item>
 
-    <item android:title="Harmonogram">
+    <item android:id="@+id/scheduleNav" android:title="@string/Schedule">
         <menu>
-            <item android:title="Harmonogram leków" android:id="@+id/medicineScheduleNav" android:icon="@drawable/ic_timesheet"/>
+            <item android:title="@string/MedicinesSchedule" android:id="@+id/medicineScheduleNav" android:icon="@drawable/ic_timesheet"/>
 
-            <item android:title="Kalendarz wizyt" android:id="@+id/visitScheduleNav" android:icon="@drawable/ic_timesheet2"/>
+            <item android:title="@string/VisitSchedule" android:id="@+id/visitScheduleNav" android:icon="@drawable/ic_timesheet2"/>
 
-            <item android:title="Podsumowanie miesiąca" android:id="@+id/summaryNav" android:icon="@drawable/ic_month_summary"/>
+            <item android:title="@string/MonthSummary" android:id="@+id/summaryNav" android:icon="@drawable/ic_month_summary"/>
         </menu>
     </item>
 
-    <item android:title="Ustawienia">
+    <item android:id="@+id/settingsNav" android:title="@string/Settings">
         <menu>
-            <item android:title="Mój profil" android:id="@+id/myProfile" android:icon="@drawable/ic_account"/>
+            <item android:title="@string/MyProfile" android:id="@+id/myProfile" android:icon="@drawable/ic_account"/>
 
-            <item android:title="Ustawienia" android:id="@+id/settings" android:icon="@drawable/ic_settings"/>
+            <item android:title="@string/Settings" android:id="@+id/settings" android:icon="@drawable/ic_settings"/>
 
-            <item android:title="O Aplikacji" android:id="@+id/about" android:icon="@drawable/ic_about"/>
+            <item android:title="@string/AboutApp" android:id="@+id/about" android:icon="@drawable/ic_about"/>
 
-            <item android:title="Wyjdź" android:id="@+id/exit" android:icon="@drawable/ic_exit"/>
+            <item android:title="@string/Quit" android:id="@+id/exit" android:icon="@drawable/ic_exit"/>
         </menu>
     </item>
 

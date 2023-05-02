@@ -14,7 +14,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
                 android:layout_marginTop="20dp"
-                android:text="Cykliczność przyjmowania" />
+                android:text="@string/CyclicType" />
 
         <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/receptionType"
@@ -49,7 +49,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
-                android:text="Godzina przyjęcia leku"
+                android:text="@string/MedicineTakeHour"
                 android:layout_below="@id/additionalInfoMedicine"
                 android:layout_marginTop="20dp"
                 android:id="@+id/medicineHourText"/>
@@ -71,7 +71,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
                 android:layout_below="@+id/medicine_time_picker_button"
-                android:text="Nazwa leku"
+                android:text="@string/MedicineName"
                 android:layout_marginTop="20dp"
                 android:id="@+id/medicineNameText"/>
 
@@ -93,7 +93,7 @@
                 android:layout_marginStart="15dp"
                 android:layout_marginTop="20dp"
                 android:layout_below="@id/medicineNameEdit"
-                android:text="Dawka" />
+                android:text="@string/MedicineDose" />
 
         <EditText
                 android:id="@+id/doseValue"
@@ -113,7 +113,7 @@
                 android:layout_marginStart="15dp"
                 android:layout_marginTop="20dp"
                 android:layout_below="@id/doseValue"
-                android:text="Dodatkowe informacje" />
+                android:text="@string/MedicineAdditionalInfo" />
 
         <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/additionalInfo"

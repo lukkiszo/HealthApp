@@ -23,7 +23,9 @@ import java.util.*;
 
 public class SugarEditorFragment extends Fragment {
 
-    String[] items = {"Nieokreślone", "Przed posiłkiem", "Po posiłku"};
+    String[] items;
+    String[] itemsPl = {"Nieokreślone", "Przed posiłkiem", "Po posiłku"};
+    String[] itemsEn = {"Undefined", "Before meal", "After meal"};
 //    private List<String> results = new ArrayList<>();
     TextInputLayout textInputLayout;
     AutoCompleteTextView autoCompleteTextView;
@@ -47,6 +49,11 @@ public class SugarEditorFragment extends Fragment {
         // Defines the xml file for the fragment
         if (getArguments() != null) {
             clickedItem = getArguments().getInt("position");
+        }
+        if (MainActivity.language.equals("English")){
+            items = itemsEn;
+        } else {
+            items = itemsPl;
         }
         loadResults();
         return inflater.inflate(R.layout.fragment_sugar_edit, parent, false);
@@ -122,7 +129,7 @@ public class SugarEditorFragment extends Fragment {
                     addNewResult(dateButton.getText().toString(), timeButton.getText().toString(), Integer.parseInt(result.getText().toString()), annot);
                 }
                 else {
-                    Toast.makeText(getActivity(), "Proszę uzupełnić wszystkie wartości", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), getString(R.string.FillAllValues), Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -140,7 +147,7 @@ public class SugarEditorFragment extends Fragment {
 
     private void deleteResult(){
         if(clickedItem >= 0){
-            SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences("results", Context.MODE_PRIVATE);
+            SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences(MainActivity.resultsPreferencesName, Context.MODE_PRIVATE);
             Gson gson = new Gson();
 
             sugarResultsArrayList.remove(clickedItem);
@@ -156,7 +163,7 @@ public class SugarEditorFragment extends Fragment {
     }
 
     private void loadResults(){
-        SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences("results", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences(MainActivity.resultsPreferencesName, Context.MODE_PRIVATE);
         Gson gson = new Gson();
 
         String json = sharedPreferences.getString("sugar", null);
@@ -171,7 +178,7 @@ public class SugarEditorFragment extends Fragment {
     }
 
     private void addNewResult(String givenDate, String givenHour, int givenResult, String givenAnnotations){
-        SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences("results", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences(MainActivity.resultsPreferencesName, Context.MODE_PRIVATE);
         Gson gson = new Gson();
 
         SugarResult result = new SugarResult(givenDate, givenHour, givenResult, givenAnnotations);
@@ -201,7 +208,7 @@ public class SugarEditorFragment extends Fragment {
 
         int style = AlertDialog.THEME_HOLO_DARK;
         TimePickerDialog timePickerDialog = new TimePickerDialog(getActivity(), style, onTimeSetListener,  hour, minute, true);
-        timePickerDialog.setTitle("Wybierz czas wykonania badania");
+        timePickerDialog.setTitle(getString(R.string.PickTimeOfTest));
         timePickerDialog.show();
     }
 
@@ -210,7 +217,12 @@ public class SugarEditorFragment extends Fragment {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                 month += 1;
-                String date = Utils.makeDateString(day, month, year);
+                String date;
+                if (MainActivity.language.equals("English")){
+                    date = Utils.makeDateStringEnglish(day, month, year);
+                } else {
+                    date = Utils.makeDateString(day, month, year);
+                }
                 dateButton.setText(date);
             }
         };

@@ -184,7 +184,7 @@ public class TemperatureResultsFragment extends Fragment implements OnChartValue
 
     private void loadChart(){
         getData();
-        LineDataSet lineDataSet = new LineDataSet(chartArrayList, "Temperatura ciała [°C]");
+        LineDataSet lineDataSet = new LineDataSet(chartArrayList, getString(R.string.TemperatureChartLabel));
         LineData lineData = new LineData(lineDataSet);
         lineDataSet.setColors(Color.RED);
         lineDataSet.setLineWidth(2f);
@@ -315,9 +315,10 @@ public class TemperatureResultsFragment extends Fragment implements OnChartValue
     }
 
     private void getLastResult(){
-        lastResult.setText(MessageFormat.format("Ostatni wynik = {0} °C", 0));
+        lastResult.setText(MessageFormat.format("{0} {1} °C", getString(R.string.LastResult), 0));
         if (!temperatureResultArrayList.isEmpty()){
-            lastResult.setText(MessageFormat.format("Ostatni wynik = {0} °C", temperatureResultArrayList.get(temperatureResultArrayList.size() - 1).getResult()));
+            lastResult.setText(MessageFormat.format("{0} {1} °C",
+                    getString(R.string.LastResult), temperatureResultArrayList.get(temperatureResultArrayList.size() - 1).getResult()));
         }
     }
 
@@ -326,7 +327,7 @@ public class TemperatureResultsFragment extends Fragment implements OnChartValue
         for (TemperatureResult temperatureResult : temperatureResultArrayList) {
             sum += temperatureResult.getResult();
         }
-        meanResults.setText(MessageFormat.format("Średnia wyników = {0} °C", sum/temperatureResultArrayList.size()));
+        meanResults.setText(MessageFormat.format("{0} {1} °C", getString(R.string.MeanResult), sum/temperatureResultArrayList.size()));
     }
 
     private void reloadChart(){
@@ -341,7 +342,7 @@ public class TemperatureResultsFragment extends Fragment implements OnChartValue
     }
 
     private void loadResults(){
-        SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences("results", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences(MainActivity.resultsPreferencesName, Context.MODE_PRIVATE);
         Gson gson = new Gson();
 
         String json = sharedPreferences.getString("temperature", null);
@@ -357,7 +358,7 @@ public class TemperatureResultsFragment extends Fragment implements OnChartValue
 
     private ArrayList<TemperatureResult> sortTemperatureResults(ArrayList<TemperatureResult> results){
 
-        SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences("results", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences(MainActivity.resultsPreferencesName, Context.MODE_PRIVATE);
         Gson gson = new Gson();
 
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -391,7 +392,7 @@ public class TemperatureResultsFragment extends Fragment implements OnChartValue
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3)
             {
                 Intent intent = new Intent(getActivity(), ResultEditor.class);
-                intent.putExtra("type", "Temperatura ciała");
+                intent.putExtra("type", getString(R.string.Temperature));
                 if (finalNumberOfElementsOnPage == 7){
                     intent.putExtra("position", temperatureResultArrayList.size() - 7 * currentListViewPage + position);
                 }

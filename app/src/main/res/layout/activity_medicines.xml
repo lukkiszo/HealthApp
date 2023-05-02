@@ -46,7 +46,6 @@
         <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Poniedziałek\n27.03.2023"
                 android:textAlignment="center"
                 android:textSize="18sp"
                 android:layout_toEndOf="@+id/date_dayBefore"

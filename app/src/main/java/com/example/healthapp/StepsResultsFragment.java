@@ -178,7 +178,7 @@ public class StepsResultsFragment extends Fragment {
 
     private void loadChart(){
         getData();
-        BarDataSet barDataSet = new BarDataSet(chartArrayList, "Wykonane kroki");
+        BarDataSet barDataSet = new BarDataSet(chartArrayList, getString(R.string.StepsChartLabel));
         BarData barData = new BarData(barDataSet);
         barDataSet.setColors(Color.GREEN);
         barData.setBarWidth(0.5f);
@@ -309,9 +309,9 @@ public class StepsResultsFragment extends Fragment {
     }
 
     private void getLastResult(){
-        lastResult.setText(MessageFormat.format("Ostatni wynik: {0} kroków", 0));
+        lastResult.setText(MessageFormat.format("{0} {1} kroków", getString(R.string.LastResult), 0));
         if (!stepsResultArrayList.isEmpty()){
-            lastResult.setText(MessageFormat.format("Ostatni wynik = {0} kroków", stepsResultArrayList.get(stepsResultArrayList.size() - 1).getResult()));
+            lastResult.setText(MessageFormat.format("{0} {1} kroków", getString(R.string.LastResult), stepsResultArrayList.get(stepsResultArrayList.size() - 1).getResult()));
         }
     }
 
@@ -320,7 +320,7 @@ public class StepsResultsFragment extends Fragment {
         for (StepsResult stepsResult : stepsResultArrayList) {
             sum += stepsResult.getResult();
         }
-        meanResults.setText(MessageFormat.format("Średnia wyników = {0} kroków", sum/stepsResultArrayList.size()));
+        meanResults.setText(MessageFormat.format("{0} {1} kroków", getString(R.string.MeanResult), sum/stepsResultArrayList.size()));
     }
 
     private void reloadChart(){
@@ -335,7 +335,7 @@ public class StepsResultsFragment extends Fragment {
     }
 
     private void loadResults(){
-        SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences("results", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences(MainActivity.resultsPreferencesName, Context.MODE_PRIVATE);
         Gson gson = new Gson();
 
         String json = sharedPreferences.getString("steps", null);
@@ -350,7 +350,7 @@ public class StepsResultsFragment extends Fragment {
     }
 
     private ArrayList<StepsResult> sortStepsResults(ArrayList<StepsResult> results){
-        SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences("results", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences(MainActivity.resultsPreferencesName, Context.MODE_PRIVATE);
         Gson gson = new Gson();
 
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -384,7 +384,7 @@ public class StepsResultsFragment extends Fragment {
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3)
             {
                 Intent intent = new Intent(getActivity(), ResultEditor.class);
-                intent.putExtra("type", "Kroki");
+                intent.putExtra("type", getString(R.string.Steps));
                 if (finalNumberOfElementsOnPage == 7){
                     intent.putExtra("position", stepsResultArrayList.size() - 7 * currentListViewPage + position);
                 }

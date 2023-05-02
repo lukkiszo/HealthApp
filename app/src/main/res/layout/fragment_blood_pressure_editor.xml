@@ -11,7 +11,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
-                android:text="Data wykonania badania"
+                android:text="@string/ResultDate"
                 android:layout_marginTop="20dp"
                 android:id="@+id/blood_dateText"/>
 
@@ -31,7 +31,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
-                android:text="Godzina wykonania badania"
+                android:text="@string/ResultHour"
                 android:layout_below="@id/blood_date_picker_button"
                 android:layout_marginTop="20dp"
                 android:id="@+id/blood_hourText"/>
@@ -55,7 +55,7 @@
                 android:layout_marginStart="15dp"
                 android:layout_marginTop="20dp"
                 android:layout_below="@id/blood_time_picker_button"
-                android:text="Ciśnienie krwi" />
+                android:text="@string/BloodPressure" />
 
         <LinearLayout
                 android:layout_width="match_parent"
@@ -108,7 +108,7 @@
                 android:layout_marginStart="15dp"
                 android:layout_marginTop="20dp"
                 android:layout_below="@id/bloodPressureResultLayout"
-                android:text="Poziom tętna" />
+                android:text="@string/PulseLevel" />
 
         <LinearLayout
                 android:layout_width="match_parent"
@@ -145,7 +145,7 @@
                 android:layout_marginStart="15dp"
                 android:layout_marginTop="20dp"
                 android:layout_below="@id/pulseResultLayout"
-                android:text="Saturacja krwi" />
+                android:text="@string/Saturation" />
 
         <LinearLayout
                 android:layout_width="match_parent"
@@ -182,7 +182,7 @@
                 android:layout_marginStart="15dp"
                 android:layout_marginTop="20dp"
                 android:layout_below="@id/saturationResultLayout"
-                android:text="Dodatkowe informacje o badaniu" />
+                android:text="@string/AdditionalInfoAboutResult" />
 
         <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/bloodType"
