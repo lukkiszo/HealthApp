@@ -9,7 +9,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
-            android:text="Data rozpoczęcia przyjmowania leku"
+            android:text="@string/MedicineDateFrom"
             android:layout_marginTop="20dp"
             android:id="@+id/dateFrom_medicine_dateText"/>
 
@@ -29,7 +29,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
-            android:text="Data zakończenia przyjmowania leku"
+            android:text="@string/MedicineDateTo"
             android:layout_marginTop="20dp"
             android:layout_below="@+id/medicine_dateFrom_picker_button"
             android:id="@+id/dateTo_medicine_dateText"/>

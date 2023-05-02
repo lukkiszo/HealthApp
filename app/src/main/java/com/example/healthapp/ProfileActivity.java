@@ -29,7 +29,6 @@ import com.bumptech.glide.request.transition.Transition;
 import com.bumptech.glide.load.DecodeFormat;
 
 public class ProfileActivity extends AppCompatActivity {
-
     public String user_name;
     public String user_photo;
     public Integer user_age;
@@ -74,7 +73,7 @@ public class ProfileActivity extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
-            getSupportActionBar().setTitle("Mój profil");
+            getSupportActionBar().setTitle(R.string.MyProfile);
         }
 
         customizeDimension();
@@ -205,7 +204,7 @@ public class ProfileActivity extends AppCompatActivity {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 changePhoto();
             } else {
-                Toast.makeText(this, "Odmowa dostępu.", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, getString(R.string.PermissionDeniedText), Toast.LENGTH_LONG).show();
             }
         }
     }

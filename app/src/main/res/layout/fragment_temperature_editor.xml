@@ -9,7 +9,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
-            android:text="Data wykonania badania"
+            android:text="@string/ResultDate"
             android:layout_marginTop="20dp"
             android:id="@+id/temperature_dateText"/>
 
@@ -29,7 +29,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
-            android:text="Godzina wykonania badania"
+            android:text="@string/ResultHour"
             android:layout_below="@id/temperature_date_picker_button"
             android:layout_marginTop="20dp"
             android:id="@+id/temperature_hourText"/>
@@ -53,7 +53,7 @@
             android:layout_marginStart="15dp"
             android:layout_marginTop="20dp"
             android:layout_below="@id/temperature_time_picker_button"
-            android:text="Temperatura ciała" />
+            android:text="@string/Temperature" />
 
     <LinearLayout
             android:layout_width="match_parent"

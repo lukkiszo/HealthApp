@@ -1,32 +1,22 @@
 package com.example.healthapp;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.Handler;
-import android.os.Looper;
-import android.util.SparseArray;
 import android.view.MenuItem;
-import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.*;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentTransaction;
 import com.google.android.gms.vision.CameraSource;
-import com.google.android.gms.vision.Detector;
-import com.google.android.gms.vision.text.TextBlock;
 import com.google.android.gms.vision.text.TextRecognizer;
-import com.google.android.material.textfield.TextInputLayout;
-import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
+import java.text.MessageFormat;
 
 public class TextRecognitionActivity extends AppCompatActivity {
 
@@ -66,7 +56,7 @@ public class TextRecognitionActivity extends AppCompatActivity {
         if (getSupportActionBar() != null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
-            getSupportActionBar().setTitle("Dodanie wyniku za pomocą kamery");
+            getSupportActionBar().setTitle(R.string.CameraActivityLabel);
         }
 
         typeTextView = findViewById(R.id.camera_type);
@@ -82,11 +72,13 @@ public class TextRecognitionActivity extends AppCompatActivity {
             public void onClick(View view) {
                 switch (intent.getStringExtra("type")){
                     case "Cukier":
+                    case "Sugar":
                         SugarEditorFragment.valueFromCamera = Double.parseDouble(String.valueOf(valueRead.getText()));
                         clearVariables();
                         finish();
                         break;
                     case "Ciśnienie krwi, puls i saturacja":
+                    case "Blood pressure, pulse and saturation":
                         if (value1 != -1){
                             if (value2 != -1){
                                 if (value3 != -1){
@@ -113,6 +105,7 @@ public class TextRecognitionActivity extends AppCompatActivity {
                         valueRead.setText("");
                         break;
                     case "Temperatura ciała":
+                    case "Body temperature":
                         TemperatureEditorFragment.valueFromCamera = Double.parseDouble(String.valueOf(valueRead.getText()));
                         clearVariables();
                         finish();
@@ -124,7 +117,7 @@ public class TextRecognitionActivity extends AppCompatActivity {
             }
         });
 
-        typeTextView.setText("Typ wprowadzanego badania : \n" + intent.getStringExtra("type"));
+        typeTextView.setText(MessageFormat.format("{0}{1}", getString(R.string.ResultType), intent.getStringExtra("type")));
 
         changeShownValues(intent.getStringExtra("type"));
 
@@ -142,10 +135,11 @@ public class TextRecognitionActivity extends AppCompatActivity {
     private void changeShownValues(String type){
         switch (type){
             case "Cukier":
+            case "Sugar":
                 if (value1 != -1){
-                    value1TextView.setText("Cukier we krwi : " + value1 + " mg/dl");
+                    value1TextView.setText(MessageFormat.format("{0} {1} mg/dl", getString(R.string.BloodSugar), value1));
                 } else {
-                    value1TextView.setText("Cukier we krwi : - mg/dl");
+                    value1TextView.setText(MessageFormat.format("{0} - mg/dl", getString(R.string.BloodSugar)));
                 }
 
                 value2TextView.setVisibility(View.GONE);
@@ -153,35 +147,37 @@ public class TextRecognitionActivity extends AppCompatActivity {
                 value4TextView.setVisibility(View.GONE);
                 break;
             case "Ciśnienie krwi, puls i saturacja":
+            case "Blood pressure, pulse and saturation":
                 if (value1 != -1){
-                    value1TextView.setText("Ciśnienie skurczowe : " + Math.floor(value1));
+                    value1TextView.setText(MessageFormat.format("{0} {1}", getString(R.string.SystolicBloodPressure), Math.floor(value1)));
                 } else {
-                    value1TextView.setText("Ciśnienie skurczowe : -");
+                    value1TextView.setText(MessageFormat.format("{0} -", getString(R.string.SystolicBloodPressure)));
                 }
 
                 if (value2 != -1){
-                    value2TextView.setText("Ciśnienie rozkurczowe : " + value2);
+                    value2TextView.setText(MessageFormat.format("{0} {1}", getString(R.string.DiastolicBloodPressure), value2));
                 } else {
-                    value2TextView.setText("Ciśnienie rozkurczowe : -");
+                    value2TextView.setText(MessageFormat.format("{0} -", getString(R.string.DiastolicBloodPressure)));
                 }
 
                 if (value3!= -1){
-                    value3TextView.setText("Puls : " + value3 + " BPM");
+                    value3TextView.setText(MessageFormat.format("{0} {1} BPM", getString(R.string.PulseTextRecogn), value3));
                 } else {
-                    value3TextView.setText("Puls : - BPM");
+                    value3TextView.setText(MessageFormat.format("{0} - BPM", getString(R.string.PulseTextRecogn)));
                 }
 
                 if (value4!= -1){
-                    value4TextView.setText("Saturacja : " + value4 + " %");
+                    value4TextView.setText(MessageFormat.format("{0} {1} %", getString(R.string.SaturationTextRecogn), value4));
                 } else {
-                    value4TextView.setText("Saturacja : - %");
+                    value4TextView.setText(MessageFormat.format("{0} - %", getString(R.string.SaturationTextRecogn)));
                 }
                 break;
             case "Temperatura ciała":
+            case "Body temperature":
                 if (value1 != -1){
-                    value1TextView.setText("Temperatura ciała : " + value1 + " °C");
+                    value1TextView.setText(MessageFormat.format("{0} : {1} °C", getString(R.string.Temperature), value1));
                 } else {
-                    value1TextView.setText("Temperatura ciała : - °C");
+                    value1TextView.setText(MessageFormat.format("{0} : - °C", getString(R.string.Temperature)));
                 }
                 value2TextView.setVisibility(View.GONE);
                 value3TextView.setVisibility(View.GONE);
@@ -216,16 +212,16 @@ public class TextRecognitionActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-        alertDialogBuilder.setTitle("Czy chcesz odrzucić wprowadzone dane?");
+        alertDialogBuilder.setTitle(getString(R.string.EditorQuitQuestion));
         alertDialogBuilder
-                .setMessage("Naciśnięcie przycisku Tak spowoduje usunięcie wprowadzonych danych!")
+                .setMessage(getString(R.string.EditorQuitPrompt))
                 .setCancelable(false)
-                .setPositiveButton("Tak",
+                .setPositiveButton(getString(R.string.Yes),
                         (dialog, id) -> {
                             finish();
                         })
 
-                .setNegativeButton("Nie", (dialog, id) -> dialog.cancel());
+                .setNegativeButton(getString(R.string.No), (dialog, id) -> dialog.cancel());
 
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();

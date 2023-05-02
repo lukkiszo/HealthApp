@@ -40,7 +40,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/temperatureResetChartButton"
                     android:layout_toEndOf="@+id/temperatureChartLeft"
-                    android:text="RESET"/>
+                    android:text="@string/Reset"/>
 
             <Button
                     android:layout_width="wrap_content"
@@ -57,7 +57,6 @@
                 android:layout_below="@+id/temperatureChartButtons"
                 android:layout_marginTop="15dp"
                 android:layout_marginStart="20dp"
-                android:text="Srednia wyników: 123"
                 android:id="@+id/meanTemperatureResults"/>
 
         <TextView
@@ -66,7 +65,6 @@
                 android:layout_below="@+id/meanTemperatureResults"
                 android:layout_marginTop="15dp"
                 android:layout_marginStart="20dp"
-                android:text="Ostatni wynik: 123"
                 android:id="@+id/lastTemperatureResult"/>
 
         <RelativeLayout

@@ -28,12 +28,13 @@ import java.util.Objects;
 public class MedicalVisitEditorFragment extends Fragment {
     private int clickedItem;
     private String date = "";
-    String[] items = {"Nadchodząca", "Zakończona", "Przełożona"};
+    String[] items;
+    String[] itemsPl = {"Nadchodząca", "Zakończona", "Przełożona"};
+    String[] itemsEn = {"Upcoming", "Completed", "Rescheduled"};
     TextInputLayout statusTextInputLayout;
     AutoCompleteTextView statusAutoCompleteTextView;
     private ArrayList<MedicalVisitScheduleItem> medicalVisitScheduleItemArrayList;
     private String statusChoice = "";
-    private String name = "";
     private String address = "";
     private String doctor = "";
     private DatePickerDialog datePickerDialog;
@@ -50,6 +51,13 @@ public class MedicalVisitEditorFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (MainActivity.language.equals("English")){
+            items = itemsEn;
+        } else {
+            items = itemsPl;
+        }
+
         if (getArguments() != null) {
             clickedItem = getArguments().getInt("position");
             date = getArguments().getString("date");
@@ -142,7 +150,7 @@ public class MedicalVisitEditorFragment extends Fragment {
                     addNewResult(dateButton.getText().toString(), timeButton.getText().toString(), visitName.getText().toString(), address, doctor, statusChoice);
                 }
                 else {
-                    Toast.makeText(getActivity(), "Proszę uzupełnić nazwę wizyty", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), getString(R.string.FillValuesOfVisit), Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -152,7 +160,7 @@ public class MedicalVisitEditorFragment extends Fragment {
 
     private void deleteResult(){
         if(clickedItem >= 0){
-            SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences("schedule", Context.MODE_PRIVATE);
+            SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences(MainActivity.schedulePreferencesName, Context.MODE_PRIVATE);
             Gson gson = new Gson();
 
             MedicalVisitScheduleItem result = medicalVisitScheduleItemArrayList.get(clickedItem);
@@ -169,7 +177,7 @@ public class MedicalVisitEditorFragment extends Fragment {
     }
 
     private void loadResults(){
-        SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences("schedule", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences(MainActivity.schedulePreferencesName, Context.MODE_PRIVATE);
         Gson gson = new Gson();
 
         String json = sharedPreferences.getString("visits", null);
@@ -184,7 +192,7 @@ public class MedicalVisitEditorFragment extends Fragment {
     }
 
     private void addNewResult(String givenDate, String givenHour, String givenName, String givenAddress, String givenDoctor, String givenStatus){
-        SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences("schedule", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences(MainActivity.schedulePreferencesName, Context.MODE_PRIVATE);
         Gson gson = new Gson();
 
         MedicalVisitScheduleItem result = new MedicalVisitScheduleItem(givenDate, givenHour, givenName, givenAddress, givenDoctor, givenStatus);
@@ -216,7 +224,7 @@ public class MedicalVisitEditorFragment extends Fragment {
 
         int style = AlertDialog.THEME_HOLO_DARK;
         TimePickerDialog timePickerDialog = new TimePickerDialog(getActivity(), style, onTimeSetListener,  hour, minute, true);
-        timePickerDialog.setTitle("Wybierz godzinę wizyty");
+        timePickerDialog.setTitle(getString(R.string.PickVisitTime));
         timePickerDialog.show();
     }
 
@@ -225,7 +233,12 @@ public class MedicalVisitEditorFragment extends Fragment {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                 month += 1;
-                String date = Utils.makeDateString(day, month, year);
+                String date;
+                if (MainActivity.language.equals("English")){
+                    date = Utils.makeDateStringEnglish(day, month, year);
+                } else {
+                    date = Utils.makeDateString(day, month, year);
+                }
                 dateButton.setText(date);
             }
         };

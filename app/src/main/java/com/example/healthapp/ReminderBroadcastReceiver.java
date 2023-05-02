@@ -16,7 +16,6 @@ import java.util.Date;
 import java.util.Locale;
 
 public class ReminderBroadcastReceiver extends BroadcastReceiver {
-
     private SharedPreferences sharedPreferences;
     private ArrayList<SugarResult> sugarResultArrayList = new ArrayList<>();
     private ArrayList<BloodPressureResult> bloodPressureResultArrayList = new ArrayList<>();
@@ -29,13 +28,13 @@ public class ReminderBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         currentContext = context;
-        sharedPreferences = context.getSharedPreferences("results", Context.MODE_PRIVATE);
+        sharedPreferences = context.getSharedPreferences(MainActivity.resultsPreferencesName, Context.MODE_PRIVATE);
 
         if (!checkLastAddedResult()) {
             NotificationCompat.Builder builder = new NotificationCompat.Builder(currentContext, "My Notification")
                     .setSmallIcon(R.drawable.ic_notification_icon)
-                    .setContentTitle("Wprowadź wszystkie pomiary")
-                    .setContentText("Dzisiaj nie uzupełniłeś swoich wyników!")
+                    .setContentTitle(context.getString(R.string.RemindNotifTitle))
+                    .setContentText(context.getString(R.string.RemindNotifText))
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
 

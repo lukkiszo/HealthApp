@@ -12,13 +12,21 @@ import com.google.android.material.textfield.TextInputLayout;
 
 public class BloodPressureActivity extends AppCompatActivity {
     private ImageButton addNewResultButton;
-    String[] items = {"Ciśnienie krwi", "Tętno", "Saturacja krwi"};
+    String[] items;
+    String[] itemsPl = {"Ciśnienie krwi", "Tętno", "Saturacja krwi"};
+    String[] itemsEn = {"Blood pressure", "Heart Rate", "Blood Saturation"};
     TextInputLayout textInputLayout;
     AutoCompleteTextView autoCompleteTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (MainActivity.language.equals("English")){
+            items = itemsEn;
+        } else {
+            items = itemsPl;
+        }
+
         setContentView(R.layout.activity_blood_pressure);
 
         Intent intent = getIntent();
@@ -29,7 +37,7 @@ public class BloodPressureActivity extends AppCompatActivity {
         if (getSupportActionBar() != null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
-            getSupportActionBar().setTitle("Parametry krwi");
+            getSupportActionBar().setTitle(R.string.BloodParameters);
         }
 
         textInputLayout = findViewById(R.id.bloodMenu);
@@ -60,7 +68,7 @@ public class BloodPressureActivity extends AppCompatActivity {
 
     private void addNewResult(){
         Intent intent = new Intent(this, ResultEditor.class);
-        intent.putExtra("type", "Ciśnienie krwi, puls i saturacja");
+        intent.putExtra("type", getString(R.string.Blood_Pressure_Pulse_Saturation));
         startActivity(intent);
     }
 
@@ -70,14 +78,17 @@ public class BloodPressureActivity extends AppCompatActivity {
         // Replace the contents of the container with the new fragment
         switch (choice){
             case "Ciśnienie krwi":
+            case "Blood pressure":
                 ft.replace(R.id.bloodPressureResults, new BloodPressureResultsFragment());
                 break;
 
             case "Tętno":
+            case "Heart Rate":
                 ft.replace(R.id.bloodPressureResults, new PulseResultsFragment());
                 break;
 
             case "Saturacja krwi":
+            case "Blood Saturation":
                 ft.replace(R.id.bloodPressureResults, new SaturationResultsFragment());
                 break;
 

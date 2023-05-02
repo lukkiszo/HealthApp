@@ -39,7 +39,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/toolbar"
         android:textAlignment="center"
-        android:hint="Typ wprowadzanego badania">
+        android:hint="@string/ResultTypeHint">
 
         <AutoCompleteTextView
                 android:layout_width="match_parent"

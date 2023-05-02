@@ -27,7 +27,7 @@ public class TemperatureActivity extends AppCompatActivity {
         if (getSupportActionBar() != null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
-            getSupportActionBar().setTitle("Temperatura");
+            getSupportActionBar().setTitle(getString(R.string.Temperature));
         }
 
         addNewResultButton = findViewById(R.id.addTemperatureResultButton);
@@ -42,7 +42,7 @@ public class TemperatureActivity extends AppCompatActivity {
 
     private void addNewResult(){
         Intent intent = new Intent(this, ResultEditor.class);
-        intent.putExtra("type", "Temperatura ciała");
+        intent.putExtra("type", getString(R.string.Temperature));
         startActivity(intent);
     }
 

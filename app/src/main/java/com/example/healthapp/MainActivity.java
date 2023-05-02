@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.app.*;
 import android.content.*;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.hardware.Sensor;
@@ -14,8 +15,6 @@ import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.IBinder;
-import android.util.Log;
 import android.view.*;
 import android.widget.*;
 import androidx.annotation.NonNull;
@@ -27,8 +26,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
-import androidx.core.content.PackageManagerCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.preference.PreferenceManager;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.request.RequestOptions;
@@ -39,6 +38,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -46,7 +46,8 @@ import java.util.Date;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, SensorEventListener {
-
+    public static String resultsPreferencesName = "results";
+    public static String schedulePreferencesName = "schedule";
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
@@ -68,10 +69,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private Boolean isCounterSensorPresent;
     int steps = 0;
     private Boolean isCounterRead = false;
+    private String stepsDailyGoal;
+    private String timeOfNotifications;
+    private Boolean notificationsEnabled;
+    public static Configuration config;
+    public static String language;
+    private TextView dailySummaryTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        setTheme(R.style.Theme_HealthApp);
+
+//
         setContentView(R.layout.activity_main);
 
         toolbar = findViewById(R.id.main_toolbar);
@@ -81,6 +91,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         bloodPressureInfo = findViewById(R.id.blood_pressure);
         stepsInfo = findViewById(R.id.steps);
         medicinesInfo = findViewById(R.id.medicines);
+        dailySummaryTextView = findViewById(R.id.summary);
+        dailySummaryTextView.setText(R.string.DailySummary);
 
         if(ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACTIVITY_RECOGNITION) == PackageManager.PERMISSION_DENIED){ //ask for permission
@@ -110,16 +122,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
 
         getLastResults();
-        setProfilePhoto();
+        setProfilePhotoAndRenameLabels();
         customizeDimension();
         checkResults();
-        checkIfResultsAddedToday();
     }
 
     @SuppressLint("SetTextI18n")
     private void getLastResults(){
-        SharedPreferences sharedPreferences = getSharedPreferences("results", Context.MODE_PRIVATE);
-        SharedPreferences sharedPreferences1 = getSharedPreferences("schedule", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getSharedPreferences(resultsPreferencesName, Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences1 = getSharedPreferences(schedulePreferencesName, Context.MODE_PRIVATE);
         Gson gson = new Gson();
 
         String json = sharedPreferences.getString("sugar", null);
@@ -217,7 +228,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         if (todayMedicines.size() == 0){
-            medicinesInfo.setText("Brak leków do zażycia dzisiaj");
+            medicinesInfo.setText(getString(R.string.NoMedicinesToday));
         } else {
             ArrayList<MedicineScheduleItem> sortedMedicines = SortHelperClass.sortMedicineItems(todayMedicines);
             MedicineScheduleItem closestMedicine = sortedMedicines.get(0);
@@ -233,16 +244,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             if (closest > 60){
                 int hourToGet = (int) Math.floor(closest / 60);
                 int minutesToGet = closest - hourToGet * 60;
-                medicinesInfo.setText("Przyjmij " + closestMedicine.getMedicineName() + "\nza " + hourToGet + " h " + minutesToGet + " min" );
+                medicinesInfo.setText(getString(R.string.TakeMedicines) + " " +closestMedicine.getMedicineName() + "\n" + getString(R.string.InTimeMedicines) + " " + hourToGet + " h " + minutesToGet + " min" );
             } else {
-                medicinesInfo.setText("Przyjmij " + closestMedicine.getMedicineName() + "\nza " + closest + " min" );
+                medicinesInfo.setText(getString(R.string.TakeMedicines) + " " + closestMedicine.getMedicineName() + "\n" + getString(R.string.InTimeMedicines) + " " + closest + " min" );
+            }
+            if (closest == 24 * 60){
+                medicinesInfo.setText(getString(R.string.NoMedicinesToday));
             }
         }
 
         bloodPressureInfo.setText(lastSystolicBloodPressureResult + " / " + lastDiastolicBloodPressureResult + "\t " + lastPulseResult + " BPM");
-        sugarInfo.setText("Poziom cukru \nwe krwi: " + lastSugarResult + " mg/dl");
+        sugarInfo.setText(getString(R.string.SugarMain) + " " + lastSugarResult + " mg/dl");
 
-        stepsInfo.setText("Liczba kroków:\n" + todayStepsResult + " / 6000");
+        stepsInfo.setText(getString(R.string.StepsMain) + todayStepsResult + " / " + stepsDailyGoal);
     }
 
     private void checkResults(){
@@ -263,8 +277,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (lastSugarResult > 100 || lastSugarResult < 70){
             NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "Sugar")
                     .setSmallIcon(R.drawable.ic_notification_icon)
-                    .setContentTitle("Nieprawidłowy poziom cukru we krwi!")
-                    .setContentText("Twój ostatni wprowadzony wynik badania poziomu cukru we krwi nie mieścił się w granicach normy")
+                    .setContentTitle(getString(R.string.BadSugarNotifTitle))
+                    .setContentText(getString(R.string.BadSugarNotifText))
                     .setPriority(NotificationCompat.PRIORITY_HIGH);
 
             NotificationManagerCompat managerCompat = NotificationManagerCompat.from(this);
@@ -274,8 +288,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (lastTemperatureResult > 37.5 || lastTemperatureResult < 36){
             NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "Temperature")
                     .setSmallIcon(R.drawable.ic_notification_icon)
-                    .setContentTitle("Nieprawidłowa temperatura ciała!")
-                    .setContentText("Twój ostatni wprowadzony wynik badania temperatury ciała nie mieścił się w granicach normy")
+                    .setContentTitle(getString(R.string.BadTemperatureNotifTitle))
+                    .setContentText(getString(R.string.BadTemperatureNotifText))
                     .setPriority(NotificationCompat.PRIORITY_HIGH);
 
             NotificationManagerCompat managerCompat = NotificationManagerCompat.from(this);
@@ -285,8 +299,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (lastSystolicBloodPressureResult > 135 || lastDiastolicBloodPressureResult > 85 || lastSystolicBloodPressureResult < 100 || lastDiastolicBloodPressureResult < 60){
             NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "BloodPressure")
                     .setSmallIcon(R.drawable.ic_notification_icon)
-                    .setContentTitle("Nieprawidłowe ciśnienie krwi!")
-                    .setContentText("Twój ostatni wprowadzony wynik badania ciśnienia tętniczego krwi nie mieścił się w granicach normy")
+                    .setContentTitle(getString(R.string.BadBloodPressureNotifTitle))
+                    .setContentText(getString(R.string.BadBloodPressureNotifText))
                     .setPriority(NotificationCompat.PRIORITY_HIGH);
 
             NotificationManagerCompat managerCompat = NotificationManagerCompat.from(this);
@@ -296,8 +310,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (lastPulseResult > 100 || lastPulseResult < 50){
             NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "Pulse")
                     .setSmallIcon(R.drawable.ic_notification_icon)
-                    .setContentTitle("Nieprawidłowe tętno!")
-                    .setContentText("Twój ostatni wprowadzony wynik badania tętna nie mieścił się w granicach normy")
+                    .setContentTitle(getString(R.string.BadPulseNotifTitle))
+                    .setContentText(getString(R.string.BadPulseNotifText))
                     .setPriority(NotificationCompat.PRIORITY_HIGH);
 
             NotificationManagerCompat managerCompat = NotificationManagerCompat.from(this);
@@ -307,8 +321,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (lastSaturationResult < 95){
             NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "Saturation")
                     .setSmallIcon(R.drawable.ic_notification_icon)
-                    .setContentTitle("Nieprawidłowa saturacja!")
-                    .setContentText("Twój ostatni wprowadzony wynik saturacji krwi był poniżej normy")
+                    .setContentTitle(getString(R.string.BadSaturationNotifTitle))
+                    .setContentText(getString(R.string.BadSaturationNotifText))
                     .setPriority(NotificationCompat.PRIORITY_HIGH);
 
             NotificationManagerCompat managerCompat = NotificationManagerCompat.from(this);
@@ -326,21 +340,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         Calendar c = Calendar.getInstance();
-        c.set(Calendar.HOUR_OF_DAY, 16);
-        c.set(Calendar.MINUTE, 0);
-        c.set(Calendar.SECOND, 0);
 
-        showNotification(c);
+        if (notificationsEnabled){
+            c.set(Calendar.HOUR_OF_DAY, Integer.parseInt(timeOfNotifications.split(":")[0]));
+            c.set(Calendar.MINUTE, Integer.parseInt(timeOfNotifications.split(":")[1]));
+            c.set(Calendar.SECOND, 0);
+            showNotification(c);
+        }
     }
 
     private void showNotification(Calendar c){
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(this, ReminderBroadcastReceiver.class);
-        PendingIntent pendingIntent1 = PendingIntent.getBroadcast(this, 2, intent, PendingIntent.FLAG_MUTABLE);
-        Log.d("reminderBroadcast", pendingIntent1.toString());
+        PendingIntent pendingIntent1 = PendingIntent.getBroadcast(this, 2, intent, PendingIntent.FLAG_IMMUTABLE);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), 24 * 60 * 60 * 1000, pendingIntent1);
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent1);
         }
     }
 
@@ -364,7 +379,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void onSensorChanged(SensorEvent event) {
         if (event.sensor == stepSensor){
             steps = (int) event.values[0];
-            stepsInfo.setText("Liczba kroków:\n" + (steps - todayStepsResult) + " / 6000");
+            stepsInfo.setText(MessageFormat.format("{0}{1} / {2}", getString(R.string.StepsMain), steps - todayStepsResult, stepsDailyGoal));
             if (!isCounterRead){
                 getDailySteps();
             }
@@ -379,10 +394,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(this, StepsReceiver.class);
         intent.putExtra("steps", steps);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intent, PendingIntent.FLAG_MUTABLE);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 4, intent, PendingIntent.FLAG_IMMUTABLE);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), 24 * 60 * 60 * 1000 , pendingIntent);
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
         }
     }
 
@@ -421,17 +436,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void onBackPressed() {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-        alertDialogBuilder.setTitle("Czy na pewno chcesz wyjść z aplikacji?");
+        alertDialogBuilder.setTitle(R.string.QuitQuestion);
         alertDialogBuilder
-                .setMessage("Kliknij tak aby wyjść!")
+                .setMessage(getString(R.string.QuitPrompt))
                 .setCancelable(false)
-                .setPositiveButton("Tak",
+                .setPositiveButton(getString(R.string.Yes),
                         (dialog, id) -> {
                             moveTaskToBack(true);
                             System.exit(0);
                         })
 
-                .setNegativeButton("Nie", (dialog, id) -> dialog.cancel());
+                .setNegativeButton(getString(R.string.No), (dialog, id) -> dialog.cancel());
 
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
@@ -470,7 +485,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 call(number);
             }
             else {
-                Toast.makeText(this, "Odmowa dostępu", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, getString(R.string.PermissionDeniedText), Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -509,7 +524,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public void goToEditor(View view){
         Intent intent = new Intent(this, ResultEditor.class);
-        intent.putExtra("type", "Cukier");
+        intent.putExtra("type", getString(R.string.Sugar));
         startActivity(intent);
     }
 
@@ -525,19 +540,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             case R.id.bloodPressureNav:
                 intent = new Intent(this, BloodPressureActivity.class);
-                intent.putExtra("type", "Ciśnienie krwi");
+                intent.putExtra("type", getString(R.string.BloodPressure));
                 startActivity(intent);
                 break;
 
             case R.id.pulseNav:
                 intent = new Intent(this, BloodPressureActivity.class);
-                intent.putExtra("type", "Tętno");
+                intent.putExtra("type", getString(R.string.Pulse));
                 startActivity(intent);
                 break;
 
             case R.id.saturationNav:
                 intent = new Intent(this, BloodPressureActivity.class);
-                intent.putExtra("type", "Saturacja krwi");
+                intent.putExtra("type", getString(R.string.Saturation));
                 startActivity(intent);
                 break;
 
@@ -593,9 +608,35 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     protected void onResume() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this /* Activity context */);
+        stepsDailyGoal = sharedPreferences.getString("stepsGoal", "6000");
+        notificationsEnabled = sharedPreferences.getBoolean("notificationsEnabled", true);
+        if (notificationsEnabled){
+            timeOfNotifications = sharedPreferences.getString("hourOfNotifications", "16:00");
+        }
+        if(sharedPreferences.getString("language", "Polski").equals("English")){
+            Locale locale = new Locale("en");
+            Locale.setDefault(locale);
+            config = new Configuration();
+            config.locale = locale;
+            language = "English";
+            getBaseContext().getResources().updateConfiguration(config,
+                    getBaseContext().getResources().getDisplayMetrics());
+        } else {
+            Locale locale = new Locale("pl");
+            Locale.setDefault(locale);
+            config = new Configuration();
+            config.locale = locale;
+            language = "Polski";
+            getBaseContext().getResources().updateConfiguration(config,
+                    getBaseContext().getResources().getDisplayMetrics());
+        }
+
+        dailySummaryTextView.setText(R.string.DailySummary);
         startFallDetectionService();
-        setProfilePhoto();
+        setProfilePhotoAndRenameLabels();
         getLastResults();
+        checkIfResultsAddedToday();
         super.onResume();
         if (sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER) != null){
             sensorManager.registerListener(this, stepSensor, SensorManager.SENSOR_DELAY_NORMAL);
@@ -610,7 +651,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    private void setProfilePhoto(){
+    private void setProfilePhotoAndRenameLabels(){
         SharedPreferences sharedPref = getSharedPreferences(ProfileActivity.mypreference, Context.MODE_PRIVATE);
 
         ImageButton headerProfile = (ImageButton) findViewById(R.id.header_profile);
@@ -619,6 +660,40 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         View headerView = navigationView.getHeaderView(0);
         TextView nav_user = (TextView) headerView.findViewById(R.id.username);
         ImageView navigationPhoto = (ImageView) headerView.findViewById(R.id.userPhoto);
+
+        Menu menu = navigationView.getMenu();
+        MenuItem item1 = menu.findItem(R.id.ResultsNav);
+        item1.setTitle(R.string.TestResults);
+        MenuItem item2 = menu.findItem(R.id.bloodPressureNav);
+        item2.setTitle(R.string.BloodPressure);
+        MenuItem item3 = menu.findItem(R.id.pulseNav);
+        item3.setTitle(R.string.Pulse);
+        MenuItem item4 = menu.findItem(R.id.saturationNav);
+        item4.setTitle(R.string.Saturation);
+        MenuItem item5 = menu.findItem(R.id.sugarNav);
+        item5.setTitle(R.string.SugarNavLabel);
+        MenuItem item6 = menu.findItem(R.id.stepsNav);
+        item6.setTitle(R.string.StepsNavLabel);
+        MenuItem item7 = menu.findItem(R.id.temperatureNav);
+        item7.setTitle(R.string.Temperature);
+        MenuItem item8 = menu.findItem(R.id.scheduleNav);
+        item8.setTitle(R.string.Schedule);
+        MenuItem item9 = menu.findItem(R.id.medicineScheduleNav);
+        item9.setTitle(R.string.MedicinesSchedule);
+        MenuItem item10 = menu.findItem(R.id.visitScheduleNav);
+        item10.setTitle(R.string.VisitSchedule);
+        MenuItem item11 = menu.findItem(R.id.summaryNav);
+        item11.setTitle(R.string.MonthSummary);
+        MenuItem item12 = menu.findItem(R.id.settingsNav);
+        item12.setTitle(R.string.Settings);
+        MenuItem item13 = menu.findItem(R.id.myProfile);
+        item13.setTitle(R.string.MyProfile);
+        MenuItem item14 = menu.findItem(R.id.settings);
+        item14.setTitle(R.string.Settings);
+        MenuItem item15 = menu.findItem(R.id.about);
+        item15.setTitle(R.string.AboutApp);
+        MenuItem item16 = menu.findItem(R.id.exit);
+        item16.setTitle(R.string.Quit);
 
         String photo = sharedPref.getString("photo", "");
         String name = sharedPref.getString("username", "");

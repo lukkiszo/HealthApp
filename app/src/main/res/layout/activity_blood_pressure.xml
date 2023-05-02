@@ -37,7 +37,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/toolbar"
             android:textAlignment="center"
-            android:hint="Wybrany parametr krwi">
+            android:hint="@string/BloodPressureParameterHint">
 
         <AutoCompleteTextView
                 android:layout_width="match_parent"

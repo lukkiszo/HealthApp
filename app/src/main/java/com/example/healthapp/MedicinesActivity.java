@@ -43,7 +43,7 @@ public class MedicinesActivity extends AppCompatActivity {
         if (getSupportActionBar() != null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
-            getSupportActionBar().setTitle("Harmonogram leków");
+            getSupportActionBar().setTitle(R.string.MedicinesSchedule);
         }
 
         cal = Calendar.getInstance();
@@ -53,7 +53,12 @@ public class MedicinesActivity extends AppCompatActivity {
         dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
 
         dateText = findViewById(R.id.medicine_dateText);
-        dateText.setText(String.format("%s\n%s", Utils.getDayString(dayOfWeek - 1), Utils.makeDateString(day, month + 1, year)));
+
+        if (MainActivity.language.equals("English")){
+            dateText.setText(String.format("%s\n%s", Utils.getDayStringEnglish(dayOfWeek - 1), Utils.makeDateStringEnglish(day, month + 1, year)));
+        } else {
+            dateText.setText(String.format("%s\n%s", Utils.getDayString(dayOfWeek - 1), Utils.makeDateString(day, month + 1, year)));
+        }
 
         listView = findViewById(R.id.medicines_listview);
 
@@ -87,7 +92,7 @@ public class MedicinesActivity extends AppCompatActivity {
 
     private void addNewMedicine(){
         Intent intent = new Intent(this, ResultEditor.class);
-        intent.putExtra("type", "Harmonogram przyjmowania leku");
+        intent.putExtra("type", getString(R.string.MedicineSchedule));
         startActivity(intent);
     }
 
@@ -97,7 +102,11 @@ public class MedicinesActivity extends AppCompatActivity {
         month = cal.get(Calendar.MONTH);
         day = cal.get(Calendar.DAY_OF_MONTH);
         dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
-        dateText.setText(String.format("%s\n%s", Utils.getDayString(dayOfWeek - 1), Utils.makeDateString(day, month + 1, year)));
+        if (MainActivity.language.equals("English")){
+            dateText.setText(String.format("%s\n%s", Utils.getDayStringEnglish(dayOfWeek - 1), Utils.makeDateStringEnglish(day, month + 1, year)));
+        } else {
+            dateText.setText(String.format("%s\n%s", Utils.getDayString(dayOfWeek - 1), Utils.makeDateString(day, month + 1, year)));
+        }
         getDailyMedicines();
     }
 
@@ -107,7 +116,11 @@ public class MedicinesActivity extends AppCompatActivity {
         month = cal.get(Calendar.MONTH);
         day = cal.get(Calendar.DAY_OF_MONTH);
         dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
-        dateText.setText(String.format("%s\n%s", Utils.getDayString(dayOfWeek - 1), Utils.makeDateString(day, month + 1, year)));
+        if (MainActivity.language.equals("English")){
+            dateText.setText(String.format("%s\n%s", Utils.getDayStringEnglish(dayOfWeek - 1), Utils.makeDateStringEnglish(day, month + 1, year)));
+        } else {
+            dateText.setText(String.format("%s\n%s", Utils.getDayString(dayOfWeek - 1), Utils.makeDateString(day, month + 1, year)));
+        }
         getDailyMedicines();
     }
 
@@ -150,7 +163,7 @@ public class MedicinesActivity extends AppCompatActivity {
     }
 
     private void loadMedicines(){
-        SharedPreferences sharedPreferences = this.getSharedPreferences("schedule", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = this.getSharedPreferences(MainActivity.schedulePreferencesName, Context.MODE_PRIVATE);
         Gson gson = new Gson();
 
         String json = sharedPreferences.getString("medicines", null);
@@ -165,7 +178,7 @@ public class MedicinesActivity extends AppCompatActivity {
     }
 
     private ArrayList<MedicineScheduleItem> sortMedicineItems(ArrayList<MedicineScheduleItem> items){
-        SharedPreferences sharedPreferences = this.getSharedPreferences("schedule", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = this.getSharedPreferences(MainActivity.schedulePreferencesName, Context.MODE_PRIVATE);
         Gson gson = new Gson();
 
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -185,7 +198,7 @@ public class MedicinesActivity extends AppCompatActivity {
         listViewArrayList = SortHelperClass.sortMedicineItems(listViewArrayList);
 
         for (MedicineScheduleItem item : listViewArrayList) {
-            medicines.add("Lek : " + item.getMedicineName() + "\nGodzina : " + item.getTime() + "\nDawka: " + item.getDose());
+            medicines.add(getString(R.string.Medicine) + " " + item.getMedicineName() + getString(R.string.MedicineHour) + " " + item.getTime() + getString(R.string.MedicineDose) + " " + item.getDose());
         }
 
         ArrayAdapter<String> arr = new ArrayAdapter<String>(this, R.layout.medicine_item, medicines);
@@ -204,7 +217,7 @@ public class MedicinesActivity extends AppCompatActivity {
                 }
 
                 Intent intent = new Intent(getApplicationContext(), ResultEditor.class);
-                intent.putExtra("type", "Harmonogram przyjmowania leku");
+                intent.putExtra("type", getString(R.string.MedicineSchedule));
                 intent.putExtra("position", index);
                 startActivity(intent);
             }

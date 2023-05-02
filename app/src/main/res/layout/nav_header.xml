@@ -26,6 +26,6 @@
             android:paddingStart="24dp"
             android:paddingTop="16dp"
             android:id="@+id/username"
-            android:text="Username"/>
+            android:text="@string/Username"/>
 
 </RelativeLayout>

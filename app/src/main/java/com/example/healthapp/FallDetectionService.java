@@ -29,6 +29,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
+
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -105,7 +107,7 @@ public class FallDetectionService extends Service implements SensorEventListener
         super.onDestroy();
         mPeriodicEventHandler.removeCallbacks(doPeriodicTask);
         senSensorManager.unregisterListener(this);
-        Toast.makeText(this, "Stopped Tracking", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, getString(R.string.StoppedTrackingInfo), Toast.LENGTH_SHORT).show();
 //        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 //            locationManager.removeUpdates(locationListener);
 //        }
@@ -150,7 +152,7 @@ public class FallDetectionService extends Service implements SensorEventListener
             handler.post(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(FallDetectionService.this.getApplicationContext(), "No GPS Permission!!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(FallDetectionService.this.getApplicationContext(), getString(R.string.GPS_NoPermission), Toast.LENGTH_SHORT).show();
                 }
             });
         }
@@ -391,8 +393,8 @@ public class FallDetectionService extends Service implements SensorEventListener
                         degreeFloat2 = degreeFloat2 * -1;
                     if (degreeFloat > 30 || degreeFloat2 > 30) {
                         if (phoneNum != null && !phoneNum.equals("")) {
-                            String textMsg1 = "Powiadomienie z aplikacji Health App. " + personName + " może potrzebować pomocy!";
-                            String textMsg2 = "Aktualna lokalizacja: " + "https://www.google.com/maps/search/?api=1&query=" + latitude + "%2C" + longitude;;
+                            String textMsg1 = getString(R.string.SMSText1) + personName + getString(R.string.SMSText2);
+                            String textMsg2 = getString(R.string.SMSText3) + "https://www.google.com/maps/search/?api=1&query=" + latitude + "%2C" + longitude;;
                             smsManager.sendTextMessage(phoneNum, null, textMsg1, null, null);
                             smsManager.sendTextMessage(phoneNum, null, textMsg2, null, null);
                         }

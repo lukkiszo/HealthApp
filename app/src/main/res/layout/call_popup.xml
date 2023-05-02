@@ -9,7 +9,7 @@
     <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Wybierz numer\nna który chcesz zadzwonić"
+            android:text="@string/PhoneNumberToCall"
             android:id="@+id/header"
             android:layout_centerHorizontal="true"
             android:textAlignment="center"
@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/call112"
             android:layout_below="@+id/header"
-            android:text="Służby ratunkowe - 112"
+            android:text="@string/EmergencyPhone"
             android:onClick="emergencyCall"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="20dp"
@@ -33,7 +33,7 @@
     <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Bliska osoba"
+            android:text="@string/ClosePersonPhone"
             android:id="@+id/call_iceperson"
             android:layout_below="@+id/call112"
             android:onClick="call_ICE"

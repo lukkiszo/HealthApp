@@ -26,7 +26,7 @@ public class SugarActivity extends AppCompatActivity {
         if (getSupportActionBar() != null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
-            getSupportActionBar().setTitle("Cukier i BMI");
+            getSupportActionBar().setTitle(R.string.SugarAndBMI);
         }
 
         addNewResultButton = findViewById(R.id.addSugarResultButton);
@@ -41,7 +41,7 @@ public class SugarActivity extends AppCompatActivity {
 
     private void addNewResult(){
         Intent intent = new Intent(this, ResultEditor.class);
-        intent.putExtra("type", "Cukier");
+        intent.putExtra("type", getString(R.string.Sugar));
         startActivity(intent);
     }
 

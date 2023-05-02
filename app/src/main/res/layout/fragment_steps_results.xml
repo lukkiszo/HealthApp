@@ -40,7 +40,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/stepsResetChartButton"
                     android:layout_toEndOf="@+id/stepsChartLeft"
-                    android:text="RESET"/>
+                    android:text="@string/Reset"/>
 
             <Button
                     android:layout_width="wrap_content"
@@ -57,7 +57,6 @@
                 android:layout_below="@+id/stepsChartButtons"
                 android:layout_marginTop="15dp"
                 android:layout_marginStart="20dp"
-                android:text="Srednia wyników: 123"
                 android:id="@+id/meanStepsResults"/>
 
         <TextView
@@ -66,7 +65,6 @@
                 android:layout_below="@+id/meanStepsResults"
                 android:layout_marginTop="15dp"
                 android:layout_marginStart="20dp"
-                android:text="Ostatni wynik: 123"
                 android:id="@+id/lastStepsResult"/>
 
         <RelativeLayout

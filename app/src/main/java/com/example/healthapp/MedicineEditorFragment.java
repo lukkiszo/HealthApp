@@ -34,8 +34,12 @@ import java.util.Locale;
 import java.util.Objects;
 
 public class MedicineEditorFragment extends Fragment{
-    String[] items = {"-", "Na czczo", "Przed posiłkiem", "Po posiłku"};
-    String[] periodicity = {"Jednorazowo", "Cyklicznie (co tydzień)", "Codziennie", "W zakresie dat"};
+    String[] items;
+    String[] itemsPl = {"-", "Na czczo", "Przed posiłkiem", "Po posiłku"};
+    String[] itemsEn = {"-", "On an empty stomach", "Before meal", "After meal"};
+    String[] periodicity;
+    String[] periodicityPl = {"Jednorazowo", "Cyklicznie (co tydzień)", "Codziennie", "W zakresie dat"};
+    String[] periodicityEn = {"Once", "Cyclically (weekly)", "Every Day", "In terms of dates"};
     TextInputLayout periodicityTextInputLayout;
     AutoCompleteTextView periodicityAutoCompleteTextView;
     TextInputLayout additionalInfoTextInputLayout;
@@ -55,6 +59,14 @@ public class MedicineEditorFragment extends Fragment{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (MainActivity.language.equals("English")){
+            items = itemsEn;
+            periodicity = periodicityEn;
+        } else {
+            items = itemsPl;
+            periodicity = periodicityPl;
+        }
+
         if (getArguments() != null) {
             clickedItem = getArguments().getInt("position");
         }
@@ -148,21 +160,25 @@ public class MedicineEditorFragment extends Fragment{
 
                     switch (periodicityChoice) {
                         case "Jednorazowo":
+                        case "Once":
                             addNewOneTimeMedicine(ResultEditor.medicineDateChosen, timeButton.getText().toString(), medicineNameEditText.getText().toString(), doseEditText.getText().toString(), annotation);
                             break;
                         case "Cyklicznie (co tydzień)":
+                        case "Cyclically (weekly)":
                             addNewCyclicMedicine(ResultEditor.medicineDayChosen, timeButton.getText().toString(), medicineNameEditText.getText().toString(), doseEditText.getText().toString(), annotation);
                             break;
                         case "Codziennie":
+                        case "Every Day":
                             addNewEveryDayMedicine(timeButton.getText().toString(), medicineNameEditText.getText().toString(), doseEditText.getText().toString(), annotation);
                             break;
                         case "W zakresie dat":
+                        case "In terms of dates":
                             addNewRangeMedicine(ResultEditor.medicineDateFromChosen, ResultEditor.medicineDateToChosen, timeButton.getText().toString(), medicineNameEditText.getText().toString(), doseEditText.getText().toString(), annotation);
                             break;
                     }
                 }
                 else {
-                    Toast.makeText(getActivity(), "Proszę uzupełnić wszystkie wartości", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), getString(R.string.FillAllValues), Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -170,7 +186,7 @@ public class MedicineEditorFragment extends Fragment{
     }
 
     private void addNewOneTimeMedicine(String date, String hour, String name, String dose, String annot){
-        SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences("schedule", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences(MainActivity.schedulePreferencesName, Context.MODE_PRIVATE);
         Gson gson = new Gson();
 
         MedicineScheduleItem medicineScheduleItem = new MedicineScheduleItem(date, hour, name, dose, annot);
@@ -191,7 +207,7 @@ public class MedicineEditorFragment extends Fragment{
     }
 
     private void addNewRangeMedicine(String dateFrom, String dateTo, String hour, String name, String dose, String annot){
-        SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences("schedule", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences(MainActivity.schedulePreferencesName, Context.MODE_PRIVATE);
         Gson gson = new Gson();
 
         MedicineScheduleItem medicineScheduleItem = new MedicineScheduleItem("W zakresie dat", dateFrom, dateTo, hour, name, dose, annot);
@@ -212,7 +228,7 @@ public class MedicineEditorFragment extends Fragment{
     }
 
     private void addNewEveryDayMedicine(String hour, String name, String dose, String annot){
-        SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences("schedule", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences(MainActivity.schedulePreferencesName, Context.MODE_PRIVATE);
         Gson gson = new Gson();
 
         MedicineScheduleItem medicineScheduleItem = new MedicineScheduleItem("Codziennie", "", hour, name, dose, annot);
@@ -233,7 +249,7 @@ public class MedicineEditorFragment extends Fragment{
     }
 
     private void addNewCyclicMedicine(String day, String hour, String name, String dose, String annot){
-        SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences("schedule", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences(MainActivity.schedulePreferencesName, Context.MODE_PRIVATE);
         Gson gson = new Gson();
 
         MedicineScheduleItem medicineScheduleItem = new MedicineScheduleItem("Cyklicznie", day, hour, name, dose, annot);
@@ -265,13 +281,13 @@ public class MedicineEditorFragment extends Fragment{
 
         int style = AlertDialog.THEME_HOLO_DARK;
         TimePickerDialog timePickerDialog = new TimePickerDialog(getActivity(), style, onTimeSetListener,  hour, minute, true);
-        timePickerDialog.setTitle("Wybierz czas wykonania badania");
+        timePickerDialog.setTitle(R.string.PickTimeOfTest);
         timePickerDialog.show();
     }
 
     private void deleteResult(){
         if(clickedItem >= 0){
-            SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences("schedule", Context.MODE_PRIVATE);
+            SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences(MainActivity.schedulePreferencesName, Context.MODE_PRIVATE);
             Gson gson = new Gson();
 
             MedicineScheduleItem item = medicineScheduleItemArrayList.get(clickedItem);
@@ -288,7 +304,7 @@ public class MedicineEditorFragment extends Fragment{
     }
 
     private void loadResults(){
-        SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences("schedule", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences(MainActivity.schedulePreferencesName, Context.MODE_PRIVATE);
         Gson gson = new Gson();
 
         String json = sharedPreferences.getString("medicines", null);
@@ -442,6 +458,7 @@ public class MedicineEditorFragment extends Fragment{
         // Replace the contents of the container with the new fragment
         switch (choice){
             case "Jednorazowo":
+            case "Once":
                 Bundle bundle = new Bundle();
                 bundle.putInt("position", clickedItem);
 
@@ -451,6 +468,7 @@ public class MedicineEditorFragment extends Fragment{
                 break;
 
             case "Cyklicznie (co tydzień)":
+            case "Cyclically (weekly)":
                 Bundle bundle1 = new Bundle();
                 bundle1.putInt("position", clickedItem);
 
@@ -460,10 +478,12 @@ public class MedicineEditorFragment extends Fragment{
                 break;
 
             case "Codziennie":
+            case "Every Day":
                 ft.replace(R.id.additionalInfoMedicine, new Fragment());
                 break;
 
             case "W zakresie dat":
+            case "In terms of dates":
                 Bundle bundle3 = new Bundle();
                 bundle3.putInt("position", clickedItem);
 

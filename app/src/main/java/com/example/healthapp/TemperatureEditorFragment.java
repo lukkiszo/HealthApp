@@ -120,7 +120,7 @@ public class TemperatureEditorFragment extends Fragment {
 
     private void deleteResult(){
         if(clickedItem >= 0){
-            SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences("results", Context.MODE_PRIVATE);
+            SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences(MainActivity.resultsPreferencesName, Context.MODE_PRIVATE);
             Gson gson = new Gson();
 
             temperatureResultArrayList.remove(clickedItem);
@@ -147,7 +147,7 @@ public class TemperatureEditorFragment extends Fragment {
     }
 
     private void loadResults(){
-        SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences("results", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences(MainActivity.resultsPreferencesName, Context.MODE_PRIVATE);
         Gson gson = new Gson();
 
         String json = sharedPreferences.getString("temperature", null);
@@ -163,7 +163,7 @@ public class TemperatureEditorFragment extends Fragment {
     }
 
     private void addNewResult(String givenDate, String givenHour, double givenResult){
-        SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences("results", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences(MainActivity.resultsPreferencesName, Context.MODE_PRIVATE);
         Gson gson = new Gson();
 
         TemperatureResult result = new TemperatureResult(givenDate, givenHour, givenResult);
@@ -193,7 +193,7 @@ public class TemperatureEditorFragment extends Fragment {
 
         int style = AlertDialog.THEME_HOLO_DARK;
         TimePickerDialog timePickerDialog = new TimePickerDialog(getActivity(), style, onTimeSetListener,  hour, minute, true);
-        timePickerDialog.setTitle("Wybierz czas wykonania badania");
+        timePickerDialog.setTitle(getString(R.string.PickTimeOfTest));
         timePickerDialog.show();
     }
 
@@ -202,7 +202,12 @@ public class TemperatureEditorFragment extends Fragment {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                 month += 1;
-                String date = Utils.makeDateString(day, month, year);
+                String date;
+                if (MainActivity.language.equals("English")){
+                    date = Utils.makeDateStringEnglish(day, month, year);
+                } else {
+                    date = Utils.makeDateString(day, month, year);
+                }
                 dateButton.setText(date);
             }
         };

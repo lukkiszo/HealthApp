@@ -44,7 +44,7 @@ public class VisitScheduleActivity extends AppCompatActivity {
         if (getSupportActionBar() != null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
-            getSupportActionBar().setTitle("Harmonogram wizyt");
+            getSupportActionBar().setTitle(getString(R.string.VisitSchedule));
         }
 
         loadResults();
@@ -81,7 +81,7 @@ public class VisitScheduleActivity extends AppCompatActivity {
     }
 
     private ArrayList<MedicalVisitScheduleItem> sortVisits(ArrayList<MedicalVisitScheduleItem> results){
-        SharedPreferences sharedPreferences = this.getSharedPreferences("schedule", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = this.getSharedPreferences(MainActivity.schedulePreferencesName, Context.MODE_PRIVATE);
         Gson gson = new Gson();
 
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -109,7 +109,7 @@ public class VisitScheduleActivity extends AppCompatActivity {
         listViewArrayList = SortHelperClass.sortVisits(listViewArrayList);
 
         for (MedicalVisitScheduleItem visit : listViewArrayList) {
-            results.add(visit.getVisitName() + " - " + visit.getDate() + ", " + visit.getTime() + "\nAdres: " + visit.getAddress() + "\nLekarz: " + visit.getDoctorName());
+            results.add(visit.getVisitName() + " - " + visit.getDate() + ", " + visit.getTime() + getString(R.string.Address) + visit.getAddress() + getString(R.string.Doctor) + visit.getDoctorName());
         }
 
         ArrayAdapter<String> arr = new ArrayAdapter<String>(this, R.layout.medicine_item, results);
@@ -128,7 +128,7 @@ public class VisitScheduleActivity extends AppCompatActivity {
                 }
 
                 Intent intent = new Intent(getApplicationContext(), ResultEditor.class);
-                intent.putExtra("type", "Harmonogram wizyt");
+                intent.putExtra("type", getString(R.string.VisitSchedule));
                 intent.putExtra("position", index);
                 intent.putExtra("date", medicalVisitScheduleItems.get(index).getDate());
 
@@ -157,7 +157,7 @@ public class VisitScheduleActivity extends AppCompatActivity {
     }
 
     private void loadResults(){
-        SharedPreferences sharedPreferences = this.getSharedPreferences("schedule", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = this.getSharedPreferences(MainActivity.schedulePreferencesName, Context.MODE_PRIVATE);
         Gson gson = new Gson();
 
         String json = sharedPreferences.getString("visits", null);
@@ -169,12 +169,11 @@ public class VisitScheduleActivity extends AppCompatActivity {
         if (medicalVisitScheduleItems == null) {
             medicalVisitScheduleItems = new ArrayList<>();
         }
-        Log.d("wizyta", String.valueOf(medicalVisitScheduleItems.size()));
     }
 
     private void addNewVisit(){
         Intent intent = new Intent(this, ResultEditor.class);
-        intent.putExtra("type", "Harmonogram wizyt");
+        intent.putExtra("type", getString(R.string.VisitSchedule));
         intent.putExtra("date", date);
         startActivity(intent);
     }

@@ -16,7 +16,9 @@ import java.util.Calendar;
 
 public class ResultEditor extends AppCompatActivity implements DayChosenInterface{
 
-    String[] items = {"Cukier", "Ciśnienie krwi, puls i saturacja", "Temperatura ciała", "Harmonogram przyjmowania leku", "Harmonogram wizyt"};
+    String[] items;
+    String[] itemsPl = {"Cukier", "Ciśnienie krwi, puls i saturacja", "Temperatura ciała", "Harmonogram przyjmowania leku", "Harmonogram wizyt"};
+    String[] itemsEn = {"Sugar", "Blood pressure, pulse and saturation", "Body temperature", "Drug intake schedule", "Schedule of visits"};
 
     TextInputLayout textInputLayout;
     AutoCompleteTextView autoCompleteTextView;
@@ -31,6 +33,13 @@ public class ResultEditor extends AppCompatActivity implements DayChosenInterfac
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (MainActivity.language.equals("English")){
+            items = itemsEn;
+        } else {
+            items = itemsPl;
+        }
+
         setContentView(R.layout.activity_result_editor);
 
         Intent intent = getIntent();
@@ -41,7 +50,7 @@ public class ResultEditor extends AppCompatActivity implements DayChosenInterfac
         if (getSupportActionBar() != null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
-            getSupportActionBar().setTitle("Edycja wyniku");
+            getSupportActionBar().setTitle(R.string.ResultEdit);
         }
 
         textInputLayout = findViewById(R.id.menu);
@@ -52,7 +61,7 @@ public class ResultEditor extends AppCompatActivity implements DayChosenInterfac
         type = intent.getStringExtra("type");
         autoCompleteTextView.setText(type, false);
 
-        if (type.equals("Harmonogram wizyt")){
+        if (type.equals(getString(R.string.VisitSchedule))){
             date = intent.getStringExtra("date");
         }
 
@@ -60,8 +69,8 @@ public class ResultEditor extends AppCompatActivity implements DayChosenInterfac
         addResultFromCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (autoCompleteTextView.getText().toString().equals("Harmonogram przyjmowania leku") || autoCompleteTextView.getText().toString().equals("Harmonogram wizyt")){
-                    Toast.makeText(getApplicationContext(), "Nie ma możliwości dodania rekordu za pomocą kamery", Toast.LENGTH_LONG).show();
+                if (autoCompleteTextView.getText().toString().equals(getString(R.string.MedicineSchedule)) || autoCompleteTextView.getText().toString().equals(getString(R.string.VisitSchedule))){
+                    Toast.makeText(getApplicationContext(), getString(R.string.NoCameraText), Toast.LENGTH_LONG).show();
                 } else {
                     Intent intent = new Intent(getApplicationContext(), TextRecognitionActivity.class);
                     intent.putExtra("type", type);
@@ -77,9 +86,8 @@ public class ResultEditor extends AppCompatActivity implements DayChosenInterfac
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id){
                 type = parent.getItemAtPosition(position).toString();
-                Toast.makeText(parent.getContext(), "Selected: " + type, Toast.LENGTH_LONG).show();
 
-                if (type.equals("Harmonogram wizyt")){
+                if (type.equals(getString(R.string.VisitSchedule))){
                     Calendar cal = Calendar.getInstance();
                     date = cal.get(Calendar.DAY_OF_MONTH) + " " + (cal.get(Calendar.MONTH) + 1) + " " + cal.get(Calendar.YEAR);
                 }
@@ -98,19 +106,16 @@ public class ResultEditor extends AppCompatActivity implements DayChosenInterfac
     @Override
     public void onDateFromSelected(String dateFrom) {
         medicineDateFromChosen = dateFrom;
-        Log.d("dayChosenDateFrom", medicineDateFromChosen);
     }
 
     @Override
     public void onDateToSelected(String dateTo) {
         medicineDateToChosen = dateTo;
-        Log.d("dayChosenDateTo", medicineDateToChosen);
     }
 
     @Override
     public void onDateSelected(String date) {
         medicineDateChosen = date;
-        Log.d("dayChosenDate", medicineDateChosen);
     }
 
 
@@ -121,6 +126,7 @@ public class ResultEditor extends AppCompatActivity implements DayChosenInterfac
         // Replace the contents of the container with the new fragment
         switch (choice){
             case "Cukier":
+            case "Sugar":
                 Bundle bundle = new Bundle();
                 bundle.putInt("position", position);
 
@@ -130,6 +136,7 @@ public class ResultEditor extends AppCompatActivity implements DayChosenInterfac
                 break;
 
             case "Ciśnienie krwi, puls i saturacja":
+            case "Blood pressure, pulse and saturation":
                 Bundle bundle1 = new Bundle();
                 bundle1.putInt("position", position);
 
@@ -139,6 +146,7 @@ public class ResultEditor extends AppCompatActivity implements DayChosenInterfac
                 break;
 
             case "Temperatura ciała":
+            case "Body temperature":
                 Bundle bundle2 = new Bundle();
                 bundle2.putInt("position", position);
 
@@ -148,6 +156,7 @@ public class ResultEditor extends AppCompatActivity implements DayChosenInterfac
                 break;
 
             case "Kroki":
+            case "Steps":
                 Bundle bundle3 = new Bundle();
                 bundle3.putInt("position", position);
 
@@ -157,6 +166,7 @@ public class ResultEditor extends AppCompatActivity implements DayChosenInterfac
                 break;
 
             case "Harmonogram przyjmowania leku":
+            case "Drug intake schedule":
                 Bundle bundle4 = new Bundle();
                 bundle4.putInt("position", position);
 
@@ -166,6 +176,7 @@ public class ResultEditor extends AppCompatActivity implements DayChosenInterfac
                 break;
 
             case "Harmonogram wizyt":
+            case "Schedule of visits":
                 Bundle bundle5 = new Bundle();
                 bundle5.putInt("position", position);
                 bundle5.putString("date", date);
@@ -185,16 +196,16 @@ public class ResultEditor extends AppCompatActivity implements DayChosenInterfac
     @Override
     public void onBackPressed() {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-        alertDialogBuilder.setTitle("Czy chcesz odrzucić wprowadzone dane?");
+        alertDialogBuilder.setTitle(R.string.EditorQuitQuestion);
         alertDialogBuilder
-                .setMessage("Naciśnięcie przycisku Tak spowoduje usunięcie wprowadzonych zmian!")
+                .setMessage(getString(R.string.EditorQuitPrompt))
                 .setCancelable(false)
-                .setPositiveButton("Tak",
+                .setPositiveButton(getString(R.string.Yes),
                         (dialog, id) -> {
                             finish();
                         })
 
-                .setNegativeButton("Nie", (dialog, id) -> dialog.cancel());
+                .setNegativeButton(getString(R.string.No), (dialog, id) -> dialog.cancel());
 
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();

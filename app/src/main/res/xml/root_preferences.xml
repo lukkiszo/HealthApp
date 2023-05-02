@@ -2,48 +2,67 @@
         xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory
-            app:title="Ogólne">
+            app:title="@string/GeneralSettings">
 
-        <DropDownPreference
-                app:title="Język"
+        <ListPreference
+                app:title="@string/Language"
                 app:key="language"
                 app:useSimpleSummaryProvider="true"
                 app:entries="@array/language"
+                app:defaultValue="language"
                 app:entryValues="@array/language"/>
 
         <SwitchPreferenceCompat
                 app:key="darkmode"
-                app:title="Tryb ciemny"
+                app:title="@string/DarkMode"
                 app:defaultValue="true"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory
+            app:title="@string/Measurements">
 
         <EditTextPreference
-                app:key="signature"
-                app:title="@string/signature_title"
+                app:key="stepsGoal"
+                app:title="@string/DailyStepGoal"
+                app:defaultValue="6000"
                 app:useSimpleSummaryProvider="true"/>
 
         <ListPreference
-                app:key="reply"
-                app:title="@string/reply_title"
-                app:entries="@array/reply_entries"
-                app:entryValues="@array/reply_values"
-                app:defaultValue="reply"
+                app:key="sugarUnit"
+                app:title="@string/SugarUnit"
+                app:entries="@array/sugar_units"
+                app:entryValues="@array/sugar_units"
+                app:defaultValue="mg/dl"
+                app:useSimpleSummaryProvider="true"/>
+
+        <ListPreference
+                app:key="temperatureUnit"
+                app:title="@string/TemperatureUnit"
+                app:entries="@array/temperature_units"
+                app:entryValues="@array/temperature_units"
+                app:defaultValue="°C"
                 app:useSimpleSummaryProvider="true"/>
 
     </PreferenceCategory>
 
     <PreferenceCategory
-            app:title="@string/sync_header">
+            app:title="@string/Notifications">
 
         <SwitchPreferenceCompat
-                app:key="sync"
-                app:title="@string/sync_title"/>
+                app:key="notificationsEnabled"
+                app:title="@string/PermissionForNotifications"
+                app:summaryOn="@string/NotificationEnabled"
+                app:summaryOff="@string/NotificationDisabled"
+                app:defaultValue="true"/>
 
-        <SwitchPreferenceCompat
-                app:key="attachment"
-                app:title="@string/attachment_title"
-                app:summaryOn="@string/attachment_summary_on"
-                app:summaryOff="@string/attachment_summary_off"
-                app:dependency="sync"/>
+        <ListPreference
+                app:key="hourOfNotifications"
+                app:title="@string/NotificationHour"
+                app:entries="@array/notification_hours"
+                app:entryValues="@array/notification_hours"
+                app:defaultValue="16:00"
+                app:dependency="notificationsEnabled"
+                app:useSimpleSummaryProvider="true"/>
 
     </PreferenceCategory>
 

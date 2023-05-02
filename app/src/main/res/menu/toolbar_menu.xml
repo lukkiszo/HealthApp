@@ -9,6 +9,6 @@
             android:enabled="true"
             android:visible="true"
             android:orderInCategory="300"
-            android:title="Profile"/>
+            android:title="@string/Profile"/>
 
 </menu>

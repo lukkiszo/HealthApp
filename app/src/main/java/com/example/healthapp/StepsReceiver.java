@@ -30,7 +30,7 @@ public class StepsReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         currentContext = context;
-        sharedPreferences = context.getSharedPreferences("results", Context.MODE_PRIVATE);
+        sharedPreferences = context.getSharedPreferences(MainActivity.resultsPreferencesName, Context.MODE_PRIVATE);
         stepCount = intent.getIntExtra("steps", 0);
         saveStepsResults();
     }
