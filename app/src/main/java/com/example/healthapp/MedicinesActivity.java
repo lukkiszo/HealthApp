@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.nfc.TagLostException;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -14,7 +13,6 @@ import android.os.Bundle;
 import androidx.appcompat.widget.Toolbar;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
 import java.lang.reflect.Type;
 import java.util.*;
 
@@ -27,7 +25,6 @@ public class MedicinesActivity extends AppCompatActivity {
     private Button previousListViewResultsButton;
     private Button nextListViewResultsButton;
     private TextView dateText;
-    private Date todayDate;
     private int year, month, day, dayOfWeek;
     private Calendar cal;
 

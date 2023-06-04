@@ -1,7 +1,6 @@
 package com.example.healthapp;
 
 import java.util.Calendar;
-import java.util.Date;
 
 public class MedicineScheduleItem {
     private String date;

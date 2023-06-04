@@ -79,9 +79,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setTheme(R.style.Theme_HealthApp);
-
-//
         setContentView(R.layout.activity_main);
 
         toolbar = findViewById(R.id.main_toolbar);
@@ -394,6 +391,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(this, StepsReceiver.class);
         intent.putExtra("steps", steps);
+        intent.putExtra("isCounterRead", isCounterRead);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 4, intent, PendingIntent.FLAG_IMMUTABLE);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -508,11 +506,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         boolean focusable = true; // lets taps outside the popup also dismiss it
         final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
 
-        // show the popup window
-        // which view you pass in doesn't matter, it is only used for the window tolken
         popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
 
-        // dismiss the popup window when touched
         popupView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -700,19 +695,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         Uri imageUri = Uri.parse(photo);
         if (imageUri != null) {
-
-            // Skaluj i skompresuj zdjęcie z wykorzystaniem biblioteki Glide
             Glide.with(this)
                     .asBitmap()
                     .load(imageUri)
                     .apply(new RequestOptions()
-                            .override(256) // Ustaw maksymalną szerokość lub wysokość na 1024 pikseli
-                            .format(DecodeFormat.PREFER_RGB_565) // Ustaw format zdjęcia na RGB_565
-                            .encodeQuality(80)) // Ustaw jakość kompresji na 80%
+                            .override(256)
+                            .format(DecodeFormat.PREFER_RGB_565)
+                            .encodeQuality(80))
                     .into(new SimpleTarget<Bitmap>() {
                         @Override
                         public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                            // Wyświetl skompresowane i przeskalowane zdjęcie w widoku ImageView
                             headerProfile.setImageBitmap(resource);
                             nav_user.setText(name);
                             navigationPhoto.setImageBitmap(resource);

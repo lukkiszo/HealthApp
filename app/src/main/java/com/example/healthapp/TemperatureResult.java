@@ -1,9 +1,5 @@
 package com.example.healthapp;
 
-import android.icu.text.SimpleDateFormat;
-
-import java.util.Date;
-
 public class TemperatureResult implements Comparable<TemperatureResult>{
 
     private String date;

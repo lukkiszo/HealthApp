@@ -1,14 +1,13 @@
 package com.example.healthapp;
 
 import android.annotation.SuppressLint;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.*;
 import android.widget.Button;
-import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -17,7 +16,6 @@ import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.text.TextBlock;
 import com.google.android.gms.vision.text.TextRecognizer;
 import org.jetbrains.annotations.NotNull;
-
 import java.io.IOException;
 import java.util.Objects;
 
@@ -102,6 +100,8 @@ public class CameraFragment extends Fragment {
         surfaceView = view.findViewById(R.id.camera2View);
         takePhotoButton = view.findViewById(R.id.buttonTakePhoto);
 
+        customizeDimension(view);
+
         Fragment thisFragment = this;
 
         takePhotoButton.setOnClickListener(new View.OnClickListener() {
@@ -114,5 +114,13 @@ public class CameraFragment extends Fragment {
         });
         textRecognizer();
         super.onViewCreated(view, savedInstanceState);
+    }
+
+    private void customizeDimension(View view){
+        View camera = view.findViewById(R.id.camera2View);
+        int height = Resources.getSystem().getDisplayMetrics().heightPixels;
+        int width = Resources.getSystem().getDisplayMetrics().widthPixels;
+
+        camera.getLayoutParams().height = (height * 4) / 5;
     }
 }
