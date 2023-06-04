@@ -99,7 +99,7 @@ public class ProfileActivity extends AppCompatActivity {
         // handle arrow click here
         if (item.getItemId() == android.R.id.home) {
             saveSettings();
-            finish(); // close this activity and return to preview activity (if there is any)
+            finish();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -111,12 +111,8 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void loadSettings() {
-        // Retrieving the value using its keys the file name
-        // must be same in both saving and retrieving the data
-
         SharedPreferences sharedPref = getSharedPreferences(mypreference, Context.MODE_PRIVATE);
-        // The value will be default as empty string because for
-        // the very first time when the app is opened, there is nothing to show
+
         user_name = sharedPref.getString("username", "");
         user_ICE_number = sharedPref.getString("number", "");
         user_age = sharedPref.getInt("age", 0);
@@ -140,18 +136,16 @@ public class ProfileActivity extends AppCompatActivity {
 
         Uri imageUri = Uri.parse(user_photo);
         if (imageUri != null) {
-            // Skaluj i skompresuj zdjęcie z wykorzystaniem biblioteki Glide
             Glide.with(this)
                     .asBitmap()
                     .load(imageUri)
                     .apply(new RequestOptions()
-                            .override(512) // Ustaw maksymalną szerokość lub wysokość na 1024 pikseli
-                            .format(DecodeFormat.PREFER_RGB_565) // Ustaw format zdjęcia na RGB_565
-                            .encodeQuality(80)) // Ustaw jakość kompresji na 80%
+                            .override(512)
+                            .format(DecodeFormat.PREFER_RGB_565)
+                            .encodeQuality(80))
                     .into(new SimpleTarget<Bitmap>() {
                         @Override
                         public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                            // Wyświetl skompresowane i przeskalowane zdjęcie w widoku ImageView
                             photo.setImageBitmap(resource);
                         }
                     });
@@ -162,7 +156,6 @@ public class ProfileActivity extends AppCompatActivity {
     private void saveSettings() {
         SharedPreferences sharedPreferences = getSharedPreferences(mypreference, Context.MODE_PRIVATE);
 
-        // Creating an Editor object to edit(write to the file)
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
         EditText age = (EditText) findViewById(R.id.age);
@@ -171,7 +164,6 @@ public class ProfileActivity extends AppCompatActivity {
         EditText username = (EditText) findViewById(R.id.name);
         EditText number = (EditText) findViewById(R.id.phonenumber);
 
-//         Storing the key and its value as the data fetched from edittext
         editor.putString("username", username.getText().toString());
         editor.putString("number", number.getText().toString());
         if (!age.getText().toString().equals("")) {
@@ -216,22 +208,18 @@ public class ProfileActivity extends AppCompatActivity {
             if (data != null) {
                 Uri imageUri = data.getData();
                 if (imageUri != null) {
-
-                    // Skaluj i skompresuj zdjęcie z wykorzystaniem biblioteki Glide
                     Glide.with(this)
                             .asBitmap()
                             .load(imageUri)
                             .apply(new RequestOptions()
-                                    .override(512) // Ustaw maksymalną szerokość lub wysokość na 1024 pikseli
-                                    .format(DecodeFormat.PREFER_RGB_565) // Ustaw format zdjęcia na RGB_565
-                                    .encodeQuality(80)) // Ustaw jakość kompresji na 80%
+                                    .override(512)
+                                    .format(DecodeFormat.PREFER_RGB_565)
+                                    .encodeQuality(80))
                             .into(new SimpleTarget<Bitmap>() {
                                 @Override
                                 public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                                    // Wyświetl skompresowane i przeskalowane zdjęcie w widoku ImageView
                                     changePhotoButton.setImageBitmap(resource);
 
-                                    // Zapisz URI zdjęcia do SharedPreferences
                                     SharedPreferences.Editor editor = getSharedPreferences(mypreference, Context.MODE_PRIVATE).edit();
                                     editor.putString("photo", imageUri.toString());
                                     editor.apply();

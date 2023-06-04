@@ -6,31 +6,18 @@ import android.content.SharedPreferences;
 import android.hardware.SensorEventListener;
 import android.os.*;
 import android.Manifest;
-import android.app.Activity;
-import android.app.Service;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.IBinder;
-
 import android.telephony.SmsManager;
-import android.util.Log;
-import android.widget.ArrayAdapter;
 import android.widget.Toast;
-
 import androidx.core.app.ActivityCompat;
-
-import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -39,53 +26,28 @@ public class FallDetectionService extends Service implements SensorEventListener
     Handler handler = new Handler(Looper.getMainLooper());
     private Handler mPeriodicEventHandler = new Handler();
     private final int PERIODIC_EVENT_TIMEOUT = 3000;
-
     private Timer fuseTimer = new Timer();
     private String sentRecently = "No";
-    //Three Sensor Fusion - Variables:
-    // angular speeds from gyro
     private float[] gyro = new float[3];
     private float degreeFloat;
     private float degreeFloat2;
-    // rotation matrix from gyro data
     private float[] gyroMatrix = new float[9];
-
-    // orientation angles from gyro matrix
     private float[] gyroOrientation = new float[3];
-
-    // magnetic field vector
     private float[] magnet = new float[3];
-
-    // accelerometer vector
     private float[] accel = new float[3];
-
-    // orientation angles from accel and magnet
     private float[] accMagOrientation = new float[3];
-
-    // final orientation angles from sensor fusion
     private float[] fusedOrientation = new float[3];
-
-    // accelerometer and magnetometer based rotation matrix
     private float[] rotationMatrix = new float[9];
-
     public static final float EPSILON = 0.000000001f;
-
     public static final int TIME_CONSTANT = 30;
     public static final float FILTER_COEFFICIENT = 0.98f;
-
     private static final float NS2S = 1.0f / 1000000000.0f;
     private float timestamp;
     private boolean initState = true;
-
-    //Sensor Variables:
     private SensorManager senSensorManager;
-
-    //GPS
     double latitude, longitude;
     LocationManager locationManager;
     LocationListener locationListener;
-
-    //SMS Variables
     SmsManager smsManager = SmsManager.getDefault();
     String phoneNum;
     String personName;
@@ -107,11 +69,6 @@ public class FallDetectionService extends Service implements SensorEventListener
         super.onDestroy();
         mPeriodicEventHandler.removeCallbacks(doPeriodicTask);
         senSensorManager.unregisterListener(this);
-        Toast.makeText(this, getString(R.string.StoppedTrackingInfo), Toast.LENGTH_SHORT).show();
-//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-//            locationManager.removeUpdates(locationListener);
-//        }
-
     }
 
     @Override
@@ -119,12 +76,8 @@ public class FallDetectionService extends Service implements SensorEventListener
         phoneNum = getICEPhoneNumber();
         personName = getPersonName();
 
-        // Acquire a reference to the system Location Manager
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
-
-
-        // Define a listener that responds to location updates
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
@@ -134,7 +87,6 @@ public class FallDetectionService extends Service implements SensorEventListener
 
             @Override
             public void onStatusChanged(String provider, int status, Bundle extras) {
-
             }
 
             @Override
@@ -143,11 +95,9 @@ public class FallDetectionService extends Service implements SensorEventListener
 
             @Override
             public void onProviderDisabled(String provider) {
-
             }
         };
 
-        // Register the listener with the Location Manager to receive location updates
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             handler.post(new Runnable() {
                 @Override
@@ -156,7 +106,7 @@ public class FallDetectionService extends Service implements SensorEventListener
                 }
             });
         }
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 0, locationListener);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, locationListener);
 
         String locationProvider = LocationManager.GPS_PROVIDER;
         latitude = locationManager.getLastKnownLocation(locationProvider).getLatitude();
@@ -190,19 +140,15 @@ public class FallDetectionService extends Service implements SensorEventListener
     public void onSensorChanged(SensorEvent sensorEvent) {
         switch (sensorEvent.sensor.getType()) {
             case Sensor.TYPE_ACCELEROMETER:
-                // copy new accelerometer data into accel array
-                // then calculate new orientation
                 System.arraycopy(sensorEvent.values, 0, accel, 0, 3);
                 calculateAccMagOrientation();
                 break;
 
             case Sensor.TYPE_GYROSCOPE:
-                // process gyro data
                 gyroFunction(sensorEvent);
                 break;
 
             case Sensor.TYPE_MAGNETIC_FIELD:
-                // copy new magnetometer data into magnet array
                 System.arraycopy(sensorEvent.values, 0, magnet, 0, 3);
                 break;
         }
@@ -232,23 +178,17 @@ public class FallDetectionService extends Service implements SensorEventListener
                                            float timeFactor) {
         float[] normValues = new float[3];
 
-        // Calculate the angular speed of the sample
         float omegaMagnitude =
                 (float) Math.sqrt(gyroValues[0] * gyroValues[0] +
                         gyroValues[1] * gyroValues[1] +
                         gyroValues[2] * gyroValues[2]);
 
-        // Normalize the rotation vector if it's big enough to get the axis
         if (omegaMagnitude > EPSILON) {
             normValues[0] = gyroValues[0] / omegaMagnitude;
             normValues[1] = gyroValues[1] / omegaMagnitude;
             normValues[2] = gyroValues[2] / omegaMagnitude;
         }
 
-        // Integrate around this axis with the angular speed by the timestep
-        // in order to get a delta rotation from this sample over the timestep
-        // We will convert this axis-angle representation of the delta rotation
-        // into a quaternion before turning it into the rotation matrix.
         float thetaOverTwo = omegaMagnitude * timeFactor;
         float sinThetaOverTwo = (float) Math.sin(thetaOverTwo);
         float cosThetaOverTwo = (float) Math.cos(thetaOverTwo);
@@ -259,11 +199,9 @@ public class FallDetectionService extends Service implements SensorEventListener
     }
 
     public void gyroFunction(SensorEvent event) {
-        // don't start until first accelerometer/magnetometer orientation has been acquired
         if (accMagOrientation == null)
             return;
 
-        // initialisation of the gyroscope based rotation matrix
         if (initState) {
             float[] initMatrix;
             initMatrix = getRotationMatrixFromOrientation(accMagOrientation);
@@ -273,8 +211,6 @@ public class FallDetectionService extends Service implements SensorEventListener
             initState = false;
         }
 
-        // copy the new gyro values into the gyro array
-        // convert the raw gyro data into a rotation vector
         float[] deltaVector = new float[4];
         if (timestamp != 0) {
             final float dT = (event.timestamp - timestamp) * NS2S;
@@ -282,17 +218,13 @@ public class FallDetectionService extends Service implements SensorEventListener
             getRotationVectorFromGyro(gyro, deltaVector, dT / 2.0f);
         }
 
-        // measurement done, save current time for next interval
         timestamp = event.timestamp;
 
-        // convert rotation vector into rotation matrix
         float[] deltaMatrix = new float[9];
         SensorManager.getRotationMatrixFromVector(deltaMatrix, deltaVector);
 
-        // apply the new rotation interval on the gyroscope based rotation matrix
         gyroMatrix = matrixMultiplication(gyroMatrix, deltaMatrix);
 
-        // get the gyroscope based orientation from the rotation matrix
         SensorManager.getOrientation(gyroMatrix, gyroOrientation);
     }
 
@@ -308,7 +240,6 @@ public class FallDetectionService extends Service implements SensorEventListener
         float sinZ = (float) Math.sin(o[0]);
         float cosZ = (float) Math.cos(o[0]);
 
-        // rotation about x-axis (pitch)
         xM[0] = 1.0f;
         xM[1] = 0.0f;
         xM[2] = 0.0f;
@@ -319,7 +250,6 @@ public class FallDetectionService extends Service implements SensorEventListener
         xM[7] = -sinX;
         xM[8] = cosX;
 
-        // rotation about y-axis (roll)
         yM[0] = cosY;
         yM[1] = 0.0f;
         yM[2] = sinY;
@@ -330,7 +260,6 @@ public class FallDetectionService extends Service implements SensorEventListener
         yM[7] = 0.0f;
         yM[8] = cosY;
 
-        // rotation about z-axis (azimuth)
         zM[0] = cosZ;
         zM[1] = sinZ;
         zM[2] = 0.0f;
@@ -341,7 +270,6 @@ public class FallDetectionService extends Service implements SensorEventListener
         zM[7] = 0.0f;
         zM[8] = 1.0f;
 
-        // rotation order is y, x, z (roll, pitch, azimuth)
         float[] resultMatrix = matrixMultiplication(xM, yM);
         resultMatrix = matrixMultiplication(zM, resultMatrix);
         return resultMatrix;
@@ -380,7 +308,6 @@ public class FallDetectionService extends Service implements SensorEventListener
                     FILTER_COEFFICIENT * gyroOrientation[2]
                             + oneMinusCoeff * accMagOrientation[2];
 
-            //**********Sensing Danger**********
             double SMV = Math.sqrt(accel[0] * accel[0] + accel[1] * accel[1] + accel[2] * accel[2]);
 
             if (SMV > 25) {

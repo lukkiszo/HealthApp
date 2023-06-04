@@ -391,7 +391,6 @@ public class StepsResultsFragment extends Fragment {
                 else {
                     intent.putExtra("position", stepsResultArrayList.size() - 7 * (currentListViewPage - 1) + position - finalNumberOfElementsOnPage);
                 }
-                Toast.makeText(getActivity(), String.valueOf(stepsResultArrayList.get(stepsResultArrayList.size() - 7 * currentListViewPage + position).getAbsoluteResult()), Toast.LENGTH_LONG).show();
                 startActivity(intent);
             }
         });

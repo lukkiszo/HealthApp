@@ -75,7 +75,6 @@ public class BloodPressureActivity extends AppCompatActivity {
     private void changeFragment(String choice){
         // zmiana wyświetlanych fragmentów
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        // Replace the contents of the container with the new fragment
         switch (choice){
             case "Ciśnienie krwi":
             case "Blood pressure":

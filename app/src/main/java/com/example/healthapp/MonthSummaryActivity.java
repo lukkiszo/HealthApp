@@ -12,13 +12,11 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.preference.PreferenceManager;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
 import java.lang.reflect.Type;
 import java.text.MessageFormat;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Objects;
 
 public class MonthSummaryActivity extends AppCompatActivity {
 

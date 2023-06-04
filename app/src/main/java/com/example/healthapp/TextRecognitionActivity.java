@@ -19,12 +19,7 @@ import com.google.android.gms.vision.text.TextRecognizer;
 import java.text.MessageFormat;
 
 public class TextRecognitionActivity extends AppCompatActivity {
-
-    private TextView textView;
-    private SurfaceView surfaceView;
-
     private CameraSource cameraSource;
-    private TextRecognizer textRecognizer;
 
     private static String stringResult = "";
 

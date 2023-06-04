@@ -1,29 +1,18 @@
 package com.example.healthapp;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
-import android.util.Log;
-import android.view.WindowManager;
-import androidx.appcompat.app.AppCompatActivity;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-public class StepsReceiver extends BroadcastReceiver {
+public class StepsReceiver extends BroadcastReceiver{
     private SharedPreferences sharedPreferences;
     private ArrayList<StepsResult> stepsResultArrayList = new ArrayList<>();
-    private SensorManager sensorManager;
-    private Sensor stepCounter;
-    private Boolean isCounterSensorPresent;
     private int stepCount = 0;
     private Context currentContext;
 

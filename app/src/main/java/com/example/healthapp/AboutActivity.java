@@ -1,26 +1,19 @@
 package com.example.healthapp;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.net.Uri;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.appcompat.widget.Toolbar;
-import androidx.preference.PreferenceManager;
-
-import java.util.Locale;
 
 public class AboutActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-//        setTheme(R.style.Theme_AppCompat_Light_NoActionBar);
 
         setContentView(R.layout.activity_about);
 
@@ -33,12 +26,24 @@ public class AboutActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayShowHomeEnabled(true);
             getSupportActionBar().setTitle(R.string.AboutApp);
         }
+        customizeDimension();
 
     }
 
     public void goToGitAccount(View view){
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/lukkiszo"));
         startActivity(browserIntent);
+    }
+
+    private void customizeDimension(){
+        View logo = findViewById(R.id.logo);
+        View infoText = findViewById(R.id.info);
+        int height = Resources.getSystem().getDisplayMetrics().heightPixels;
+        int width = Resources.getSystem().getDisplayMetrics().widthPixels;
+
+        logo.getLayoutParams().height = height / 4;
+        logo.getLayoutParams().width = width / 2;
+        infoText.getLayoutParams().height = height / 5;
     }
 
     @Override
